@@ -1,0 +1,30 @@
+{
+    "name": "Hacker News Enhancement Suite",
+    "version": "1.0",
+    "description": "Hacker News Enhanced.",
+    "background_page": "background_chrome.html",
+    "permissions": ["tabs"],
+    "icons": {
+        "16" : "images/icon-16.png",
+        "48" : "images/icon-48.png",
+        "128" : "images/icon-128.png"
+    },
+    "content_scripts": [
+      {
+        "run_at": "document_end",
+        "all_frames": true,
+        "css": [ "style.css" ],
+        "js": ["js/jquery-1.7.2.min.js", "js/hn.js"],
+        "matches": [
+          "http://news.ycombinator.com/*",
+          "http://news.ycombinator.net/*",
+          "http://hackerne.ws/*",
+          "http://news.ycombinator.org/*" ]
+      },
+      {
+        "matches": ["http://hckrnews.com/*"],
+        "run_at": "document_end",
+        "js": ["js/jquery-1.7.2.js", "js/hn.js"]
+      }
+    ]
+}

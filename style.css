@@ -1,0 +1,560 @@
+/*
+*
+*	HN+ for Chrome v1.5
+*	by @jarques
+*
+*/
+
+body {
+  /* hide content flash */
+  visibility: hidden;
+	margin: 0;
+}
+/*ignore <center> elements*/
+body center {
+	text-align: left;
+}
+body > center > table {
+  width: 100%;
+	margin: 0 auto;
+  padding-bottom: 20px;
+}
+body center table table {
+	box-shadow: none;
+	padding: 0;
+	background: none
+}
+table {
+  //position: relative;
+}
+
+/*header color*/
+#header,
+.nav-drop-down {
+  background-color: #d74937 !important;
+}
+/*content color*/
+#content {
+  background-color: #f6f6ef !important;
+}
+
+/*box shadow above content and footer*/
+body > center > table > tbody > tr:last-child > td,
+#content > td {
+  box-shadow: inset 0px 8px 8px -8px #000;
+}
+
+/*header padding*/
+#header table td {
+  padding: 5px;
+}
+/*icon width*/
+#header table td:first-child {
+  width: 18px;
+}
+/*user nav align*/
+#header table td:nth-child(3) {
+  text-align: right;
+}
+/*content padding*/
+#content > td {
+  padding: 21px 8px;
+}
+body#index-body #content > td {
+  padding: 21px 0px;
+}
+
+table, td {
+ background: none !important;
+}
+table tr {
+  position: relative;
+}
+table tr td {
+  position: relative;
+  padding: 4px 0px 4px 0px;
+}
+
+#index-body table table {
+  margin: 0 auto;
+}
+
+/*highlight every other story line except 'More' link*/
+#index-body #content tr:nth-child(2n) {
+  background-color: #e6e6df !important;
+}
+#index-body #content tr,
+#index-body #content tr:nth-child(32) {
+  background-color: #f6f6ef !important;
+}
+#index-body #content tr.on_story {
+  border: 1px solid black;
+  background-color: #c6c6bf !important;
+  //background-color: #d74937 !important;
+}
+
+/*position comment and score tally at the top even if story line is multi-line*/
+.score, .comments {
+  position: absolute;
+  top: 7px;
+}
+/*spacing for comment and score tally*/
+#index-body #content table td:first-child {
+  width: 80px;
+  text-align: right;
+}
+#index-body #content table td:nth-child(2) {
+  width: 64px;
+  text-align: right;
+}
+
+/*spacing between story lines*/
+#index-body #content tr td {
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+#index-body .title {
+  padding-left: 18px;
+  padding-right: 18px;
+}
+/*comments tally hover*/
+.hover-comments-score {
+  cursor: pointer;
+  text-decoration: underline;
+}
+/*new comments in black*/
+.newcomments {
+  padding-right: 4px;
+  color: #000;
+}
+/*expand to entire container*/
+a.comments {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+a.comments:hover {
+  text-decoration: underline;
+}
+
+/*karma score in the user nav*/
+#my-karma {
+  padding-left: 8px;
+  color: #f6f6ef;
+}
+/*navigation links*/
+.nav-links a {
+  color: #222;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+/*text shadow on hover*/
+.pagetop a:hover,
+.more-arrow:hover,
+.more-arrow:hover a,
+.nav-active-link {
+  text-shadow: 0px 1px 5px #000;
+  color: #fff !important;
+}
+/*allow an active link after 'more' dropdown to wrap down*/
+.new-active-link {
+  display: inline-block;
+}
+/*center alert on jobs page*/
+#content > td > center > table {
+  text-align: center;
+  margin: 0 auto;
+}
+/*hide text-select cursor on | seperators*/
+.nav-links span {
+  cursor: default;
+}
+/*hand cursor on more arrow*/
+.more-arrow {
+  cursor: pointer !important;
+}
+/*down arrow after more links*/
+.more-arrow:after {
+  position: relative;
+  top: -2px;
+  left: -3px;
+  font-shadow: none;
+  font-size: 8px;
+  content: '▼';
+  padding-right: 5px;
+}
+/*toggleable drop downs on top of everything*/
+.nav-drop-down {
+  z-index: 9999;
+  display: none;
+  position: absolute;
+  padding-bottom: 8px;
+  padding-top: 8px;
+  box-shadow: 0px 4px 4px 0px #222;
+	border-radius: 1px;
+}
+.nav-drop-down div {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+.nav-drop-down a {
+  display: block;
+  text-align: left;
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+/*highlight line*/
+.nav-drop-down a:hover {
+  background-color: #e75947 !important;
+}
+/*other main nav links*/
+#nav-others {
+  padding-right: 16px;
+}
+#nav-others a {
+  width: 100%;
+}
+/*other user nav links*/
+#user-hidden {
+  right: 18px;
+}
+#user-hidden a {
+  padding-right: 28px;
+}
+/*make logout look a little different*/
+#user-logout {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #f76957;
+}
+/* More link */
+#more {
+  text-align: left !important;
+}
+#more a {
+  color: #D93B3D;
+}
+#more a:hover {
+  text-decoration: underline;
+}
+
+body#item-body .title {
+  width: 100%;
+}
+/*story title*/
+.title {
+	color: #242222;
+	font-family:  "Helvetica Neue", Arial, sans-serif !important;
+	font-size: 16px !important;
+	line-height: 18px;
+	font-weight: medium;
+}
+/*upvote arrow*/
+#item-body img[src="http://ycombinator.com/images/grayarrow.gif"] {
+  position: relative;
+  top: -4px;
+  position-right: 3px;
+}
+/* poll vote ups */
+#item-body .item-header tr:last-child img[src="http://ycombinator.com/images/grayarrow.gif"] {
+  top: 0px;
+  position-right: 0px;
+}
+
+/*make self posts text black*/
+.item-header tr:nth-child(3) td {
+  color: #000 !important;
+}
+
+a:link {
+	color: #202020;
+}
+a:hover {
+	color: #dd4b39;
+}
+/*submit/add comment button*/
+input[type="submit"] {
+	font-family: "Helvetica Neue", Arial, sans-serif;
+	font-size: 13px;
+	color: white;
+	background: -webkit-gradient(linear,left top,left bottom,from(#d74937),to(#c23422));
+	border: 1px solid #666;
+	padding: 5px 10px;
+	text-transform: capitalize;
+	border-radius: 2px;
+}
+input[type="submit"]:hover {
+  cursor: pointer;
+  background: #d74937;
+}
+input[type="text"] {
+  font-family: "Helvetica Neue", Arial, sans-serif;
+	font-size: 12px !important;
+}
+font[color="#ff6600"] {
+  display: none;
+}
+
+.title a.on_story {
+    border-left: 2px solid #3986f8 !important;
+}
+.title a:visited {opacity: .5;}
+
+/*user name in info subtext*/
+.submitter {
+  margin-left: 4px;
+}
+.subtext, .submitter {
+	color: #b8b8b8;
+	font-family: "Helvetica Neue", Arial, sans-serif;
+	font-size: 11px !important;
+	padding-bottom: 15px;
+}
+body#index-body .submitter a,
+body#index-body .submitter a:visited {
+  color: #666;
+}
+.subtext a, .comhead a {
+	color: #b8b8b8 !important
+}
+.comhead {
+  color: #000;
+	font-family: "Helvetica Neue", Arial, sans-serif;
+	font-size: 11px !important;
+}
+div > .comhead {
+  font-size: 12px !important;
+}
+
+/*score next to username indicating user upvotes*/
+.user-score {
+  margin-left: 4px;
+  color: #D74937;
+}
+.user-score:before, .user-score:after {
+  color: #888;
+}
+.user-score:before {
+  content:'(';
+}
+.user-score:after {
+  content:')';
+}
+
+/*collapse comment 'button'*/
+.collapse {
+  padding-right: 6px;
+  cursor: pointer;
+}
+.collapse:hover {
+  text-decoration: underline;
+}
+.paren {
+	color: #c9c9c9 !important;
+}
+.paren:first-child {
+  margin-left: 5px;
+}
+.title:first-child {
+	padding-left: 5px !important;
+}
+.pagetop a:active {
+  color: #000;
+}
+
+/*footer links*/
+.yclinks {
+	display: block;
+	padding: 10px;
+  text-align: center;
+	font-size: 10px;
+  color: #b8b8b8 !important;
+}
+.yclinks a {
+	color: #888 !important;
+}
+
+#top-navigation {
+  display: block;
+}
+.pagetop {
+  font-size: 10px;
+  font-family: "Helvetica Neue", Arial, sans-serif !important;
+}
+.pagetop b a {
+	font-size: 11px;
+	display: none;
+	color: #a3a3a3 !important
+}
+textarea {
+  border: 1px solid #c6cfd6 !important;
+  padding: 4px !important;
+  font-family: "Helvetica Neue", Arial, sans-serif !important;
+	font-size: 12px !important;
+}
+form textarea {
+  background: #fff;
+  font-family: font-family: "Helvetica Neue", Arial, sans-serif !important;
+  font-size: 14px;
+  padding: 10px;
+  height:80px;
+  overflow: auto;
+}
+input[name="q"], input[type="text"], form textarea {
+  border-color: #d74937 !important;
+  border-width: 1px;
+  border-radius: 2px;
+}
+form[action="http://www.hnsearch.com/search#request/all"],
+input[name="q"] {
+  width: 270px;
+}
+input[name="q"] {
+  margin-left: 10px;
+  height: 32px;
+  padding-left: 10px;
+  color: #888 !important;
+}
+input[name="q"]:focus {
+  color: #3b3e40 !important;
+}
+form[action="http://www.hnsearch.com/search#request/all"] {
+  margin: 0 auto;
+    color: #fff;
+}
+html body center table tbody tr td table tbody tr td table {
+  background: none !important
+}
+br {
+  display: none;
+}
+.default a:link, .default a:visited {color: #000;}
+
+#item-body .comhead a:nth-child(2),
+#threads-body .comhead a:nth-child(2) {
+  color: #000 !important;
+}
+a.original_poster,
+#item-body .comhead a.original_poster {
+  color: #D93B3D !important;
+}
+.comment font{
+  display: block;
+}
+.comment {
+  display: block;
+  width: 100%;
+  max-width: 800px;
+  font-family: font-family: "Helvetica Neue", Arial, sans-serif !important;
+  font-size: 13px !important;
+  line-height: 1.7em;
+}
+#content > td {
+  width: 
+}
+.comment code {
+  color: #373736;
+  font-family: "Helvetica Neue", Arial, sans-serif !important;
+  font-size: 13px !important;
+  line-height: 20px;
+}
+.default div {
+  margin-bottom: 6px !important;
+}
+.comment p,
+.comment > font {
+  font-family: font-family: "Helvetica Neue", Arial, sans-serif !important;
+  font-size: 13px !important;
+  margin-top: 6px !important;
+  margin-bottom: 6px !important;
+}
+
+#options_bar {
+	position: fixed;
+	bottom: 0;
+	background: #fff;
+	padding: 5px;
+	border-top: 1px solid #c9c9c7;
+	width: 100%;
+}
+td::selection,
+::selection *,
+::selection {
+	background: #dd4b39 !important;
+	color: #fff;
+}
+.icon {
+  width: 36px;
+  height: 36px;
+  border: 1px solid #fff;
+	box-shadow: 0px 0px 7px #000;
+	background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAAkCAIAAABuYg/PAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA+FpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczpkYz0iaHR0cDovL3B1cmwub3JnL2RjL2VsZW1lbnRzLzEuMS8iIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdFJlZj0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlUmVmIyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCIgeG1wOkNyZWF0ZURhdGU9IjIwMTEtMDYtMzBUMjI6Mjc6MDUtMDc6MDAiIHhtcDpNb2RpZnlEYXRlPSIyMDExLTA3LTAxVDA2OjAxKzE3OjAwIiB4bXA6TWV0YWRhdGFEYXRlPSIyMDExLTA3LTAxVDA2OjAxKzE3OjAwIiBkYzpmb3JtYXQ9ImltYWdlL3BuZyIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpGQTNBQkM1RjlCQzkxMUUwQTFDNUUxMkQzOUQ0MjY0MCIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpGQTNBQkM2MDlCQzkxMUUwQTFDNUUxMkQzOUQ0MjY0MCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZBM0FCQzVEOUJDOTExRTBBMUM1RTEyRDM5RDQyNjQwIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkZBM0FCQzVFOUJDOTExRTBBMUM1RTEyRDM5RDQyNjQwIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+HtChkAAAAS9JREFUeNpifH388Kdls3/duclAS8Cmos4Xlcp4M9Lz34d3DLQHTAJCTPSxCQiAFjEx0BGMWjZq2Qi1jIWgClZxSeX56yHsV7MmvNuwAi7F7+otWVgLYd9NDPz98jmlPgMa8WbpHAhbJDqFmZsXwgYyxNMKIez3G1cStInYYHy/YeXvVy9Aqrl5xNILoBbHpAC5oHLo65c3S+ZQLc7+fv38amY/NOhcvLn0jIBhK+gfDhF53tcMVECdOIOAz8cPfrt8nkvXEByYqXBxoCBQivqp8XlfE4QBtBJiK7IglS1DTikQAOQSky7IzGfwlAKy+9ULIJeGmRqYED7u3gJhAxlEpovRsnEIW8Z43dN8NBhHLRu1bNQyMi1jFhKhj01Ai5gE0guBfUI6dDuBFgEEGAAManVd0fe0qQAAAABJRU5ErkJggg%3D%3D) no-repeat !important;
+}
+html body center table tbody tr td table tbody tr td a img[src="http://ycombinator.com/images/y18.gif"]  {
+  zoom: 60%;
+	height: 0px !important;
+	width: 0px !important;
+	/* these numbers match the new image's dimensions */
+	padding-left: 36px !important;
+	padding-top: 36px !important;
+  border-color: 0px 0px 3px #000;
+	background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAAkCAIAAABuYg/PAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA+FpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczpkYz0iaHR0cDovL3B1cmwub3JnL2RjL2VsZW1lbnRzLzEuMS8iIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdFJlZj0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlUmVmIyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCIgeG1wOkNyZWF0ZURhdGU9IjIwMTEtMDYtMzBUMjI6Mjc6MDUtMDc6MDAiIHhtcDpNb2RpZnlEYXRlPSIyMDExLTA3LTAxVDA2OjAxKzE3OjAwIiB4bXA6TWV0YWRhdGFEYXRlPSIyMDExLTA3LTAxVDA2OjAxKzE3OjAwIiBkYzpmb3JtYXQ9ImltYWdlL3BuZyIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpGQTNBQkM1RjlCQzkxMUUwQTFDNUUxMkQzOUQ0MjY0MCIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpGQTNBQkM2MDlCQzkxMUUwQTFDNUUxMkQzOUQ0MjY0MCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZBM0FCQzVEOUJDOTExRTBBMUM1RTEyRDM5RDQyNjQwIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkZBM0FCQzVFOUJDOTExRTBBMUM1RTEyRDM5RDQyNjQwIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+HtChkAAAAS9JREFUeNpifH388Kdls3/duclAS8Cmos4Xlcp4M9Lz34d3DLQHTAJCTPSxCQiAFjEx0BGMWjZq2Qi1jIWgClZxSeX56yHsV7MmvNuwAi7F7+otWVgLYd9NDPz98jmlPgMa8WbpHAhbJDqFmZsXwgYyxNMKIez3G1cStInYYHy/YeXvVy9Aqrl5xNILoBbHpAC5oHLo65c3S+ZQLc7+fv38amY/NOhcvLn0jIBhK+gfDhF53tcMVECdOIOAz8cPfrt8nkvXEByYqXBxoCBQivqp8XlfE4QBtBJiK7IglS1DTikQAOQSky7IzGfwlAKy+9ULIJeGmRqYED7u3gJhAxlEpovRsnEIW8Z43dN8NBhHLRu1bNQyMi1jFhKhj01Ai5gE0guBfUI6dDuBFgEEGAAManVd0fe0qQAAAABJRU5ErkJggg%3D%3D) no-repeat !important;
+}
+/* Submit Page */
+form[action="/r"] table {
+	width: 400px;
+}
+form[action="/r"],
+form[action="/r"] input[type="text"],
+form[action="/r"] textarea {
+	width: 385px;
+	padding: 5px;
+	margin: 5px 0;
+}
+#submit-overlay {
+	position: absolute;
+	background: white;
+	padding: 20px;
+	z-index: 100;
+	width: 535px;
+	margin: 20px 0 0 150px;
+	display: none;
+	border-radius: 4px;
+}
+#overlay-bg {
+	background: #000;
+	opacity: .6;
+	width: 4000px;
+	height: 4000px;
+	position: fixed;
+	left: 0;
+	top: 0;
+	z-index: 99;
+	display: none;
+}
+
+/* HN Heat */
+.no-heat {
+  color: #242222 !important;
+}
+.mild {
+  color: #462628 !important;
+}
+.medium {
+  color: #702e30 !important;
+}
+.hot {
+  color: #d93b3d !important;
+}
+
+#jobs-body #content .pagetop,
+#jobs-body #content .pagetop * {
+  color: #000 !important;
+  text-shadow: none !important;
+}
+
+.poll-graph {
+  background-color: #D74937;
+  display: block;
+  height: 32px;
+}
