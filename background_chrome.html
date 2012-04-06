@@ -1,8 +1,8 @@
 <html>
   <!--<script src="shared.js" type="text/javascript"></script>-->
-	<script>
-		// Add event listeners
-		chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
+  <script>
+    // Add event listeners
+    chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
       console.log('REQUEST', request.method, request)
       if (request.method == "getAllLocalStorage") {
         sendResponse({data: localStorage});
@@ -17,7 +17,7 @@
       else {
         sendResponse({});
       }
-		});
+    });
 
     //expire old entries
     (function() {
@@ -28,5 +28,5 @@
           localStorage.removeItem(localStorage.key(i));
       }
     });
-	</script>
+  </script>
 </html>
