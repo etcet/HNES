@@ -29,6 +29,7 @@ TODO
 * Do something with un-threaded comment lists (e.g. best comments)
 * Make profiles prettier
 * Allow user to highlight friends and make notes about users (ala RES)
+* Show dead/grayed-out comments on mouse hover (or maybe a button)
 
 License
 -------
