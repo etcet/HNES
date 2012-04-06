@@ -30,6 +30,7 @@ TODO
 * Make profiles prettier
 * Allow user to highlight friends and make notes about users (ala RES)
 * Show dead/grayed-out comments on mouse hover (or maybe a button)
+* Test / make it work when user can see downvotes
 
 License
 -------
