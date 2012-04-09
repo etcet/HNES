@@ -510,13 +510,19 @@ var HN = {
       var original_poster = $('.subtext a:eq(0)').addClass('original_poster').text();
       $('.commenter').each(function() {
         //add title to new users
-        if ($(this).find('font[color="#3c963c"]').length) {
-          $(this).attr('title', 'New user');
+        var new_user = $(this).find('font[color="#3c963c"]');
+        if (new_user.length) {
+          var user = $(this).text();
+          new_user.remove();
+          $(this).addClass('new_user')
+                 .attr('title', 'New user')
+                 .text(user);
         }
 
         //style and title original poster
         if ($(this).text() == original_poster) {
-          $(this).addClass('original_poster').attr('title', 'Original poster');
+          $(this).addClass('original_poster')
+                 .attr('title', 'Original poster');
         }
       });
 

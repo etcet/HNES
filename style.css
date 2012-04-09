@@ -430,10 +430,17 @@ br {
 }
 .default a:link, .default a:visited {color: #000;}
 
+/*usernames are usually black*/
 #item-body .comhead a:nth-child(2),
 #threads-body .comhead a:nth-child(2) {
   color: #000 !important;
 }
+/*but new users are green*/
+a.new_user,
+#item-body .comhead a.new_user {
+  color: #3c963c !important;
+}
+/*and the person who posted the story is orange*/
 a.original_poster,
 #item-body .comhead a.original_poster {
   color: #D93B3D !important;
