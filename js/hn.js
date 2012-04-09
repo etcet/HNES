@@ -730,6 +730,9 @@ var HN = {
       user_drop.click(function() {
         hidden_div.toggle();
       });
+      hidden_div.click(function() {
+        hidden_div.toggle();
+      });
       hidden_div.hide();
     },
     rewriteNavigation: function() {
@@ -815,6 +818,9 @@ var HN = {
         navigation.empty().append(topsel);
         
         more_link.click(function() {
+          hidden_div.toggle();
+        });
+        hidden_div.click(function() {
           hidden_div.toggle();
         });
         hidden_div.offset({'left': more_link.position().left});
