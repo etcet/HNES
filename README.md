@@ -27,6 +27,7 @@ Open the .crx file in Chrome or Chromium.
 
 Chrome web store link
 ---------------------
+https://chrome.google.com/webstore/detail/bappiabcodbpphnojdiaddhnilfnjmpm
 
 TODO
 ----
