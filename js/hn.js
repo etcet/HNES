@@ -583,7 +583,13 @@ var HN = {
     formatScore: function() {
       $('.subtext').each(function(){
         var score = $(this).find('span:first');
-        var comments = $(this).find('a:last-child');
+        var as = $(this).find('a');
+        var comments;
+        if (as.length == 3)
+          comments = $(as[2])
+        else if (as.length == 4)
+          comments = $(as[1]);
+
         var by = $(this).find('a:eq(0)');
 
         if (score.length == 0)

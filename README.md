@@ -23,7 +23,7 @@ Features
 
 Install
 -------
-Open the .crx file in Chrome or Chromium.
+Open the .crx file in Chrome or Chromium or visit the link below.
 
 Chrome web store link
 ---------------------
