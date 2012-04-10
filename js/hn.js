@@ -585,10 +585,12 @@ var HN = {
         var score = $(this).find('span:first');
         var as = $(this).find('a');
         var comments;
-        if (as.length == 3)
-          comments = $(as[2])
-        else if (as.length == 4)
-          comments = $(as[1]);
+        if (as.length == 4)
+          comments = $(as[1])
+        else {
+          comments = $(as[as.length - 1]);
+        }
+        console.log(comments);
 
         var by = $(this).find('a:eq(0)');
 
