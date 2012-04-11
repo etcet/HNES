@@ -33,9 +33,14 @@ var CommentTracker = {
   },
 
   getInfo: function() {
-    var comment_info_el = $('.subtext a:last');
-    var page_id;
+    var comment_info_el;
+    var no_comments = $('.subtext a:contains(discuss)');
+    if (no_comments.length)
+      comment_info_el = no_comments;
+    else
+      comment_info_el = $('.subtext a:contains(comment)');
 
+    //if there is no 'discuss' or 'n comment(s)' link it's some other kind of page (e.g. profile)
     if (comment_info_el.length == 0)
       return {"id": window.location.pathname + window.location.search,
               "num": 0,
@@ -272,7 +277,7 @@ var HN = {
           HN.rewriteNavigation();
         }
 
-        //if user if logged in
+        //if user is logged in
         var logout_elem = $('.pagetop a:contains(logout)');
         if (logout_elem.length)
           HN.rewriteUserNav(logout_elem.parent());
@@ -300,6 +305,9 @@ var HN = {
           }
           else if (words[0] == "Edit") {
             pathname = "/edit";
+          }
+          else if (title == "Hacker News | Confirm") {
+            pathname = "/confirm";
           }
           else {
             pathname = "/news";
@@ -585,12 +593,12 @@ var HN = {
         var score = $(this).find('span:first');
         var as = $(this).find('a');
         var comments;
+        //if self story pick, 2nd link is to comments (after name)
         if (as.length == 4)
           comments = $(as[1])
-        else {
+        //otherwise it's the last one
+        else
           comments = $(as[as.length - 1]);
-        }
-        console.log(comments);
 
         var by = $(this).find('a:eq(0)');
 
