@@ -21,10 +21,6 @@ Features
   * o - Open story
   * p - View comments
 
-Install
--------
-Open the .crx file in Chrome or Chromium or visit the link below.
-
 Chrome web store link
 ---------------------
 https://chrome.google.com/webstore/detail/bappiabcodbpphnojdiaddhnilfnjmpm
