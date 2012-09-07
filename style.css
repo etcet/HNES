@@ -124,7 +124,6 @@ table tr td {
 }
 /*new comments in black*/
 .newcomments {
-  padding-right: 4px;
   color: #000;
 }
 /*expand to entire container*/

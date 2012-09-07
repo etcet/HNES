@@ -113,7 +113,7 @@ var CommentTracker = {
             if (diff > 0) {
               var newcomm = $('<span/>').addClass('newcomments')
                                         .attr('title', 'New Comments')
-                                        .text(diff + ' /');
+                                        .text(diff + ' / ');
               var totalcomm = $('<span/>').text(el.text())
                                           .addClass('totalcomments')
                                           .attr('title', 'Total Comments');
