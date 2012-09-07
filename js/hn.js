@@ -176,6 +176,12 @@ var RedditComments = {
         var comment_span = reply_link_in_comment.parent().parent();
         comment_span.after(reply_link_in_comment.parent());
       }
+
+      //remove extra spacing after 'dead' comments due to missing 'reply'
+      var comment_is_dead = $this.find('.dead');
+      if (comment_is_dead) {
+        comment_is_dead.parent().next().remove();
+      }
     });
   },
 
