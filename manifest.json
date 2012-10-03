@@ -1,6 +1,6 @@
 {
     "name": "Hacker News Enhancement Suite",
-    "version": "1.1",
+    "version": "1.1.1",
     "description": "Hacker News Enhanced.",
     "background_page": "background_chrome.html",
     "permissions": ["tabs"],
@@ -29,6 +29,11 @@
         "matches": ["http://hckrnews.com/*"],
         "run_at": "document_end",
         "js": ["js/jquery-1.7.2.js", "js/hn.js"]
+      },
+      {
+        "matches" : ["http://news.ycombinator.com/item?*"],
+        "run_at" : "document_end",
+        "js" : ["js/jquery-1.7.2.min.js", "js/hnreply.js"]
       }
     ]
 }
