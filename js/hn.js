@@ -320,6 +320,9 @@ var HN = {
             //postlist
           }
         }
+        else if (pathname == "/news2") {
+          pathname = "/news";
+        }
 
         var postPagesRE = /^(?:\/|\/news|\/newest|\/best|\/active|\/classic|\/submitted|\/saved|\/jobs|\/noobstories|\/ask)$/;
         if (postPagesRE.test(pathname)) {
@@ -372,7 +375,9 @@ var HN = {
 
       $('#header table td').removeAttr('style');
       
-      $('.title a[rel="nofollow"]:contains(More)').parent().attr('id', 'more');
+      $('tr:last-child .title').attr('id', 'more');
+      //$('.title a[rel="nofollow"]:contains(More)').parent().attr('id', 'more');
+      //$('.title a[href="news2"]').parent().attr('id', 'more');
 
       //remove spacing
       HN.removeCommentSpacing();
