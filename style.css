@@ -114,7 +114,7 @@ table tr td {
   padding-bottom: 5px;
 }
 #index-body .title {
-  padding-left: 18px;
+  padding-left: 8px;
   padding-right: 18px;
 }
 /*comments tally hover*/
@@ -255,6 +255,14 @@ body#item-body .title {
   top: -4px;
   position-right: 3px;
 }
+/*upvotes on index page*/
+#index-body #content td:nth-child(3) {
+  width: 30px;
+}
+#index-body #content td:nth-child(3) center {
+  position: absolute;
+  top: 5px;
+}
 /* poll vote ups */
 #item-body .item-header tr:last-child img[src="http://ycombinator.com/images/grayarrow.gif"],
 #item-body .item-header tr:last-child img[src="/sslyc/images/grayarrow.gif"] {
@@ -279,9 +287,9 @@ input[type="submit"] {
   font-size: 13px;
   color: white;
   background: -webkit-gradient(linear,left top,left bottom,from(#d74937),to(#c23422));
-  border: 1px solid #666;
   padding: 5px 10px;
   text-transform: capitalize;
+  border: 1px solid #666;
   border-radius: 2px;
 }
 input[type="submit"]:hover {
@@ -297,7 +305,7 @@ font[color="#ff6600"] {
 }
 
 .title a.on_story {
-    border-left: 2px solid #3986f8 !important;
+  border-left: 2px solid #3986f8 !important;
 }
 .title a:visited {opacity: .5;}
 
@@ -401,10 +409,13 @@ form textarea {
   height:80px;
   overflow: auto;
 }
-input[name="q"], input[type="text"], form textarea {
-  border-color: #d74937 !important;
+textarea, input {
   border-width: 1px;
   border-radius: 2px;
+}
+form textarea:focus, textarea:focus, input:focus, input[name="q"] {
+  outline: #d74937;
+  border-color: #d73937 !important;
 }
 form[action="http://www.hnsearch.com/search#request/all"],
 input[name="q"] {
@@ -421,7 +432,7 @@ input[name="q"]:focus {
 }
 form[action="http://www.hnsearch.com/search#request/all"] {
   margin: 0 auto;
-    color: #fff;
+  color: #fff;
 }
 html body center table tbody tr td table tbody tr td table {
   background: none !important
@@ -488,6 +499,9 @@ img[src="http://ycombinator.com/images/grayarrow.gif"],
 img[src="/sslyc/images/grayarrow.gif"] {
   width: 10px;
 }
+.reply_form {
+  width: 300px;
+}
 
 #options_bar {
   position: fixed;
@@ -529,8 +543,11 @@ form[action="/r"],
 form[action="/r"] input[type="text"],
 form[action="/r"] textarea {
   width: 385px;
-  padding: 5px;
+//  padding: 5px;
   margin: 5px 0;
+}
+form[action="/r"] input[type="submit"] {
+  margin: 0px;
 }
 #submit-overlay {
   position: absolute;
@@ -578,4 +595,11 @@ form[action="/r"] textarea {
   background-color: #D74937;
   display: block;
   height: 32px;
+}
+
+.underlined {
+  text-decoration: underline !important;
+}
+.no-font-size {
+  font-size: 0;
 }
