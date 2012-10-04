@@ -10,8 +10,96 @@
 * hckrnews.com extension - http://hckrnews.com/about.html
 *   by Wayne Larson (wvl)
 *
+* Thanks to Samuel Stern for the inline replying
+*
 * Under MIT license, see LICENSE
 */
+
+var InlineReply = {
+  init: function() {
+    $('a[href^="reply?"]').click(function(e) {
+      e.preventDefault();
+
+      //make sure there's no stray underlining between Reply and Cancel
+      $(this).addClass('underlined');
+      $(this).parent('u').replaceWith($(this));
+
+      /*remove the 'reply' link without actually hide()ing it because it
+        doesn't work that way with collapsible comments*/
+      $(this).addClass('no-font-size');
+
+      domain = window.location.origin;
+      link = domain + '/' + $(this).attr('href');
+
+      if ($(this).next().hasClass('replyform')) {
+        $(this).next().show();
+      }
+      else {
+        //add buttons and box
+        $(this).after(
+          '<div class="reply_form"> \
+          <textarea rows="4" cols="60"/> \
+          <input type="submit" value="Reply" class="rbutton"/> \
+          <input type="submit" value="Cancel" class="cbutton"/> \
+          </div>'
+        );
+        $(this).parent().find('.rbutton').attr('data', link);
+      }
+    });
+
+    $('.rbutton').live('click', function(e) {
+      e.preventDefault();
+      link = $(this).attr('data');
+      text = $(this).prev().val();
+      InlineReply.postCommentTo(link, domain, text, $(this));
+    });
+    
+    $('.cbutton').live('click', function(e) {
+      InlineReply.hideButtonAndBox($(this).prev());
+    });
+  },
+
+  postCommentTo: function(link, domain, text, button) {
+    InlineReply.disableButtonAndBox(button);
+    $.ajax({
+      accepts: "text/html",
+      url: link
+    }).success(function(html) {
+      input = $(html).find('input');
+      fnid = input.attr('value');
+      InlineReply.sendComment(domain, fnid, text);
+    }).error(function(xhr, status, error) {
+      InlineReply.enableButtonAndBox(button);
+    });
+  },
+
+  sendComment: function(domain, fnidarg, textarg) {
+    $.post(
+      domain + "/r", 
+      {fnid : fnidarg, text: textarg }
+    ).complete(function(a) {
+      window.location.reload(true);
+    }); 
+  },
+
+  disableButtonAndBox: function(button) {
+    button.attr('disabled', 'disabled');
+    button.next().attr('disabled', 'disabled');
+    button.prev().attr('disabled', 'disabled');
+  },
+
+  enableButtonAndBox: function(button) {
+    button.removeAttr('disabled');
+    button.next().removeAttr('disabled');
+    button.prev().removeAttr('disabled');
+  },
+  
+  hideButtonAndBox: function(button) {
+    button.parent().prev().removeClass('no-font-size');
+    button.parent().hide();
+  }
+}
+
 
 var CommentTracker = {
   init: function() {
@@ -126,8 +214,8 @@ var CommentTracker = {
       }
     });
   }
-
 }
+
 
 var RedditComments = {
   init: function(comments) {
@@ -190,7 +278,7 @@ var RedditComments = {
     if (link_to_parent.attr('href').length > 1)
       return;
 
-		var el = $(this).closest("table");
+    var el = $(this).closest("table");
     var level = el.attr('level');
     var prev_level = level;
     var comment_row = el.parent().parent();
@@ -208,8 +296,8 @@ var RedditComments = {
   },
 
   collapse: function(e) {
-		var $e = $(e.target);
-		var el = $e.closest("table");
+    var $e = $(e.target);
+    var el = $e.closest("table");
     var comment_row = el.parent().parent();
     var indent = Number(el.attr('level'));
     //var indent = RedditComments.stripPx(comment_row.find('td:eq(1) img').css('width'));
@@ -253,7 +341,7 @@ var RedditComments = {
     var def = el.find('.default');
     if (has_visible_children || !el.hasClass('collapsed')) {
       var child_str = (num_children > 0 ? " (" + num_children + " child" + (num_children == 1? "" : "ren") + ")" : "");
-			$e.text("[+]" + child_str)
+      $e.text("[+]" + child_str)
         .attr('title', 'Restore comment')
         .css('margin-left', def.prev().width() + 2 + 'px');
       def.find('div').siblings().hide();
@@ -261,16 +349,16 @@ var RedditComments = {
       el.addClass('collapsed');
     }
     else {
-			$e.text("[−]")
+      $e.text("[−]")
         .attr('title', 'Collapse comment')
         .css('margin-left', '');
       def.find('div').siblings().show();
       def.prev().show();
       el.removeClass('collapsed');
     }
-	}
-
+  }
 }
+
 
 var HN = {
     init: function() {
@@ -425,7 +513,9 @@ var HN = {
 
       HN.init_keys();
 
-      HN.removeUpvotes();
+      //HN.removeUpvotes();
+      //with upvotes, the 'more' link needs to be shifted 1 more col
+      HN.moveMoreLink();
       HN.formatScore();
       HN.formatURL();
 
@@ -445,6 +535,7 @@ var HN = {
     },
 
     doCommentsList: function(pathname, track_comments) {
+      InlineReply.init();
       HN.addClassToCommenters();
 
       //add classes to comment page header (OP post) and the table containing all the comments
@@ -677,6 +768,9 @@ var HN = {
         });
     },
 
+    moveMoreLink: function() {
+      $('#more').prev().attr('colspan', '3');
+    },
     removeUpvotes: function() {
       var titles = $('.title');
       if ($(titles[titles.length - 1]).attr('id') == "more")
@@ -962,6 +1056,7 @@ var HN = {
       });
     }
 }
+
 
 //show new comment count on hckrnews.com
 if (window.location.host == "hckrnews.com") {
