@@ -9,6 +9,7 @@ Features
 * Easy access to all pages
 * Enhanced comment threads
   * Collapsible comments
+  * Inline commenting
   * Link to parent
   * Display all comments on paginated threads
   * Highlight the original poster
@@ -44,3 +45,5 @@ Thanks
 Wayne Larson for hckrnews.com and permission to use code from his extension which displays new comments.
 
 @jarques for his HN+ extension (https://github.com/jarquesp/Hacker-News--) which was used as a starting point for this project.
+
+Thanks to Samuel Stern for the inline commenting.
