@@ -32,6 +32,11 @@
         "matches": ["http://hckrnews.com/*"],
         "run_at": "document_end",
         "js": ["js/jquery-1.7.2.js", "js/hn.js"]
+      },
+      {
+        "matches" : ["http://news.ycombinator.com/item?*"],
+        "run_at" : "document_end",
+        "js" : ["js/jquery-1.7.2.min.js", "js/hnreply.js"]
       }
     ]
 }
