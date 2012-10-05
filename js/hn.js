@@ -955,16 +955,20 @@ var HN = {
 
     setSearchInput: function(el) {
       el.focus(function(){
+        HN.searchInputFocused = true;
         if (el.val() == "Search on hnsearch.com") {
           el.val("");
         }
       });
       el.blur(function(){
+        HN.searchInputFocused = false;
         if (el.val() == "") {
           el.val("Search on hnsearch.com");
         }
       });
     },
+
+    searchInputFocused: false,
 
     init_keys: function(){
         var j = 74, // Next Item
@@ -973,16 +977,19 @@ var HN = {
             p = 80, // View Comments
             h = 72; // Open Help
         $(document).keydown(function(e){
-          if (e.which == j) {
-            HN.next_story();
-          } else if (e.which == k) {
-            HN.previous_story();
-          } else if (e.which == o) {
-            HN.open_story();
-          } else if (e.which == p) {
-            HN.view_comments();
-          } else if (e.which == h) {
-            //HN.open_help();
+          //Keyboard shortcuts disabled when search focused
+          if (!HN.searchInputFocused) {
+            if (e.which == j) {
+              HN.next_story();
+            } else if (e.which == k) {
+              HN.previous_story();
+            } else if (e.which == o) {
+              HN.open_story();
+            } else if (e.which == p) {
+              HN.view_comments();
+            } else if (e.which == h) {
+              //HN.open_help();
+            }
           }
         })
     },
