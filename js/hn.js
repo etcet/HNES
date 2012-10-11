@@ -976,10 +976,10 @@ var HN = {
             o = 79, // Open Story
             p = 80, // View Comments
             h = 72; // Open Help
-			l = 76; // New tab
-			c = 67; // Comments in new tab
-			b = 66; // Open comments and link in new tab
-			shiftKey = 16; //allow modifier
+            l = 76; // New tab
+            c = 67; // Comments in new tab
+            b = 66; // Open comments and link in new tab
+            shiftKey = 16; //allow modifier
         $(document).keydown(function(e){
           //Keyboard shortcuts disabled when search focused
           if (!HN.searchInputFocused) {
@@ -988,28 +988,54 @@ var HN = {
             } else if (e.which == k) {
               HN.previous_story();
             } else if (e.which == l){
-				HN.open_story_new_tab();
+              HN.open_story_in_new_tab();
             } else if (e.which == o) {
-              HN.open_story();
+              HN.open_story_in_current_tab();
             } else if (e.which == p) {
-              HN.view_comments();
+              HN.open_comments_in_current_tab();
             } else if (e.which == c) {
-              HN.view_comments_new_tab();
+              HN.open_comments_in_new_tab();
             } else if (e.which == h) {
               //HN.open_help();
-			} else if (e.which == b) {
-					HN.view_link_and_comments_new_tab();
-			}
+            } else if (e.which == b) {
+              HN.open_comments_in_new_tab();
+              HN.open_story_in_new_tab();
+            }
           }
         })
     },
 
-    next_story: function(){
+    open_story_in_current_tab: function() {
+      HN.open_story(false);
+    },
+    open_story_in_new_tab: function() {
+      HN.open_story(true);
+    },
+    open_comments_in_current_tab: function() {
+      HN.view_comments(false);
+    },
+    open_comments_in_new_tab: function() {
+      HN.view_comments(true);
+    },
+
+    next_story: function() {
+      HN.next_or_prev_story(true);
+    },
+    previous_story: function() {
+      HN.next_or_prev_story(false);
+    },
+
+    next_or_prev_story: function(next){
       if ($('.on_story').length == 0) {
-        $('#content tr:first').addClass("on_story");
+        if (next)
+          $('#content tr:first').addClass("on_story");
       } else {
         var current = $('.on_story');
-        var next_lem = current.next();
+        var next_lem;
+        if (next)
+          next_lem = current.next();
+        else
+          next_lem = current.prev();
         if (next_lem.length) {
           next_lem.addClass("on_story");
           $('html, body').stop();
@@ -1021,60 +1047,25 @@ var HN = {
       }
     },
 
-    previous_story:function(){
-      if ($('.on_story').length == 0) {
-      } else {
-        var current = $('.on_story');
-        var next_lem = current.prev();
-        if (next_lem.length) {
-          next_lem.addClass("on_story");
-          $('html, body').stop();
-          $('html, body').animate({
-            scrollTop: next_lem.offset().top - 10
-            }, 200);
-          current.removeClass("on_story");
+    open_story: function(new_tab){
+      if ($('.on_story').length != 0) {
+        var story = $('.on_story .title > a');
+        if (new_tab)
+          window.open(story.attr("href"));
+        else
+          window.location = story.attr("href");
+      }
+    },
+
+    view_comments: function(new_tab){
+      if ($('.on_story').length != 0) {
+        var comments = $('.on_story .comments');
+        if (comments.length != 0) {
+          if (new_tab)
+            window.open(comments.attr("href"));
+          else
+            window.location = comments.attr("href");
         }
-      }
-    },
-
-    open_story: function(){
-      if ($('.on_story').length != 0) {
-        var story = $('.on_story .title > a');
-        window.location = story.attr("href");
-      }
-    },
-
-    open_story_new_tab: function(){
-      if ($('.on_story').length != 0) {
-        var story = $('.on_story .title > a');
-		window.open(story.attr("href"));
-        //window.location = story.attr("href");
-      }
-    },
-
-    view_comments: function(){
-      if ($('.on_story').length != 0) {
-        var comments = $('.on_story .comments');
-        if (comments.length != 0)
-          window.location = comments.attr("href");
-      }
-    },
-
-    view_comments_new_tab: function(){
-      if ($('.on_story').length != 0) {
-        var comments = $('.on_story .comments');
-        if (comments.length != 0)
-          window.open(comments.attr("href"));
-      }
-    },
-
-    view_link_and_comments_new_tab: function(){
-      if ($('.on_story').length != 0) {
-        var comments = $('.on_story .comments');
-		var story = $('.on_story .title > a');
-        if (comments.length != 0)
-          window.open(comments.attr("href"));
-		window.open(story.attr("href"));
       }
     },
 
