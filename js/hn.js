@@ -976,6 +976,10 @@ var HN = {
             o = 79, // Open Story
             p = 80, // View Comments
             h = 72; // Open Help
+			l = 76; // New tab
+			c = 67; // Comments in new tab
+			b = 66; // Open comments and link in new tab
+			shiftKey = 16; //allow modifier
         $(document).keydown(function(e){
           //Keyboard shortcuts disabled when search focused
           if (!HN.searchInputFocused) {
@@ -983,13 +987,19 @@ var HN = {
               HN.next_story();
             } else if (e.which == k) {
               HN.previous_story();
+            } else if (e.which == l){
+				HN.open_story_new_tab();
             } else if (e.which == o) {
               HN.open_story();
             } else if (e.which == p) {
               HN.view_comments();
+            } else if (e.which == c) {
+              HN.view_comments_new_tab();
             } else if (e.which == h) {
               //HN.open_help();
-            }
+			} else if (e.which == b) {
+					HN.view_link_and_comments_new_tab();
+			}
           }
         })
     },
@@ -1034,11 +1044,37 @@ var HN = {
       }
     },
 
+    open_story_new_tab: function(){
+      if ($('.on_story').length != 0) {
+        var story = $('.on_story .title > a');
+		window.open(story.attr("href"));
+        //window.location = story.attr("href");
+      }
+    },
+
     view_comments: function(){
       if ($('.on_story').length != 0) {
         var comments = $('.on_story .comments');
         if (comments.length != 0)
           window.location = comments.attr("href");
+      }
+    },
+
+    view_comments_new_tab: function(){
+      if ($('.on_story').length != 0) {
+        var comments = $('.on_story .comments');
+        if (comments.length != 0)
+          window.open(comments.attr("href"));
+      }
+    },
+
+    view_link_and_comments_new_tab: function(){
+      if ($('.on_story').length != 0) {
+        var comments = $('.on_story .comments');
+		var story = $('.on_story .title > a');
+        if (comments.length != 0)
+          window.open(comments.attr("href"));
+		window.open(story.attr("href"));
       }
     },
 
