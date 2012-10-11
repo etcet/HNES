@@ -978,6 +978,7 @@ var HN = {
             h = 72; // Open Help
 			l = 76; // New tab
 			c = 67; // Comments in new tab
+			b = 66; // Open comments and link in new tab
 			shiftKey = 16; //allow modifier
         $(document).keydown(function(e){
           //Keyboard shortcuts disabled when search focused
@@ -996,6 +997,8 @@ var HN = {
               HN.view_comments_new_tab();
             } else if (e.which == h) {
               //HN.open_help();
+			} else if (e.which == b) {
+					HN.view_link_and_comments_new_tab();
 			}
           }
         })
@@ -1064,6 +1067,17 @@ var HN = {
           window.open(comments.attr("href"));
       }
     },
+
+    view_link_and_comments_new_tab: function(){
+      if ($('.on_story').length != 0) {
+        var comments = $('.on_story .comments');
+		var story = $('.on_story .title > a');
+        if (comments.length != 0)
+          window.open(comments.attr("href"));
+		window.open(story.attr("href"));
+      }
+    },
+
     getAndRateStories: function() {
       var NO_HEAT = 50;
       var MILD    = 75;
