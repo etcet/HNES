@@ -976,6 +976,8 @@ var HN = {
             o = 79, // Open Story
             p = 80, // View Comments
             h = 72; // Open Help
+			t = 84; // New tab
+			shiftKey = 16; //allow modifier
         $(document).keydown(function(e){
           //Keyboard shortcuts disabled when search focused
           if (!HN.searchInputFocused) {
@@ -983,13 +985,15 @@ var HN = {
               HN.next_story();
             } else if (e.which == k) {
               HN.previous_story();
+            } else if (e.which == t){
+				HN.open_story_new_tab();
             } else if (e.which == o) {
               HN.open_story();
             } else if (e.which == p) {
               HN.view_comments();
             } else if (e.which == h) {
               //HN.open_help();
-            }
+			}
           }
         })
     },
@@ -1031,6 +1035,14 @@ var HN = {
       if ($('.on_story').length != 0) {
         var story = $('.on_story .title > a');
         window.location = story.attr("href");
+      }
+    },
+
+    open_story_new_tab: function(){
+      if ($('.on_story').length != 0) {
+        var story = $('.on_story .title > a');
+		window.open(story.attr("href"));
+        //window.location = story.attr("href");
       }
     },
 
