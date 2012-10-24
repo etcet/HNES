@@ -408,11 +408,8 @@ var HN = {
             //postlist
           }
         }
-        else if (pathname == "/news2") {
-          pathname = "/news";
-        }
 
-        var postPagesRE = /^(?:\/|\/news|\/newest|\/best|\/active|\/classic|\/submitted|\/saved|\/jobs|\/noobstories|\/ask)$/;
+        var postPagesRE = /^(?:\/|\/news|\/newest|\/best|\/active|\/classic|\/submitted|\/saved|\/jobs|\/noobstories|\/ask|\/news2|\/over)$/;
         if (postPagesRE.test(pathname)) {
           HN.doPostsList();
           if (pathname == '/jobs') {
