@@ -31,7 +31,7 @@ var InlineReply = {
       domain = window.location.origin;
       link = domain + '/' + $(this).attr('href');
 
-      if ($(this).next().hasClass('replyform')) {
+      if ($(this).next().hasClass('reply_form')) {
         $(this).next().show();
       }
       else {
@@ -47,6 +47,7 @@ var InlineReply = {
       }
     });
 
+    /* Reply button */
     $('.rbutton').live('click', function(e) {
       e.preventDefault();
       link = $(this).attr('data');
@@ -54,6 +55,7 @@ var InlineReply = {
       InlineReply.postCommentTo(link, domain, text, $(this));
     });
     
+    /* Cancel button */
     $('.cbutton').live('click', function(e) {
       InlineReply.hideButtonAndBox($(this).prev());
     });
