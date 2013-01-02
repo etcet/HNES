@@ -525,6 +525,8 @@ var HN = {
       CommentTracker.checkIndexPage();
       //heat map points
       HN.getAndRateStories();
+      //enable highlighting of clicked links
+      HN.enableLinkHighlighting();
     },
 
     addClassToCommenters: function() {
@@ -1086,6 +1088,12 @@ var HN = {
         } else {
           $(this).addClass('hot');
         };
+      });
+    },
+
+    enableLinkHighlighting: function() {
+      $('.title a:link').click(function() {
+          $(this).closest('td').addClass('link-highlight');
       });
     }
 }
