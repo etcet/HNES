@@ -14,6 +14,7 @@ Features
   * Display all comments on paginated threads
   * Highlight the original poster
 * Show and highlight new comments since you last view a thread
+* Highlight links once clicked to more easily identify what you've recently visited
 * Display how many times you've upvoted each user
 * Graphs on polls
 * Keyboard controls on index pages:
