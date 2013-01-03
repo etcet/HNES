@@ -15,6 +15,7 @@ Features
   * Highlight the original poster
 * Show and highlight new comments since you last view a thread
 * Highlight links once clicked to more easily identify what you've recently visited
+* Redirect back to the front page upon hitting an expired link
 * Display how many times you've upvoted each user
 * Graphs on polls
 * Keyboard controls on index pages:
