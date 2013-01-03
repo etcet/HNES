@@ -53,3 +53,5 @@ Wayne Larson for hckrnews.com and permission to use code from his extension whic
 Thanks to Samuel Stern for the inline commenting.
 
 Thanks to Vishnu Rajeevan for adding more keyboard shortcuts.
+
+Thanks to Lewis Pollard for highlighting a story once you've opened it
