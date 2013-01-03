@@ -598,3 +598,8 @@ form[action="/r"] input[type="submit"] {
 .no-font-size {
   font-size: 0;
 }
+.link-highlight {
+  border: 1px dashed #cccccc;
+  padding-top: 4px !important;
+  padding-bottom: 4px !important;
+}
