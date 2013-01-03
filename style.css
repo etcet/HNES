@@ -605,7 +605,7 @@ form[action="/r"] input[type="submit"] {
 
 td #more.link-highlight {
   border: none;
-  padding: 5px !important;
+  padding: 5px 18px 5px 8px !important;
 }
 
 .alert {
