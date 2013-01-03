@@ -604,6 +604,12 @@ form[action="/r"] input[type="submit"] {
   padding-bottom: 4px !important;
 }
 
+td #more.link-highlight {
+  border: none;
+  padding-top: 5px !important;
+  padding-bottom: 5px !important;
+}
+
 .alert {
   padding: 5px;
   text-align: center;
