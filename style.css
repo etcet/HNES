@@ -603,3 +603,8 @@ form[action="/r"] input[type="submit"] {
   padding-top: 4px !important;
   padding-bottom: 4px !important;
 }
+
+.alert {
+  padding: 5px;
+  text-align: center;
+}
