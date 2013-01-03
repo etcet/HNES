@@ -1125,7 +1125,7 @@ else {
   $(document).ready(function(){
     if ("Unknown or expired link." == $('body').html()) {
       HN.setLocalStorage('expired', true);
-      window.location.replace("http://news.ycombinator.com/");
+      window.location.replace("/");
       return;
     } else {
       HN.getLocalStorage('expired', function(response) {
