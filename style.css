@@ -600,6 +600,15 @@ form[action="/r"] input[type="submit"] {
 }
 .link-highlight {
   border: 1px dashed #aaa;
-  padding-top: 4px !important;
-  padding-bottom: 4px !important;
+  padding: 4px 27px 4px 7px !important;
+}
+
+td #more.link-highlight {
+  border: none;
+  padding: 5px 18px 5px 8px !important;
+}
+
+.alert {
+  padding: 5px;
+  text-align: center;
 }
