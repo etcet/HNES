@@ -599,7 +599,7 @@ form[action="/r"] input[type="submit"] {
   font-size: 0;
 }
 .link-highlight {
-  border: 1px dashed #cccccc;
+  border: 1px dashed #aaa;
   padding-top: 4px !important;
   padding-bottom: 4px !important;
 }
