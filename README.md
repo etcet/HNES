@@ -55,4 +55,4 @@ Thanks to Samuel Stern for the inline commenting.
 
 Thanks to Vishnu Rajeevan for adding more keyboard shortcuts.
 
-Thanks to Lewis Pollard for highlighting a story once you've opened it
+Thanks to Lewis Pollard for highlighting a story once you've opened it and redirecting to the front page when you hit an expired link.
