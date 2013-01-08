@@ -1123,6 +1123,20 @@ else {
   HN.init();
 
   $(document).ready(function(){
+    if ("Unknown or expired link." == $('body').html()) {
+      HN.setLocalStorage('expired', true);
+      window.location.replace("/");
+      return;
+    } else {
+      HN.getLocalStorage('expired', function(response) {
+        expired = JSON.parse(response.data);
+        if (expired) {
+          $('#header').after("<p class=\"alert\">You reached an expired page and have been redirected back to the front page.</p>");
+          HN.setLocalStorage('expired', false);
+        }
+      });
+    }
+    
     $('body').css('visibility', 'visible');
   });
 }
