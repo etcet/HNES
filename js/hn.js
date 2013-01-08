@@ -527,6 +527,8 @@ var HN = {
       HN.getAndRateStories();
       //enable highlighting of clicked links
       HN.enableLinkHighlighting();
+
+      HN.replaceVoteButtons(true);      
     },
 
     addClassToCommenters: function() {
@@ -640,6 +642,25 @@ var HN = {
       HN.removeCommentSpacing();
       HN.addScoreToUsers(comments);
       RedditComments.init(comments);
+      HN.replaceVoteButtons(false);
+    },
+
+    replaceVoteButtons: function(isPostList) {
+      $('img[src$="grayarrow.gif"]').replaceWith('<div class="up-arrow"></div>');
+      $('img[src$="graydown.gif"]').replaceWith('<div class="down-arrow last-arrow"></div>');
+      
+      if (isPostList) {
+        $('div.up-arrow').addClass('postlist-arrow');
+      } else {
+        // any up-arrows that don't have a down arrow next to them, add the last-arrow class
+        // as well, which will give a bit extra margin before the show/hide link
+        $('div.up-arrow').each(function() {
+          var numbuttons = $($(this).parents('center').get(0)).find('a').size();
+          if (numbuttons == 1) {
+            $(this).addClass('last-arrow');
+          }
+        });
+      }
     },
 
     addScoreToUsers: function(commentsblock) {
@@ -1131,7 +1152,7 @@ else {
       HN.getLocalStorage('expired', function(response) {
         expired = JSON.parse(response.data);
         if (expired) {
-          $('#header').after("<p class=\"alert\">You reached an expired page and have been redirected back to the front page.</p>");
+          $('#header').after("<p id=\"alert\">You reached an expired page and have been redirected back to the front page.<a href=\"http://news.ycombinator.com/item?id=17705\" id=\"alert-explanation\">what?</a></p>");
           HN.setLocalStorage('expired', false);
         }
       });
