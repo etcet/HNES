@@ -51,8 +51,10 @@ Wayne Larson for hckrnews.com and permission to use code from his extension whic
 
 @jarques for his HN+ extension (https://github.com/jarquesp/Hacker-News--) which was used as a starting point for this project.
 
-Thanks to Samuel Stern for the inline commenting.
+Thanks to Samuel Stern (hatboysam) for the inline commenting.
 
-Thanks to Vishnu Rajeevan for adding more keyboard shortcuts.
+Thanks to Vishnu Rajeevan (burntcookie90) for adding more keyboard shortcuts.
 
-Thanks to Lewis Pollard for highlighting a story once you've opened it and redirecting to the front page when you hit an expired link.
+Thanks to Lewis Pollard (lewispollard) for highlighting a story once you've opened it and redirecting to the front page when you hit an expired link.
+
+Thanks for Dean Harding (codeka) for replacing the up/down vote images with CSS buttons.
