@@ -18,6 +18,7 @@ Features
 * Redirect back to the front page upon hitting an expired link
 * Display how many times you've upvoted each user
 * Graphs on polls
+* New smooth and scalable up & down vote arrows
 * Keyboard controls on index pages:
   * j - Next item
   * k - Previous item
