@@ -608,7 +608,41 @@ td #more.link-highlight {
   padding: 5px 18px 5px 8px !important;
 }
 
-.alert {
+div.up-arrow {
+  width: 0;
+  height: 0;
+  border-left: 5pt solid transparent;
+  border-right: 5pt solid transparent;
+  border-bottom: 7pt solid #999;
+  display: inline-block;
+}
+
+div.down-arrow {
+  width: 0;
+  height: 0;
+  border-left: 5pt solid transparent;
+  border-right: 5pt solid transparent;
+  border-top: 7pt solid #999;
+  display: inline-block;
+}
+
+div.last-arrow {
+  margin-right: 4pt;
+}
+
+div.postlist-arrow {
+  display: block;
+  margin-top: 4pt;
+  margin-left: 4pt;
+}
+
+#alert {
+  color: #dd4b39;
   padding: 5px;
   text-align: center;
+}
+#alert-explanation {
+  margin-left: 1pt;
+  color #222;
+  font-size: 60%;
 }
