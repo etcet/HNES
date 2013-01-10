@@ -641,8 +641,6 @@ div.postlist-arrow {
   padding: 5px;
   text-align: center;
 }
-#alert-explanation {
-  margin-left: 1pt;
-  color #222;
-  font-size: 60%;
+#alert a {
+  color #000;
 }
