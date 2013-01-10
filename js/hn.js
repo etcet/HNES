@@ -1152,7 +1152,7 @@ else {
       HN.getLocalStorage('expired', function(response) {
         expired = JSON.parse(response.data);
         if (expired) {
-          $('#header').after("<p id=\"alert\">You reached an expired page and have been redirected back to the front page.<a href=\"http://news.ycombinator.com/item?id=17705\" id=\"alert-explanation\">what?</a></p>");
+          $('#header').after("<p id=\"alert\">You reached an <a href=\"http://news.ycombinator.com/item?id=17705\" title=\"what?\">expired page</a> and have been redirected back to the front page.</p>");
           HN.setLocalStorage('expired', false);
         }
       });
