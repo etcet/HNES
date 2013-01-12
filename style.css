@@ -644,3 +644,7 @@ div.postlist-arrow {
 #alert a {
   color #000;
 }
+
+.mourning {
+  border-top: 5px solid #000;
+}
