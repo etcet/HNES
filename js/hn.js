@@ -452,6 +452,12 @@ var HN = {
 
     initElements: function() {
       var header = $('body > center > table > tbody > tr:first-child');
+      if (header.find('td').css('backgroundColor') == "rgba(0, 0, 0, 0)") {
+        //mourning
+        header = header.next();
+        header.prev().remove();
+        $('body').addClass('mourning');
+      }
       header.attr('id', 'header');
 
       var content = $('body > center > table > tbody > tr:nth-child(3)');
