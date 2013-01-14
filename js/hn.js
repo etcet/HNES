@@ -452,7 +452,7 @@ var HN = {
 
     initElements: function() {
       var header = $('body > center > table > tbody > tr:first-child');
-      if (header.find('td').css('backgroundColor') == "rgba(0, 0, 0, 0)") {
+      if (header.find('td').attr('bgcolor') === "#000000") {
         //mourning
         header = header.next();
         header.prev().remove();
