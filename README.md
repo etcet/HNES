@@ -47,6 +47,10 @@ Things I can't test
 -------
 I don't have enough karma to test down votes, creating polls, or topbar color
 
+Compatability
+-------
+I do not test this extension with any other extensions active on Hacker News so I cannot guarantee that it will play nice. If you come across an apparent bug please make sure that any other extension are disabled or please mention which ones are enabled in the bug report.
+
 License
 -------
 MIT License, see LICENSE
