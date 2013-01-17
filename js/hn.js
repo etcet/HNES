@@ -561,6 +561,9 @@ var HN = {
         if (poll)
           HN.graphPoll(poll);
 
+        //linkify self-post text
+        $('.item-header tr:nth-child(3)').addClass('self-post-text').linkify();
+
         var more = $('#more');
         //recursively load more pages on closed thread
         if (more) 
@@ -587,26 +590,139 @@ var HN = {
 
     doUserProfile: function() {
       $('#content > td').attr('id', 'user-profile');
-      var options = $('tr > td[valign="top"]').removeAttr('valign');
+
+      //remove topcolor setting as this will cause problems (untested)
+      $('tr > td[valign="top"]:contains("topcolor:")').parent().remove();
+
+      var options = $('tr > td[valign="top"]');
       var user = options[0];
-      var created = options[1];
-      var karma = options[2];
-      var avg = options[3];
-      var about = $(options[4]).attr('valign','top');
+      var created = $(options[1]);
+      var karma = $(options[2]);
+      var avg = $(options[3]);
+      var about = $(options[4]);
+
+      var days_ago = created.next();
+      var days = days_ago.text().split(" ")[0];
+      days_ago.text(days + " days (" + HN.prettyPrintDaysAgo(days) + ") ago");
+
       if (options.length === 5) {
         //other user pages
+        $('#user-profile a[href^="submitted"]').parent().attr('id', 'others-profile-submitted');
         about.next().linkify();
       }
       else {
         //your user page
-        var email = options[5];
-        var showdead = options[6];
-        var noprocrast = options[7];
-        var maxvisit = options[8];
-        var minaway = options[9];
-        var delay = options[10];
+        $('#user-profile').addClass('your-profile');
+        var email = $(options[5]);
+        var showdead = $(options[6]);
+        var noprocrast = $(options[7]);
+        var maxvisit = $(options[8]);
+        var minaway = $(options[9]);
+        var delay = $(options[10]);
+
+        //fix spacing
+        email.addClass('select-option'); 
+        showdead.addClass('select-option');
+        noprocrast.addClass('select-option');
+        maxvisit.addClass('select-option');
+        minaway.addClass('select-option');
+        delay.addClass('select-option');
+        $('#user-profile a[href="changepw"]').parent().attr('id', 'your-profile-change-password');
+
+        var current_karma = parseInt(karma.next().text());
+        var karma_for_flag = 20;
+        var karma_for_polls = 200;
+        var karma_for_downvotes = 500;
+        var can_flag_msg;
+        var can_create_polls_msg;
+        var can_downvote_msg;
+        if (current_karma < karma_for_flag) {
+          can_flag_msg = $('<p>You need ' + (karma_for_flag - current_karma) + ' more karma until you can flag posts.</p>');
+        }
+        else {
+          can_flag_msg = $('<p>You can flag posts.</p>');
+        }
+        if (current_karma < karma_for_polls) {
+          can_create_polls_msg = $('<p>You need ' + (karma_for_polls - current_karma) + ' more karma until you can create a poll.</p>');
+        }
+        else {
+          can_create_polls_msg = $('<p>You can <a href="//news.ycombinator.com/newpoll">create a poll</a>.</p>');
+        }
+        if (current_karma < karma_for_downvotes) {
+          can_downvote_msg = $('<p>You need ' + (karma_for_downvotes - current_karma) + ' more karma until you can downvote comments.</p>');
+        }
+        else {
+          can_downvote_msg = $('<p>You can downvote comments.</p>');
+        }
+        karma.next().append(can_flag_msg).append(can_create_polls_msg).append(can_downvote_msg);
+
+        var avg_explanation = $('<p>Average karma is calculated by averaging the scores of your last 50 comments except the comment with the highest score and your 5 most recent comments. It is generally recalculated every few days.</p>');
+        avg.next().append(avg_explanation);
+
+        var about_help = about.next().find('a[href="formatdoc"]');
+        about_help.click(function(e) {
+          e.preventDefault();
+          var input_help = about.next().find('.input-help');
+          if (input_help.length) {
+            input_help.remove();
+          }
+          else {
+            about.next().append(HN.getFormattingHelp(false));
+          }
+        });
+
+        var dead_explanation = $('<p>Showdead allows you to see all the submissions and comments that have been killed by the editors.</p>');
+        showdead.next().append($('<span>Default: no</span>')).append(dead_explanation);
+
+        var noprocrast_explanation = $('<p>Noprocast is a way to prevent yourself from spending too much time on Hacker News. If you turn it on you\'ll only be allowed to visit the site for maxvisit minutes at a time, with gaps of minaway minutes in between.</p>');
+        noprocrast.next().append($('<span>Default: no</span>')).append(noprocrast_explanation);
+
+        maxvisit.next().append($('<span>Default: 20</span>'));
+        minaway.next().append($('<span>Default: 180</span>'));
+
+        var delay_explanation = $('<p>Delay allows you to delay the public posting of comments you make for delay minutes.</p>');
+        delay.next().append($('<span>Default: 0</span>')).append(delay_explanation);
+
+        //redirect to profile page after updating, instead of /x page
+        $('input[value="update"]').click(function() {
+          HN.setLocalStorage('update_profile', window.location.href);
+        });
       }
     }, 
+
+    getFormattingHelp: function(links_work) {
+      help = '<p>Blank lines separate paragraphs.</p>' +
+             '<p>Text after a blank line that is indented by two or more spaces is reproduced verbatim (this is intended for code).</p>' +
+             '<p>Text surrounded by asterisks is italicized, if the character after the first asterisk isn\'t whitespace.</p>';
+      if (links_work)
+        help += '<p>Urls become links.</p>';
+
+      return $('<div class="input-help">').append($(help));
+    },
+
+    prettyPrintDaysAgo: function(days) {
+      //copied from http://stackoverflow.com/a/8942982
+      var str = '';
+      var values = {
+        ' year': 365,
+        ' month': 30,
+        ' day': 1
+      };
+
+      for (var x in values) {
+        var amount = Math.floor(days / values[x]);
+
+        if (amount >= 1) {
+          str += amount + x + (amount > 1 ? 's' : '');
+          if (x != ' day') {
+            str += ' ';
+          }
+          days -= amount * values[x];
+        }
+      }
+
+      return str;
+    },
 
     graphPoll: function(poll) {
       var poll_max_width = 500;
@@ -1183,6 +1299,16 @@ else {
         if (expired) {
           $('#header').after("<p id=\"alert\">You reached an <a href=\"http://news.ycombinator.com/item?id=17705\" title=\"what?\">expired page</a> and have been redirected back to the front page.</p>");
           HN.setLocalStorage('expired', false);
+        }
+      });
+    }
+
+    //redirect to profile page after updating it
+    if (window.location.pathname == "/x") {
+      HN.getLocalStorage('update_profile', function(response) {
+        if (response.data != "false") {
+          window.location.replace(response.data);
+          HN.setLocalStorage('update_profile', false);
         }
       });
     }

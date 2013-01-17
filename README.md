@@ -18,6 +18,7 @@ Features
 * Redirect back to the front page upon hitting an expired link
 * Display how many times you've upvoted each user
 * Graphs on polls
+* Clickable links in self posts and on users profile pages
 * New smooth and scalable up & down vote arrows
 * Keyboard controls on index pages:
   * j - Next item
@@ -41,6 +42,10 @@ TODO
 * Allow user to highlight friends and make notes about users (ala RES)
 * Show dead/grayed-out comments on mouse hover (or maybe a button)
 * Test / make it work when user can see downvotes
+
+Things I can't test
+-------
+I don't have enough karma to test down votes, creating polls, or topbar color
 
 License
 -------
