@@ -444,6 +444,9 @@ var HN = {
           HN.addClassToCommenters();
           HN.addScoreToUsers($('body'));
         }
+        else if (pathname == '/user') {
+          HN.doUserProfile();
+        }
         else {
           //make sure More link is in correct place
           $('.title:contains(More)').prev().attr('colspan', '1');
@@ -524,9 +527,6 @@ var HN = {
       HN.formatScore();
       HN.formatURL();
 
-      //remove '*' on self stuff on /submitted?id=user
-      $('font[color="#ff6600"]').parent().parent().remove();
-
       //check for new comments
       CommentTracker.checkIndexPage();
       //heat map points
@@ -584,6 +584,29 @@ var HN = {
       if (track_comments)
         CommentTracker.init();
     },
+
+    doUserProfile: function() {
+      $('#content > td').attr('id', 'user-profile');
+      var options = $('tr > td[valign="top"]').removeAttr('valign');
+      var user = options[0];
+      var created = options[1];
+      var karma = options[2];
+      var avg = options[3];
+      var about = $(options[4]).attr('valign','top');
+      if (options.length === 5) {
+        //other user pages
+        about.next().linkify();
+      }
+      else {
+        //your user page
+        var email = options[5];
+        var showdead = options[6];
+        var noprocrast = options[7];
+        var maxvisit = options[8];
+        var minaway = options[9];
+        var delay = options[10];
+      }
+    }, 
 
     graphPoll: function(poll) {
       var poll_max_width = 500;

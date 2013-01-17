@@ -58,4 +58,6 @@ Thanks to Vishnu Rajeevan (burntcookie90) for adding more keyboard shortcuts.
 
 Thanks to Lewis Pollard (lewispollard) for highlighting a story once you've opened it and redirecting to the front page when you hit an expired link.
 
-Thanks for Dean Harding (codeka) for replacing the up/down vote images with CSS buttons.
+Thanks to Dean Harding (codeka) for replacing the up/down vote images with CSS buttons.
+
+Thanks to Jiahua (jwang47) for his fork of Már Örlygsson's (maranomynet) linkify JQuery plugin.

@@ -17,7 +17,11 @@
         "run_at": "document_end",
         "all_frames": true,
         "css": [ "style.css" ],
-        "js": ["js/jquery-1.7.2.min.js", "js/hn.js"],
+        "js": [
+          "js/jquery-1.7.2.min.js",
+          "js/linkify/jquery.linkify-1.0.js",
+          "js/linkify/plugins/jquery.linkify-1.0-twitter.js",
+          "js/hn.js"],
         "matches": [
           "http://news.ycombinator.com/*",
           "https://news.ycombinator.com/*",
