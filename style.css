@@ -435,7 +435,9 @@ html body center table tbody tr td table tbody tr td table {
 br {
   display: none;
 }
-.default a:link, .default a:visited {color: #000;}
+.default a:link {
+  color: #000;
+}
 
 /*usernames are usually black*/
 #item-body .comhead a:nth-child(2),
@@ -656,6 +658,21 @@ div.postlist-arrow {
 #user-profile td:nth-child(2) {
   color: #000;
 }
-#user-profile a {
-  text-decoration: underline;
+#user-profile.your-profile td p:first-of-type {
+  margin-top: .5em;
+}
+#user-profile.your-profile td p {
+  margin-top: 0em;
+}
+#user-profile.your-profile td span {
+  margin-left: 1em;
+}
+#user-profile.your-profile .select-option {
+  padding-top: 7px;
+}
+#user-profile a, .self-post-text a {
+  text-decoration: underline !important;
+}
+#others-profile-submitted, #your-profile-change-password {
+  padding-top: 2em;
 }
