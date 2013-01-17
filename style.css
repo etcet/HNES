@@ -648,3 +648,14 @@ div.postlist-arrow {
 .mourning {
   border-top: 5px solid #000;
 }
+
+#user-profile td:first-child {
+  color: #444;
+  padding-right: 1em;
+}
+#user-profile td:nth-child(2) {
+  color: #000;
+}
+#user-profile a {
+  text-decoration: underline;
+}
