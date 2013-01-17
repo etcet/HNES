@@ -512,7 +512,7 @@ var HN = {
           key: key,
           value: value },
         function(response) {
-          console.log('RESPONSE', response.data);
+          //console.log('RESPONSE', response.data);
         });
     },
 
@@ -1293,12 +1293,15 @@ else {
       HN.setLocalStorage('expired', true);
       window.location.replace("/");
       return;
-    } else {
+    }
+    else {
       HN.getLocalStorage('expired', function(response) {
-        expired = JSON.parse(response.data);
-        if (expired) {
-          $('#header').after("<p id=\"alert\">You reached an <a href=\"//news.ycombinator.com/item?id=17705\" title=\"what?\">expired page</a> and have been redirected back to the front page.</p>");
-          HN.setLocalStorage('expired', false);
+        if (response.data != undefined) {
+          var expired = JSON.parse(response.data);
+          if (expired) {
+            $('#header').after("<p id=\"alert\">You reached an <a href=\"//news.ycombinator.com/item?id=17705\" title=\"what?\">expired page</a> and have been redirected back to the front page.</p>");
+            HN.setLocalStorage('expired', false);
+          }
         }
       });
     }
@@ -1306,9 +1309,9 @@ else {
     //redirect to profile page after updating it
     if (window.location.pathname == "/x") {
       HN.getLocalStorage('update_profile', function(response) {
-        if (response.data != "false") {
-          window.location.replace(response.data);
+        if (response.data != undefined && response.data != "false") {
           HN.setLocalStorage('update_profile', false);
+          window.location.replace(response.data);
         }
       });
     }
