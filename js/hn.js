@@ -18,7 +18,12 @@
 var InlineReply = {
   init: function() {
     $('a[href^="reply?"]').click(function(e) {
-      e.preventDefault();
+      if (HN.isLoggedIn()) {
+        e.preventDefault();
+      }
+      else {
+        return;
+      }
 
       //make sure there's no stray underlining between Reply and Cancel
       $(this).addClass('underlined');
@@ -97,8 +102,17 @@ var InlineReply = {
   },
   
   hideButtonAndBox: function(button) {
-    button.parent().prev().removeClass('no-font-size');
-    button.parent().hide();
+    var button_and_box = button.parent();
+    var reply_link = button_and_box.prev();
+    var textbox = button_and_box.find('textarea');
+    if (textbox.val().length > 0) {
+      reply_link.text("reply (saved)");
+    }
+    else {
+      reply_link.text("reply");
+    }
+    reply_link.removeClass('no-font-size');
+    button_and_box.hide();
   }
 }
 
@@ -110,7 +124,7 @@ var CommentTracker = {
       var data = response.data;
       var prev_last_id = CommentTracker.process(data, page_info);
       CommentTracker.highlightNewComments(prev_last_id);
-      console.log("commentracker: ", page_info, prev_last_id);
+      //console.log("commentracker: ", page_info, prev_last_id);
     });
   },
 
@@ -382,6 +396,7 @@ var HN = {
         //More link - can be post index, threads, comments, etc
         //threads is like "etcet's comments"
         //comment listings are like "New Comments"
+        //add comment after logging in is "Hacker News | Add Comment"
         var track_comments = true;
         if (pathname == "/x") {
           track_comments = false;
@@ -404,6 +419,9 @@ var HN = {
           }
           else if (title == "Hacker News | Confirm") {
             pathname = "/confirm";
+          }
+          else if (title == "Hacker News | Add Comment") {
+            pathname = "/reply";
           }
           else {
             pathname = "/news";
@@ -451,6 +469,11 @@ var HN = {
           //make sure More link is in correct place
           $('.title:contains(More)').prev().attr('colspan', '1');
         }
+    },
+
+    isLoggedIn: function() {
+      var logout_elem = $('.pagetop a:contains(logout)');
+      return (logout_elem.length > 0 ? true : false);
     },
 
     initElements: function() {
