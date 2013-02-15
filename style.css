@@ -319,7 +319,7 @@ body#index-body .submitter a:visited {
   color: #666;
 }
 .subtext a, .comhead a {
-  color: #b8b8b8 !important
+  color: #989898 !important
 }
 .comhead {
   color: #000;
@@ -440,8 +440,8 @@ br {
 }
 
 /*usernames are usually black*/
-#item-body .comhead a:nth-child(2),
-#threads-body .comhead a:nth-child(2) {
+#item-body .comhead a.commenter,
+#threads-body .comhead a.commenter {
   color: #000 !important;
 }
 /*but new users are green*/
@@ -498,6 +498,9 @@ img[src="/sslyc/images/grayarrow.gif"] {
 }
 .reply_form {
   width: 300px;
+}
+a[href^="reply"]:visited {
+  color: #000
 }
 
 #options_bar {
