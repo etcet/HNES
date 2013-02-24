@@ -620,6 +620,7 @@ div.up-arrow {
   border-right: 5pt solid transparent;
   border-bottom: 7pt solid #999;
   display: inline-block;
+  float: left;
 }
 
 div.down-arrow {
@@ -629,6 +630,9 @@ div.down-arrow {
   border-right: 5pt solid transparent;
   border-top: 7pt solid #999;
   display: inline-block;
+  float: left;
+  margin-top: 15px;
+  margin-left: -12px;
 }
 
 div.last-arrow {
