@@ -70,3 +70,5 @@ Thanks to Lewis Pollard (lewispollard) for highlighting a story once you've open
 Thanks to Dean Harding (codeka) for replacing the up/down vote images with CSS buttons.
 
 Thanks to Jiahua (jwang47) for his fork of Már Örlygsson's (maranomynet) linkify JQuery plugin.
+
+Thanks for Dan Harper (danharper) and to Will Ridgers (wridgers) for some CSS fixes.
