@@ -99,6 +99,9 @@ table tr td {
   top: 7px;
   right: 0px;
 }
+.comments {
+  left: 0;
+}
 /*spacing for comment and score tally*/
 #index-body #content table td:first-child {
   width: 80px;
