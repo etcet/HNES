@@ -465,6 +465,10 @@ var HN = {
         else if (pathname == '/user') {
           HN.doUserProfile();
         }
+        else if (pathname == '/newslogin' ||
+                 pathname == '/login') {
+          HN.doLogin();
+        }
         else {
           //make sure More link is in correct place
           $('.title:contains(More)').prev().attr('colspan', '1');
@@ -512,6 +516,11 @@ var HN = {
       icon.parent().attr({"href": "http://news.ycombinator.com/"});
       icon.attr('title', 'Hacker News');
     },
+
+    injectCSS: function() {
+      $('head').append('<link rel="stylesheet" type="text/css" href="news.css">');
+    },
+
     removeCommentSpacing: function() {
       //remove spacing if comment doesn't have reply
       $('font[size="1"]').each(function() {
@@ -537,6 +546,32 @@ var HN = {
         function(response) {
           //console.log('RESPONSE', response.data);
         });
+    },
+
+    doLogin: function() {
+      HN.injectCSS();
+
+      // remove login header, submit button (will be re-added later)
+      $('body > b').remove();
+      var buttonHtml = $('form input[type="submit"]').get(0).outerHTML;
+      $('form input[type=submit]').remove();
+
+      var headerHtml = '<tr id="header"><td bgcolor="#ff6600"><table border="0" cellpadding="0" cellspacing="0" width="100%" style="padding:2px"><tbody><tr><td><a href="http://ycombinator.com"><img src="y18.gif" width="18" height="18" style="border:1px #ffffff solid;"></a></td><td><span class="pagetop" id="top-navigation"><span class="nav-links"><span><a href="/news" class="top" title="Top stories">top</a>|</span><span><a href="/newest" class="new" title="Newest stories">new</a>|</span><span><a href="/best" class="best" title="Best stories">best</a></span></div></span></span></td></tr></tbody></table></td></tr>';
+      
+      // wrap content into a table
+      $('form').wrap('<tr id="content"><td></td></tr>');
+      $('tr#content').wrap('<table border="0" cellpadding="0" cellspacing="0" width="85%"></table>');
+
+      // add header table row and submit button row
+      $('tr#content').before(headerHtml);
+      $('tr#content form tr:last').after('<tr><td></td><td>' + buttonHtml + '</td></tr>');
+
+      $('table').wrap('<center></center>');
+      $('tr#content form').before('<b>Login</b>');
+
+      // css
+      $('tr#content form').css({'margin-top': '10px'});
+      $('tr#content form tr:lt(2) td>input').css({'width': '200px'});
     },
 
     doPostsList: function() {
