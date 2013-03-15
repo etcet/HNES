@@ -416,6 +416,7 @@ form textarea:focus, textarea:focus, input:focus, input[name="q"] {
   border-color: #d73937 !important;
 }
 form[action="http://www.hnsearch.com/search#request/all"],
+form[action="//www.hnsearch.com/search#request/all"],
 input[name="q"] {
   width: 270px;
 }
@@ -428,7 +429,8 @@ input[name="q"] {
 input[name="q"]:focus {
   color: #3b3e40 !important;
 }
-form[action="http://www.hnsearch.com/search#request/all"] {
+form[action="http://www.hnsearch.com/search#request/all"],
+form[action="//www.hnsearch.com/search#request/all"] {
   margin: 0 auto;
   color: #fff;
 }
