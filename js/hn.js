@@ -512,7 +512,7 @@ var HN = {
       HN.setSearchInput($('input[name="q"]'));
       $("input[name='q']").val("Search on hnsearch.com");
 
-      var icon = $('img[src="http://ycombinator.com/images/y18.gif"]');
+      var icon = $('img[src="y18.gif"]');
       icon.parent().attr({"href": "http://news.ycombinator.com/"});
       icon.attr('title', 'Hacker News');
     },
