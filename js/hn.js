@@ -476,10 +476,15 @@ var HN = {
                  ($("b:contains('Login')").length > 0)) {
           HN.doLogin(); // reply when not logged in
         }
+        else if ((pathname == '/submit') &&
+                 ($("b:contains('Login')").length > 0)) {
+          HN.doLogin(); // submit when not logged in 
+        }
         else {
           //make sure More link is in correct place
           $('.title:contains(More)').prev().attr('colspan', '1');
         }
+        console.log(pathname);
     },
 
     isLoggedIn: function() {
