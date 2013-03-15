@@ -72,3 +72,5 @@ Thanks to Dean Harding (codeka) for replacing the up/down vote images with CSS b
 Thanks to Jiahua (jwang47) for his fork of Már Örlygsson's (maranomynet) linkify JQuery plugin.
 
 Thanks for Dan Harper (danharper) and to Will Ridgers (wridgers) for some CSS fixes.
+
+Thanks for Nuno Santos (nfvs) for styling the login page and other fixes.
