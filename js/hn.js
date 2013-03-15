@@ -549,6 +549,9 @@ var HN = {
     },
 
     doLogin: function() {
+      $('body').attr('id', 'login-body');
+      document.title = "Login | Hacker News";
+
       HN.injectCSS();
 
       // remove login header, submit button (will be re-added later)
@@ -568,10 +571,6 @@ var HN = {
 
       $('table').wrap('<center></center>');
       $('tr#content form').before('<b>Login</b>');
-
-      // css
-      $('tr#content form').css({'margin-top': '10px'});
-      $('tr#content form tr:lt(2) td>input').css({'width': '200px'});
     },
 
     doPostsList: function() {

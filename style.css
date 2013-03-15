@@ -664,7 +664,8 @@ div.postlist-arrow {
   border-top: 5px solid #000;
 }
 
-#user-profile td:first-child {
+#user-profile td:first-child,
+#login-body tr#content form td:first-child {
   color: #444;
   padding-right: 1em;
 }
@@ -688,4 +689,21 @@ div.postlist-arrow {
 }
 #others-profile-submitted, #your-profile-change-password {
   padding-top: 2em;
+}
+
+form input[type="text"],
+form input[type="password"] {
+  padding: 3px;
+}
+
+body#login-body {
+}
+#login-body tr#content form{
+  margin-top: 10px;
+}
+#login-body tr#content form input:not([type="submit"]) {
+  width: 200px;
+}
+#login-body b {
+  color: #000;
 }
