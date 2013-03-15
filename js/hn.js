@@ -423,6 +423,9 @@ var HN = {
           else if (title == "Hacker News | Add Comment") {
             pathname = "/reply";
           }
+          else if ($("b:contains('Login')").length > 0) {
+            pathname = "/login";
+          }
           else {
             pathname = "/news";
             //postlist
@@ -554,6 +557,10 @@ var HN = {
 
       HN.injectCSS();
 
+      // save and remove (to be re-added later) any rogue messages outside of any tag (e.g. "Bad login.")
+      var message = $('body').contents().filter(function(){ return this.nodeType == 3; }).text().trim();
+      $('body').contents().filter(function(){ return this.nodeType == 3; }).remove();
+
       // remove login header, submit button (will be re-added later)
       $('body > b').remove();
       var buttonHtml = $('form input[type="submit"]').get(0).outerHTML;
@@ -570,7 +577,11 @@ var HN = {
       $('tr#content form tr:last').after('<tr><td></td><td>' + buttonHtml + '</td></tr>');
 
       $('table').wrap('<center></center>');
-      $('tr#content form').before('<b>Login</b>');
+      $('tr#content form').before('<p><b>Login</b></p>');
+      
+      // re-add rogue messages previously removed
+      if (message)
+        $('tr#content > td:first > p > b').after(' <i id="login-msg">' + message + '</i>');
     },
 
     doPostsList: function() {
