@@ -482,7 +482,7 @@ var HN = {
           //make sure More link is in correct place
           $('.title:contains(More)').prev().attr('colspan', '1');
         }
-        console.log(pathname);
+        //console.log(pathname);
     },
 
     isLoginPage: function() {
@@ -594,14 +594,14 @@ var HN = {
       $('#login-form tr:last').after('<tr><td></td><td>' + buttonHtml + '</td></tr>');
 
       $('table').wrap('<center></center>');
-      $('#login-form').before('<p><b>Login</b></p>');
+      $('#login-form').before('<h1>Login</h1>');
 
       if (recover_password_link.length > 0)
         $('#login-form').before(recover_password_link);
       
       // re-add rogue messages previously removed
       if (message)
-        $('tr#content > td:first > p > b').after(' <i id="login-msg">' + message + '</i>');
+        $('tr#content > td:first > h1').before(' <p id="login-msg">' + message + '</p>');
 
       // register?
       if ($("b:contains('Create Account')").length > 0) {
@@ -624,10 +624,10 @@ var HN = {
 
       // rebuild title/form inside the existing table
       $('tr#content > td:last').append(formContent);
-      var buttonHtml = $('#register-form > input[type=submit]').get(0).outerHTML;
+      var buttonHtml = $('#register-form > input[type="submit"]').get(0).outerHTML;
       $('#register-form > input[type="submit"]').remove();
       $('#register-form tr:last').after('<tr><td></td><td>' + buttonHtml + '</td></tr>');
-      $('#register-form').before('<p><b>Create Account</b></p>');
+      $('#register-form').before('<h1>Create Account</h1>');
     },
 
     doPostsList: function() {
