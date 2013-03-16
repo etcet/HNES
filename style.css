@@ -668,7 +668,8 @@ div.postlist-arrow {
 }
 
 #user-profile td:first-child,
-#login-body tr#content form td:first-child {
+body#poll-body form td:first-child,
+body#login-body tr#content form td:first-child {
   color: #444;
   padding-right: 1em;
 }
