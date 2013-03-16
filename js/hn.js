@@ -423,6 +423,9 @@ var HN = {
           else if (title == "Hacker News | Add Comment") {
             pathname = "/reply";
           }
+          else if ($("b:contains('Login')").length > 0) {
+            pathname = "/login";
+          }
           else {
             pathname = "/news";
             //postlist
@@ -469,10 +472,19 @@ var HN = {
                  pathname == '/login') {
           HN.doLogin();
         }
+        else if ((pathname == '/reply') &&
+                 ($("b:contains('Login')").length > 0)) {
+          HN.doLogin(); // reply when not logged in
+        }
+        else if ((pathname == '/submit') &&
+                 ($("b:contains('Login')").length > 0)) {
+          HN.doLogin(); // submit when not logged in 
+        }
         else {
           //make sure More link is in correct place
           $('.title:contains(More)').prev().attr('colspan', '1');
         }
+        console.log(pathname);
     },
 
     isLoggedIn: function() {
@@ -554,23 +566,58 @@ var HN = {
 
       HN.injectCSS();
 
+      // save and remove (to be re-added later) any rogue messages outside of any tag (e.g. "Bad login.")
+      var message = $('body').contents().filter(function(){ return this.nodeType == 3; }).text().trim();
+      $('body').contents().filter(function(){ return this.nodeType == 3; }).remove();
+
       // remove login header, submit button (will be re-added later)
-      $('body > b').remove();
+      $('body > b:first').remove();
       var buttonHtml = $('form input[type="submit"]').get(0).outerHTML;
-      $('form input[type=submit]').remove();
+      $('form:first input[type=submit]').remove();
 
       var headerHtml = '<tr id="header"><td bgcolor="#ff6600"><table border="0" cellpadding="0" cellspacing="0" width="100%" style="padding:2px"><tbody><tr><td><a href="http://ycombinator.com"><img src="y18.gif" width="18" height="18" style="border:1px #ffffff solid;"></a></td><td><span class="pagetop" id="top-navigation"><span class="nav-links"><span><a href="/news" class="top" title="Top stories">top</a>|</span><span><a href="/newest" class="new" title="Newest stories">new</a>|</span><span><a href="/best" class="best" title="Best stories">best</a></span></div></span></span></td></tr></tbody></table></td></tr>';
       
       // wrap content into a table
-      $('form').wrap('<tr id="content"><td></td></tr>');
+      $('body > form:first').attr('id', 'login-form');
+      $('#login-form').wrap('<tr id="content"><td></td></tr>');
       $('tr#content').wrap('<table border="0" cellpadding="0" cellspacing="0" width="85%"></table>');
 
       // add header table row and submit button row
       $('tr#content').before(headerHtml);
-      $('tr#content form tr:last').after('<tr><td></td><td>' + buttonHtml + '</td></tr>');
+      $('#login-form tr:last').after('<tr><td></td><td>' + buttonHtml + '</td></tr>');
 
       $('table').wrap('<center></center>');
-      $('tr#content form').before('<b>Login</b>');
+      $('#login-form').before('<p><b>Login</b></p>');
+      
+      // re-add rogue messages previously removed
+      if (message)
+        $('tr#content > td:first > p > b').after(' <i id="login-msg">' + message + '</i>');
+
+      // register?
+      if ($("b:contains('Create Account')").length > 0) {
+        HN.doCreateAccount();
+      }
+    },
+
+    doCreateAccount: function() {
+      // first check if doLogin() has already built a login prompt,
+      // then check if there is another form present (e.g. Create Account)
+      if ($('body#login-body').length == 0) return;
+      if ($('body > form').length == 0) return;
+
+      // save and remove title/form
+      var formTitle = $('body > b').text();
+      $('body > b').remove();
+      $('body > form').attr('id', 'register-form');
+      var formContent = $('#register-form').get(0).outerHTML;
+      $('#register-form').remove();
+
+      // rebuild title/form inside the existing table
+      $('tr#content > td:last').append(formContent);
+      var buttonHtml = $('#register-form > input[type=submit]').get(0).outerHTML;
+      $('#register-form > input[type="submit"]').remove();
+      $('#register-form tr:last').after('<tr><td></td><td>' + buttonHtml + '</td></tr>');
+      $('#register-form').before('<p><b>Create Account</b></p>');
     },
 
     doPostsList: function() {

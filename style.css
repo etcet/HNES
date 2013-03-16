@@ -669,6 +669,9 @@ div.postlist-arrow {
   color: #444;
   padding-right: 1em;
 }
+#login-msg {
+  margin-left: 10px;
+}
 #user-profile td:nth-child(2) {
   color: #000;
 }
