@@ -711,5 +711,15 @@ body#login-body {
   color: #000;
 }
 #login-body #login-msg {
+  //color: #dd4b39;
+  color: #000;
+  font-style: italic;
   margin-left: 10px;
+}
+#login-body h1 {
+  font-size: 130%;
+  color: #222;
+}
+#login-body a:hover {
+  text-decoration: underline;
 }
