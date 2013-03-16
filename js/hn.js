@@ -423,7 +423,7 @@ var HN = {
           else if (title == "Hacker News | Add Comment") {
             pathname = "/reply";
           }
-          else if ($("b:contains('Login')").length > 0) {
+          else if (HN.isLoginPage()) {
             pathname = "/login";
           }
           else {
@@ -472,12 +472,10 @@ var HN = {
                  pathname == '/login') {
           HN.doLogin();
         }
-        else if ((pathname == '/reply') &&
-                 ($("b:contains('Login')").length > 0)) {
+        else if ((pathname == '/reply') && HN.isLoginPage()) {
           HN.doLogin(); // reply when not logged in
         }
-        else if ((pathname == '/submit') &&
-                 ($("b:contains('Login')").length > 0)) {
+        else if ((pathname == '/submit') && HN.isLoginPage()) {
           HN.doLogin(); // submit when not logged in 
         }
         else {
@@ -485,6 +483,10 @@ var HN = {
           $('.title:contains(More)').prev().attr('colspan', '1');
         }
         console.log(pathname);
+    },
+
+    isLoginPage: function() {
+      return ($("b:contains('Login')").length > 0);
     },
 
     isLoggedIn: function() {
@@ -567,8 +569,13 @@ var HN = {
       HN.injectCSS();
 
       // save and remove (to be re-added later) any rogue messages outside of any tag (e.g. "Bad login.")
-      var message = $('body').contents().filter(function(){ return this.nodeType == 3; }).text().trim();
-      $('body').contents().filter(function(){ return this.nodeType == 3; }).remove();
+      var rogue_messages = $('body').contents().filter(function(){ return this.nodeType == 3; });
+      var message = rogue_messages.text().trim();
+      rogue_messages.remove();
+
+      var recover_password_link = $('body > a');
+      if (recover_password_link.length > 0)
+        recover_password_link.remove();
 
       // remove login header, submit button (will be re-added later)
       $('body > b:first').remove();
@@ -588,6 +595,9 @@ var HN = {
 
       $('table').wrap('<center></center>');
       $('#login-form').before('<p><b>Login</b></p>');
+
+      if (recover_password_link.length > 0)
+        $('#login-form').before(recover_password_link);
       
       // re-add rogue messages previously removed
       if (message)
