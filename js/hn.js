@@ -478,11 +478,18 @@ var HN = {
         else if ((pathname == '/submit') && HN.isLoginPage()) {
           HN.doLogin(); // submit when not logged in 
         }
+        else if (pathname == '/newpoll') {
+          HN.doPoll();
+        }
         else {
           //make sure More link is in correct place
           $('.title:contains(More)').prev().attr('colspan', '1');
         }
         //console.log(pathname);
+    },
+
+    doPoll: function() {
+      $('body').attr('id', 'poll-body');
     },
 
     isLoginPage: function() {
