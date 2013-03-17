@@ -570,6 +570,12 @@ var HN = {
       var message = $('body').contents().filter(function(){ return this.nodeType == 3; }).text().trim();
       $('body').contents().filter(function(){ return this.nodeType == 3; }).remove();
 
+      // also save and remove any remaining messages that _do_ contain tags (e.g. <a> for recover password)
+      $('body > b:contains("Login")').prevAll().each(function() {
+        message += ' ' + this.outerHTML;
+        this.remove();
+      });
+
       // remove login header, submit button (will be re-added later)
       $('body > b:first').remove();
       var buttonHtml = $('form input[type="submit"]').get(0).outerHTML;
@@ -590,11 +596,12 @@ var HN = {
       $('#login-form').before('<p><b>Login</b></p>');
       
       // re-add rogue messages previously removed
-      if (message)
+      if (message) {
         $('tr#content > td:first > p > b').after(' <i id="login-msg">' + message + '</i>');
+      }
 
       // register?
-      if ($("b:contains('Create Account')").length > 0) {
+      if ($('b:contains("Create Account")').length > 0) {
         HN.doCreateAccount();
       }
     },
