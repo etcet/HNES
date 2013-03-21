@@ -308,7 +308,7 @@ font[color="#ff6600"] {
 .title a.on_story {
   border-left: 2px solid #3986f8 !important;
 }
-.title a:visited {opacity: .5;}
+.title a:visited {opacity: .5;color:#2257a9;}
 
 /*user name in info subtext*/
 .submitter {
