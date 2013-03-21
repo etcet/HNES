@@ -248,6 +248,7 @@ body#item-body .title {
   font-size: 16px !important;
   line-height: 18px;
   font-weight: medium;
+  opacity:0.9;
 }
 /*upvote arrow*/
 #item-body img[src="http://ycombinator.com/images/grayarrow.gif"],
@@ -308,7 +309,9 @@ font[color="#ff6600"] {
 .title a.on_story {
   border-left: 2px solid #3986f8 !important;
 }
-.title a:visited {opacity: .5;color:#2257a9;}
+.title a:visited {opacity: .45;color:#2257a9;}
+
+.title a:hover {opacity: 1;color:#691e16;}
 
 /*user name in info subtext*/
 .submitter {
