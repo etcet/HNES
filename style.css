@@ -309,6 +309,7 @@ font[color="#ff6600"] {
   border-left: 2px solid #3986f8 !important;
 }
 .title a:visited {opacity: .5;}
+.title a:hover {color: #DD4B39;}
 
 /*user name in info subtext*/
 .submitter {
