@@ -629,26 +629,19 @@ td #more.link-highlight {
   padding: 5px 18px 5px 8px !important;
 }
 
-div.up-arrow {
+div.up-arrow, div.down-arrow {
   width: 0;
   height: 0;
   border-left: 5pt solid transparent;
   border-right: 5pt solid transparent;
+}
+div.up-arrow {
   border-bottom: 7pt solid #999;
-  display: inline-block;
-  float:left;
 }
 
 div.down-arrow {
-  width: 0;
-  height: 0;
-  border-left: 5pt solid transparent;
-  border-right: 5pt solid transparent;
   border-top: 7pt solid #999;
-  display: inline-block;
-  float: left;
-  margin-top: 15px;
-  margin-left: -12px;
+  margin-top: 7px;
 }
 
 div.last-arrow {
