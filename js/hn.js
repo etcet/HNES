@@ -1019,7 +1019,7 @@ var HN = {
         else
           by_el = $('<span/>').addClass('submitter')
                               .text('by ')
-                              .append(by);
+                              .append(by.attr('title', 'View profile'));
 
         var score_el = $('<td/>').append(score);
         var comments_el = $('<td/>').append(comments);
@@ -1136,12 +1136,12 @@ var HN = {
       );
       user_links.append(hidden_div);
 
-      user_drop.click(function() {
+      user_drop_toggle = function() {
+        user_drop.find('a').toggleClass('active')
         hidden_div.toggle();
-      });
-      hidden_div.click(function() {
-        hidden_div.toggle();
-      });
+      }
+      user_drop.click(user_drop_toggle);
+      hidden_div.click(user_drop_toggle);
       hidden_div.hide();
     },
     rewriteNavigation: function() {
@@ -1216,7 +1216,7 @@ var HN = {
             new_active = new_link.clone().addClass('nav-active-link')
                                          .addClass('new-active-link');
 
-          hidden_div.append($('<span/>').append(new_link));
+          hidden_div.append(new_link);
         }
 
         topsel.append(more_link).append(hidden_div);
@@ -1226,12 +1226,13 @@ var HN = {
 
         navigation.empty().append(topsel);
         
-        more_link.click(function() {
+        toggle_more_link = function() {
+          more_link.find('a').toggleClass('active');
           hidden_div.toggle();
-        });
-        hidden_div.click(function() {
-          hidden_div.toggle();
-        });
+        }
+        more_link.click(toggle_more_link);
+        hidden_div.click(toggle_more_link);
+
         hidden_div.offset({'left': more_link.position().left});
         hidden_div.hide();
     },

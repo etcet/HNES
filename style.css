@@ -159,6 +159,7 @@ a.comments:hover {
 .pagetop a:hover,
 .more-arrow:hover,
 .more-arrow:hover a,
+.more-arrow a.active, 
 .nav-active-link {
   text-shadow: 0px 1px 5px #000;
   color: #fff !important;
@@ -195,17 +196,11 @@ a.comments:hover {
   z-index: 9999;
   display: none;
   position: absolute;
-  padding-bottom: 8px;
-  padding-top: 8px;
-  box-shadow: 0px 4px 4px 0px #222;
-  border-radius: 1px;
-}
-.nav-drop-down div {
-  padding-top: 4px;
-  padding-bottom: 4px;
+  padding-top: 10px;
 }
 .nav-drop-down a {
   display: block;
+  padding-left: 8px;
   text-align: left;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -230,9 +225,8 @@ a.comments:hover {
 }
 /*make logout look a little different*/
 #user-logout {
-  margin-top: 8px;
   padding-top: 8px;
-  border-top: 1px solid #f76957;
+  padding-bottom: 8px;
 }
 /* More link */
 #more {
@@ -315,7 +309,10 @@ font[color="#ff6600"] {
 .title a.on_story {
   border-left: 2px solid #3986f8 !important;
 }
-.title a:hover { color: #dd4b39; }
+.submitter a:hover,
+.title a:hover {
+  color: #dd4b39;
+}
 
 /*user name in info subtext*/
 .submitter {
