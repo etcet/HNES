@@ -138,11 +138,11 @@ var CommentTracker = {
 
   getInfo: function() {
     var comment_info_el;
-    var no_comments = $('.subtext a:contains(discuss)');
+    var no_comments = $('.subtext a[href^="item?"]:contains(discuss)');
     if (no_comments.length)
       comment_info_el = no_comments;
     else
-      comment_info_el = $('.subtext a:contains(comment)');
+      comment_info_el = $('.subtext a[href^="item?"]:contains(comment)');
 
     //if there is no 'discuss' or 'n comment(s)' link it's some other kind of page (e.g. profile)
     if (comment_info_el.length == 0)

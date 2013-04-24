@@ -99,12 +99,19 @@ table tr td {
 /*position comment and score tally at the top even if story line is multi-line*/
 .score, .comments {
   position: absolute;
-  top: 7px;
+  height: 100%;
+  top: 0px;
+  padding-top: 7px;
+  padding-right: 3px;
   right: 0px;
 }
 .comments {
   left: 0;
 }
+.comments:hover {
+  color: #dd4b39;
+}
+
 /*spacing for comment and score tally*/
 #index-body #content table td:first-child {
   width: 80px;
@@ -308,12 +315,7 @@ font[color="#ff6600"] {
 .title a.on_story {
   border-left: 2px solid #3986f8 !important;
 }
-.title a:hover {color: #DD4B39;}
-/*
-.title a:visited {opacity: .45;color:#2257a9;}
-
-.title a:hover {opacity: 1;color:#691e16;}
-*/
+.title a:hover { color: #dd4b39; }
 
 /*user name in info subtext*/
 .submitter {
