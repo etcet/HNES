@@ -1,5 +1,8 @@
 /*
+* Hacker News Enhancement Suite (HNES)
+* Chris James / etcet.net / chris@etcet.net
 *
+* Initially based on:
 * HN+ for Chrome v1.5
 * by @jarques
 *
@@ -96,8 +99,19 @@ table tr td {
 /*position comment and score tally at the top even if story line is multi-line*/
 .score, .comments {
   position: absolute;
-  top: 7px;
+  height: 100%;
+  top: 0px;
+  padding-top: 7px;
+  padding-right: 3px;
+  right: 0px;
 }
+.comments {
+  left: 0;
+}
+.comments:hover {
+  color: #dd4b39;
+}
+
 /*spacing for comment and score tally*/
 #index-body #content table td:first-child {
   width: 80px;
@@ -126,12 +140,6 @@ table tr td {
 .newcomments {
   color: #000;
 }
-/*expand to entire container*/
-a.comments {
-  width: 100%;
-  height: 100%;
-  display: block;
-}
 a.comments:hover {
   text-decoration: underline;
 }
@@ -151,6 +159,7 @@ a.comments:hover {
 .pagetop a:hover,
 .more-arrow:hover,
 .more-arrow:hover a,
+.more-arrow a.active, 
 .nav-active-link {
   text-shadow: 0px 1px 5px #000;
   color: #fff !important;
@@ -187,17 +196,11 @@ a.comments:hover {
   z-index: 9999;
   display: none;
   position: absolute;
-  padding-bottom: 8px;
-  padding-top: 8px;
-  box-shadow: 0px 4px 4px 0px #222;
-  border-radius: 1px;
-}
-.nav-drop-down div {
-  padding-top: 4px;
-  padding-bottom: 4px;
+  padding-top: 10px;
 }
 .nav-drop-down a {
   display: block;
+  padding-left: 8px;
   text-align: left;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -222,9 +225,8 @@ a.comments:hover {
 }
 /*make logout look a little different*/
 #user-logout {
-  margin-top: 8px;
   padding-top: 8px;
-  border-top: 1px solid #f76957;
+  padding-bottom: 8px;
 }
 /* More link */
 #more {
@@ -307,7 +309,10 @@ font[color="#ff6600"] {
 .title a.on_story {
   border-left: 2px solid #3986f8 !important;
 }
-.title a:visited {opacity: .5;}
+.submitter a:hover,
+.title a:hover {
+  color: #dd4b39;
+}
 
 /*user name in info subtext*/
 .submitter {
@@ -324,7 +329,7 @@ body#index-body .submitter a:visited {
   color: #666;
 }
 .subtext a, .comhead a {
-  color: #b8b8b8 !important
+  color: #989898 !important
 }
 .comhead {
   color: #000;
@@ -418,6 +423,7 @@ form textarea:focus, textarea:focus, input:focus, input[name="q"] {
   border-color: #d73937 !important;
 }
 form[action="http://www.hnsearch.com/search#request/all"],
+form[action="//www.hnsearch.com/search#request/all"],
 input[name="q"] {
   width: 270px;
 }
@@ -430,7 +436,8 @@ input[name="q"] {
 input[name="q"]:focus {
   color: #3b3e40 !important;
 }
-form[action="http://www.hnsearch.com/search#request/all"] {
+form[action="http://www.hnsearch.com/search#request/all"],
+form[action="//www.hnsearch.com/search#request/all"] {
   margin: 0 auto;
   color: #fff;
 }
@@ -440,11 +447,13 @@ html body center table tbody tr td table tbody tr td table {
 br {
   display: none;
 }
-.default a:link, .default a:visited {color: #000;}
+.default a:link {
+  color: #000;
+}
 
 /*usernames are usually black*/
-#item-body .comhead a:nth-child(2),
-#threads-body .comhead a:nth-child(2) {
+#item-body .comhead a.commenter,
+#threads-body .comhead a.commenter {
   color: #000 !important;
 }
 /*but new users are green*/
@@ -502,6 +511,9 @@ img[src="/sslyc/images/grayarrow.gif"] {
 .reply_form {
   width: 300px;
 }
+a[href^="reply"]:visited {
+  color: #000
+}
 
 #options_bar {
   position: fixed;
@@ -525,6 +537,7 @@ td::selection,
   background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAAkCAIAAABuYg/PAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA+FpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczpkYz0iaHR0cDovL3B1cmwub3JnL2RjL2VsZW1lbnRzLzEuMS8iIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdFJlZj0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlUmVmIyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCIgeG1wOkNyZWF0ZURhdGU9IjIwMTEtMDYtMzBUMjI6Mjc6MDUtMDc6MDAiIHhtcDpNb2RpZnlEYXRlPSIyMDExLTA3LTAxVDA2OjAxKzE3OjAwIiB4bXA6TWV0YWRhdGFEYXRlPSIyMDExLTA3LTAxVDA2OjAxKzE3OjAwIiBkYzpmb3JtYXQ9ImltYWdlL3BuZyIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpGQTNBQkM1RjlCQzkxMUUwQTFDNUUxMkQzOUQ0MjY0MCIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpGQTNBQkM2MDlCQzkxMUUwQTFDNUUxMkQzOUQ0MjY0MCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZBM0FCQzVEOUJDOTExRTBBMUM1RTEyRDM5RDQyNjQwIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkZBM0FCQzVFOUJDOTExRTBBMUM1RTEyRDM5RDQyNjQwIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+HtChkAAAAS9JREFUeNpifH388Kdls3/duclAS8Cmos4Xlcp4M9Lz34d3DLQHTAJCTPSxCQiAFjEx0BGMWjZq2Qi1jIWgClZxSeX56yHsV7MmvNuwAi7F7+otWVgLYd9NDPz98jmlPgMa8WbpHAhbJDqFmZsXwgYyxNMKIez3G1cStInYYHy/YeXvVy9Aqrl5xNILoBbHpAC5oHLo65c3S+ZQLc7+fv38amY/NOhcvLn0jIBhK+gfDhF53tcMVECdOIOAz8cPfrt8nkvXEByYqXBxoCBQivqp8XlfE4QBtBJiK7IglS1DTikQAOQSky7IzGfwlAKy+9ULIJeGmRqYED7u3gJhAxlEpovRsnEIW8Z43dN8NBhHLRu1bNQyMi1jFhKhj01Ai5gE0guBfUI6dDuBFgEEGAAManVd0fe0qQAAAABJRU5ErkJggg%3D%3D) no-repeat !important;
 }
 html body center table tbody tr td table tbody tr td a img[src="http://ycombinator.com/images/y18.gif"],
+html body center table tbody tr td table tbody tr td a img[src="y18.gif"],
 html body center table tbody tr td table tbody tr td a img[src="/sslyc/images/y18.gif"] {
   zoom: 60%;
   height: 0px !important;
@@ -602,4 +615,109 @@ form[action="/r"] input[type="submit"] {
 }
 .no-font-size {
   font-size: 0;
+}
+.link-highlight {
+  border: 1px dashed #aaa;
+  padding: 4px 27px 4px 7px !important;
+}
+
+td #more.link-highlight {
+  border: none;
+  padding: 5px 18px 5px 8px !important;
+}
+
+div.up-arrow, div.down-arrow {
+  width: 0;
+  height: 0;
+  border-left: 5pt solid transparent;
+  border-right: 5pt solid transparent;
+}
+div.up-arrow {
+  border-bottom: 7pt solid #999;
+}
+
+div.down-arrow {
+  border-top: 7pt solid #999;
+  margin-top: 7px;
+}
+
+div.last-arrow {
+  margin-right: 4pt;
+}
+
+div.postlist-arrow {
+  display: block;
+  margin-top: 4pt;
+  margin-left: 4pt;
+}
+
+#alert {
+  color: #dd4b39;
+  padding: 5px;
+  text-align: center;
+}
+#alert a {
+  color #000;
+}
+
+.mourning {
+  border-top: 5px solid #000;
+}
+
+#user-profile td:first-child,
+body#poll-body form td:first-child,
+body#login-body tr#content form td:first-child {
+  color: #444;
+  padding-right: 1em;
+}
+#user-profile td:nth-child(2) {
+  color: #000;
+}
+#user-profile.your-profile td p:first-of-type {
+  margin-top: .5em;
+}
+#user-profile.your-profile td p {
+  margin-top: 0em;
+}
+#user-profile.your-profile td span {
+  margin-left: 1em;
+}
+#user-profile.your-profile .select-option {
+  padding-top: 7px;
+}
+#user-profile a, .self-post-text a {
+  text-decoration: underline !important;
+}
+#others-profile-submitted, #your-profile-change-password {
+  padding-top: 2em;
+}
+
+form input[type="text"],
+form input[type="password"] {
+  padding: 3px;
+}
+
+body#login-body {
+}
+#login-body tr#content form{
+  margin-top: 10px;
+}
+#login-body tr#content form input:not([type="submit"]) {
+  width: 200px;
+}
+#login-body b {
+  color: #000;
+}
+#login-body #login-msg {
+  //color: #dd4b39;
+  color: #000;
+  font-style: italic;
+  margin-left: 10px;
+}
+#login-body h1 {
+  font-size: 130%;
+  color: #222;
+}
+#login-body a:hover {
+  text-decoration: underline;
 }
