@@ -18,7 +18,12 @@
 var InlineReply = {
   init: function() {
     $('a[href^="reply?"]').click(function(e) {
-      e.preventDefault();
+      if (HN.isLoggedIn()) {
+        e.preventDefault();
+      }
+      else {
+        return;
+      }
 
       //make sure there's no stray underlining between Reply and Cancel
       $(this).addClass('underlined');
@@ -31,7 +36,7 @@ var InlineReply = {
       domain = window.location.origin;
       link = domain + '/' + $(this).attr('href');
 
-      if ($(this).next().hasClass('replyform')) {
+      if ($(this).next().hasClass('reply_form')) {
         $(this).next().show();
       }
       else {
@@ -47,6 +52,7 @@ var InlineReply = {
       }
     });
 
+    /* Reply button */
     $('.rbutton').live('click', function(e) {
       e.preventDefault();
       link = $(this).attr('data');
@@ -54,6 +60,7 @@ var InlineReply = {
       InlineReply.postCommentTo(link, domain, text, $(this));
     });
     
+    /* Cancel button */
     $('.cbutton').live('click', function(e) {
       InlineReply.hideButtonAndBox($(this).prev());
     });
@@ -95,8 +102,17 @@ var InlineReply = {
   },
   
   hideButtonAndBox: function(button) {
-    button.parent().prev().removeClass('no-font-size');
-    button.parent().hide();
+    var button_and_box = button.parent();
+    var reply_link = button_and_box.prev();
+    var textbox = button_and_box.find('textarea');
+    if (textbox.val().length > 0) {
+      reply_link.text("reply (saved)");
+    }
+    else {
+      reply_link.text("reply");
+    }
+    reply_link.removeClass('no-font-size');
+    button_and_box.hide();
   }
 }
 
@@ -108,7 +124,7 @@ var CommentTracker = {
       var data = response.data;
       var prev_last_id = CommentTracker.process(data, page_info);
       CommentTracker.highlightNewComments(prev_last_id);
-      console.log("commentracker: ", page_info, prev_last_id);
+      //console.log("commentracker: ", page_info, prev_last_id);
     });
   },
 
@@ -122,11 +138,11 @@ var CommentTracker = {
 
   getInfo: function() {
     var comment_info_el;
-    var no_comments = $('.subtext a:contains(discuss)');
+    var no_comments = $('.subtext a[href^="item?"]:contains(discuss)');
     if (no_comments.length)
       comment_info_el = no_comments;
     else
-      comment_info_el = $('.subtext a:contains(comment)');
+      comment_info_el = $('.subtext a[href^="item?"]:contains(comment)');
 
     //if there is no 'discuss' or 'n comment(s)' link it's some other kind of page (e.g. profile)
     if (comment_info_el.length == 0)
@@ -380,6 +396,7 @@ var HN = {
         //More link - can be post index, threads, comments, etc
         //threads is like "etcet's comments"
         //comment listings are like "New Comments"
+        //add comment after logging in is "Hacker News | Add Comment"
         var track_comments = true;
         if (pathname == "/x") {
           track_comments = false;
@@ -403,16 +420,19 @@ var HN = {
           else if (title == "Hacker News | Confirm") {
             pathname = "/confirm";
           }
+          else if (title == "Hacker News | Add Comment") {
+            pathname = "/reply";
+          }
+          else if (HN.isLoginPage()) {
+            pathname = "/login";
+          }
           else {
             pathname = "/news";
             //postlist
           }
         }
-        else if (pathname == "/news2") {
-          pathname = "/news";
-        }
 
-        var postPagesRE = /^(?:\/|\/news|\/newest|\/best|\/active|\/classic|\/submitted|\/saved|\/jobs|\/noobstories|\/ask)$/;
+        var postPagesRE = /^(?:\/|\/news|\/newest|\/best|\/active|\/classic|\/submitted|\/saved|\/jobs|\/noobstories|\/ask|\/news2|\/over)$/;
         if (postPagesRE.test(pathname)) {
           HN.doPostsList();
           if (pathname == '/jobs') {
@@ -445,14 +465,50 @@ var HN = {
           HN.addClassToCommenters();
           HN.addScoreToUsers($('body'));
         }
+        else if (pathname == '/user') {
+          HN.doUserProfile();
+        }
+        else if (pathname == '/newslogin' ||
+                 pathname == '/login') {
+          HN.doLogin();
+        }
+        else if ((pathname == '/reply') && HN.isLoginPage()) {
+          HN.doLogin(); // reply when not logged in
+        }
+        else if ((pathname == '/submit') && HN.isLoginPage()) {
+          HN.doLogin(); // submit when not logged in 
+        }
+        else if (pathname == '/newpoll') {
+          HN.doPoll();
+        }
         else {
           //make sure More link is in correct place
           $('.title:contains(More)').prev().attr('colspan', '1');
         }
+        //console.log(pathname);
+    },
+
+    doPoll: function() {
+      $('body').attr('id', 'poll-body');
+    },
+
+    isLoginPage: function() {
+      return ($("b:contains('Login')").length > 0);
+    },
+
+    isLoggedIn: function() {
+      var logout_elem = $('.pagetop a:contains(logout)');
+      return (logout_elem.length > 0 ? true : false);
     },
 
     initElements: function() {
       var header = $('body > center > table > tbody > tr:first-child');
+      if (header.find('td').attr('bgcolor') === "#000000") {
+        //mourning
+        header = header.next();
+        header.prev().remove();
+        $('body').addClass('mourning');
+      }
       header.attr('id', 'header');
 
       var content = $('body > center > table > tbody > tr:nth-child(3)');
@@ -477,10 +533,15 @@ var HN = {
       HN.setSearchInput($('input[name="q"]'));
       $("input[name='q']").val("Search on hnsearch.com");
 
-      var icon = $('img[src="http://ycombinator.com/images/y18.gif"]');
+      var icon = $('img[src="y18.gif"]');
       icon.parent().attr({"href": "http://news.ycombinator.com/"});
       icon.attr('title', 'Hacker News');
     },
+
+    injectCSS: function() {
+      $('head').append('<link rel="stylesheet" type="text/css" href="news.css">');
+    },
+
     removeCommentSpacing: function() {
       //remove spacing if comment doesn't have reply
       $('font[size="1"]').each(function() {
@@ -504,8 +565,76 @@ var HN = {
           key: key,
           value: value },
         function(response) {
-          console.log('RESPONSE', response.data);
+          //console.log('RESPONSE', response.data);
         });
+    },
+
+    doLogin: function() {
+      $('body').attr('id', 'login-body');
+      document.title = "Login | Hacker News";
+
+      HN.injectCSS();
+
+      // save and remove (to be re-added later) any rogue messages outside of any tag (e.g. "Bad login.")
+      var rogue_messages = $('body').contents().filter(function(){ return this.nodeType == 3; });
+      var message = rogue_messages.text().trim();
+      rogue_messages.remove();
+
+      var recover_password_link = $('body > a');
+      if (recover_password_link.length > 0)
+        recover_password_link.remove();
+
+      // remove login header, submit button (will be re-added later)
+      $('body > b:first').remove();
+      var buttonHtml = $('form input[type="submit"]').get(0).outerHTML;
+      $('form:first input[type=submit]').remove();
+
+      var headerHtml = '<tr id="header"><td bgcolor="#ff6600"><table border="0" cellpadding="0" cellspacing="0" width="100%" style="padding:2px"><tbody><tr><td><a href="http://ycombinator.com"><img src="y18.gif" width="18" height="18" style="border:1px #ffffff solid;"></a></td><td><span class="pagetop" id="top-navigation"><span class="nav-links"><span><a href="/news" class="top" title="Top stories">top</a>|</span><span><a href="/newest" class="new" title="Newest stories">new</a>|</span><span><a href="/best" class="best" title="Best stories">best</a></span></div></span></span></td></tr></tbody></table></td></tr>';
+      
+      // wrap content into a table
+      $('body > form:first').attr('id', 'login-form');
+      $('#login-form').wrap('<tr id="content"><td></td></tr>');
+      $('tr#content').wrap('<table border="0" cellpadding="0" cellspacing="0" width="85%"></table>');
+
+      // add header table row and submit button row
+      $('tr#content').before(headerHtml);
+      $('#login-form tr:last').after('<tr><td></td><td>' + buttonHtml + '</td></tr>');
+
+      $('table').wrap('<center></center>');
+      $('#login-form').before('<h1>Login</h1>');
+
+      if (recover_password_link.length > 0)
+        $('#login-form').before(recover_password_link);
+      
+      // re-add rogue messages previously removed
+      if (message)
+        $('tr#content > td:first > h1').before(' <p id="login-msg">' + message + '</p>');
+
+      // register?
+      if ($("b:contains('Create Account')").length > 0) {
+        HN.doCreateAccount();
+      }
+    },
+
+    doCreateAccount: function() {
+      // first check if doLogin() has already built a login prompt,
+      // then check if there is another form present (e.g. Create Account)
+      if ($('body#login-body').length == 0) return;
+      if ($('body > form').length == 0) return;
+
+      // save and remove title/form
+      var formTitle = $('body > b').text();
+      $('body > b').remove();
+      $('body > form').attr('id', 'register-form');
+      var formContent = $('#register-form').get(0).outerHTML;
+      $('#register-form').remove();
+
+      // rebuild title/form inside the existing table
+      $('tr#content > td:last').append(formContent);
+      var buttonHtml = $('#register-form > input[type="submit"]').get(0).outerHTML;
+      $('#register-form > input[type="submit"]').remove();
+      $('#register-form tr:last').after('<tr><td></td><td>' + buttonHtml + '</td></tr>');
+      $('#register-form').before('<h1>Create Account</h1>');
     },
 
     doPostsList: function() {
@@ -519,13 +648,14 @@ var HN = {
       HN.formatScore();
       HN.formatURL();
 
-      //remove '*' on self stuff on /submitted?id=user
-      $('font[color="#ff6600"]').parent().parent().remove();
-
       //check for new comments
       CommentTracker.checkIndexPage();
       //heat map points
       HN.getAndRateStories();
+      //enable highlighting of clicked links
+      HN.enableLinkHighlighting();
+
+      HN.replaceVoteButtons(true);      
     },
 
     addClassToCommenters: function() {
@@ -552,6 +682,9 @@ var HN = {
         if (poll)
           HN.graphPoll(poll);
 
+        //linkify self-post text
+        $('.item-header tr:nth-child(3)').addClass('self-post-text').linkify();
+
         var more = $('#more');
         //recursively load more pages on closed thread
         if (more) 
@@ -574,6 +707,142 @@ var HN = {
       //TODO: infinite scroll and tracking on 'more' pages
       if (track_comments)
         CommentTracker.init();
+    },
+
+    doUserProfile: function() {
+      $('#content > td').attr('id', 'user-profile');
+
+      //remove topcolor setting as this will cause problems (untested)
+      $('tr > td[valign="top"]:contains("topcolor:")').parent().remove();
+
+      var options = $('tr > td[valign="top"]');
+      var user = options[0];
+      var created = $(options[1]);
+      var karma = $(options[2]);
+      var avg = $(options[3]);
+      var about = $(options[4]);
+
+      var days_ago = created.next();
+      var days = days_ago.text().split(" ")[0];
+      days_ago.text(days + " days (" + HN.prettyPrintDaysAgo(days) + ") ago");
+
+      if (options.length === 5) {
+        //other user pages
+        $('#user-profile a[href^="submitted"]').parent().attr('id', 'others-profile-submitted');
+        about.next().linkify();
+      }
+      else {
+        //your user page
+        $('#user-profile').addClass('your-profile');
+        var email = $(options[5]);
+        var showdead = $(options[6]);
+        var noprocrast = $(options[7]);
+        var maxvisit = $(options[8]);
+        var minaway = $(options[9]);
+        var delay = $(options[10]);
+
+        //fix spacing
+        email.addClass('select-option'); 
+        showdead.addClass('select-option');
+        noprocrast.addClass('select-option');
+        maxvisit.addClass('select-option');
+        minaway.addClass('select-option');
+        delay.addClass('select-option');
+        $('#user-profile a[href="changepw"]').parent().attr('id', 'your-profile-change-password');
+
+        var current_karma = parseInt(karma.next().text());
+        var karma_for_flag = 20;
+        var karma_for_polls = 200;
+        var karma_for_downvotes = 500;
+        var can_flag_msg;
+        var can_create_polls_msg;
+        var can_downvote_msg;
+        if (current_karma < karma_for_flag) {
+          can_flag_msg = $('<p>You need ' + (karma_for_flag - current_karma) + ' more karma until you can flag posts.</p>');
+        }
+        else {
+          can_flag_msg = $('<p>You can flag posts.</p>');
+        }
+        if (current_karma < karma_for_polls) {
+          can_create_polls_msg = $('<p>You need ' + (karma_for_polls - current_karma) + ' more karma until you can create a poll.</p>');
+        }
+        else {
+          can_create_polls_msg = $('<p>You can <a href="//news.ycombinator.com/newpoll">create a poll</a>.</p>');
+        }
+        if (current_karma < karma_for_downvotes) {
+          can_downvote_msg = $('<p>You need ' + (karma_for_downvotes - current_karma) + ' more karma until you can downvote comments.</p>');
+        }
+        else {
+          can_downvote_msg = $('<p>You can downvote comments.</p>');
+        }
+        karma.next().append(can_flag_msg).append(can_create_polls_msg).append(can_downvote_msg);
+
+        var avg_explanation = $('<p>Average karma is calculated by averaging the scores of your last 50 comments except the comment with the highest score and your 5 most recent comments. It is generally recalculated every few days.</p>');
+        avg.next().append(avg_explanation);
+
+        var about_help = about.next().find('a[href="formatdoc"]');
+        about_help.click(function(e) {
+          e.preventDefault();
+          var input_help = about.next().find('.input-help');
+          if (input_help.length) {
+            input_help.remove();
+          }
+          else {
+            about.next().append(HN.getFormattingHelp(false));
+          }
+        });
+
+        var dead_explanation = $('<p>Showdead allows you to see all the submissions and comments that have been killed by the editors.</p>');
+        showdead.next().append($('<span>Default: no</span>')).append(dead_explanation);
+
+        var noprocrast_explanation = $('<p>Noprocast is a way to prevent yourself from spending too much time on Hacker News. If you turn it on you\'ll only be allowed to visit the site for maxvisit minutes at a time, with gaps of minaway minutes in between.</p>');
+        noprocrast.next().append($('<span>Default: no</span>')).append(noprocrast_explanation);
+
+        maxvisit.next().append($('<span>Default: 20</span>'));
+        minaway.next().append($('<span>Default: 180</span>'));
+
+        var delay_explanation = $('<p>Delay allows you to delay the public posting of comments you make for delay minutes.</p>');
+        delay.next().append($('<span>Default: 0</span>')).append(delay_explanation);
+
+        //redirect to profile page after updating, instead of /x page
+        $('input[value="update"]').click(function() {
+          HN.setLocalStorage('update_profile', window.location.href);
+        });
+      }
+    }, 
+
+    getFormattingHelp: function(links_work) {
+      help = '<p>Blank lines separate paragraphs.</p>' +
+             '<p>Text after a blank line that is indented by two or more spaces is reproduced verbatim (this is intended for code).</p>' +
+             '<p>Text surrounded by asterisks is italicized, if the character after the first asterisk isn\'t whitespace.</p>';
+      if (links_work)
+        help += '<p>Urls become links.</p>';
+
+      return $('<div class="input-help">').append($(help));
+    },
+
+    prettyPrintDaysAgo: function(days) {
+      //copied from http://stackoverflow.com/a/8942982
+      var str = '';
+      var values = {
+        ' year': 365,
+        ' month': 30,
+        ' day': 1
+      };
+
+      for (var x in values) {
+        var amount = Math.floor(days / values[x]);
+
+        if (amount >= 1) {
+          str += amount + x + (amount > 1 ? 's' : '');
+          if (x != ' day') {
+            str += ' ';
+          }
+          days -= amount * values[x];
+        }
+      }
+
+      return str;
     },
 
     graphPoll: function(poll) {
@@ -639,6 +908,25 @@ var HN = {
       HN.removeCommentSpacing();
       HN.addScoreToUsers(comments);
       RedditComments.init(comments);
+      HN.replaceVoteButtons(false);
+    },
+
+    replaceVoteButtons: function(isPostList) {
+      $('img[src$="grayarrow.gif"]').replaceWith('<div class="up-arrow"></div>');
+      $('img[src$="graydown.gif"]').replaceWith('<div class="down-arrow last-arrow"></div>');
+      
+      if (isPostList) {
+        $('div.up-arrow').addClass('postlist-arrow');
+      } else {
+        // any up-arrows that don't have a down arrow next to them, add the last-arrow class
+        // as well, which will give a bit extra margin before the show/hide link
+        $('div.up-arrow').each(function() {
+          var numbuttons = $($(this).parents('center').get(0)).find('a').size();
+          if (numbuttons == 1) {
+            $(this).addClass('last-arrow');
+          }
+        });
+      }
     },
 
     addScoreToUsers: function(commentsblock) {
@@ -731,7 +1019,7 @@ var HN = {
         else
           by_el = $('<span/>').addClass('submitter')
                               .text('by ')
-                              .append(by);
+                              .append(by.attr('title', 'View profile'));
 
         var score_el = $('<td/>').append(score);
         var comments_el = $('<td/>').append(comments);
@@ -848,12 +1136,12 @@ var HN = {
       );
       user_links.append(hidden_div);
 
-      user_drop.click(function() {
+      user_drop_toggle = function() {
+        user_drop.find('a').toggleClass('active')
         hidden_div.toggle();
-      });
-      hidden_div.click(function() {
-        hidden_div.toggle();
-      });
+      }
+      user_drop.click(user_drop_toggle);
+      hidden_div.click(user_drop_toggle);
       hidden_div.hide();
     },
     rewriteNavigation: function() {
@@ -928,7 +1216,7 @@ var HN = {
             new_active = new_link.clone().addClass('nav-active-link')
                                          .addClass('new-active-link');
 
-          hidden_div.append($('<span/>').append(new_link));
+          hidden_div.append(new_link);
         }
 
         topsel.append(more_link).append(hidden_div);
@@ -938,12 +1226,13 @@ var HN = {
 
         navigation.empty().append(topsel);
         
-        more_link.click(function() {
+        toggle_more_link = function() {
+          more_link.find('a').toggleClass('active');
           hidden_div.toggle();
-        });
-        hidden_div.click(function() {
-          hidden_div.toggle();
-        });
+        }
+        more_link.click(toggle_more_link);
+        hidden_div.click(toggle_more_link);
+
         hidden_div.offset({'left': more_link.position().left});
         hidden_div.hide();
     },
@@ -976,6 +1265,10 @@ var HN = {
             o = 79, // Open Story
             p = 80, // View Comments
             h = 72; // Open Help
+            l = 76; // New tab
+            c = 67; // Comments in new tab
+            b = 66; // Open comments and link in new tab
+            shiftKey = 16; //allow modifier
         $(document).keydown(function(e){
           //Keyboard shortcuts disabled when search focused
           if (!HN.searchInputFocused) {
@@ -983,23 +1276,55 @@ var HN = {
               HN.next_story();
             } else if (e.which == k) {
               HN.previous_story();
+            } else if (e.which == l){
+              HN.open_story_in_new_tab();
             } else if (e.which == o) {
-              HN.open_story();
+              HN.open_story_in_current_tab();
             } else if (e.which == p) {
-              HN.view_comments();
+              HN.open_comments_in_current_tab();
+            } else if (e.which == c) {
+              HN.open_comments_in_new_tab();
             } else if (e.which == h) {
               //HN.open_help();
+            } else if (e.which == b) {
+              HN.open_comments_in_new_tab();
+              HN.open_story_in_new_tab();
             }
           }
         })
     },
 
-    next_story: function(){
+    open_story_in_current_tab: function() {
+      HN.open_story(false);
+    },
+    open_story_in_new_tab: function() {
+      HN.open_story(true);
+    },
+    open_comments_in_current_tab: function() {
+      HN.view_comments(false);
+    },
+    open_comments_in_new_tab: function() {
+      HN.view_comments(true);
+    },
+
+    next_story: function() {
+      HN.next_or_prev_story(true);
+    },
+    previous_story: function() {
+      HN.next_or_prev_story(false);
+    },
+
+    next_or_prev_story: function(next){
       if ($('.on_story').length == 0) {
-        $('#content tr:first').addClass("on_story");
+        if (next)
+          $('#content tr:first').addClass("on_story");
       } else {
         var current = $('.on_story');
-        var next_lem = current.next();
+        var next_lem;
+        if (next)
+          next_lem = current.next();
+        else
+          next_lem = current.prev();
         if (next_lem.length) {
           next_lem.addClass("on_story");
           $('html, body').stop();
@@ -1011,34 +1336,27 @@ var HN = {
       }
     },
 
-    previous_story:function(){
-      if ($('.on_story').length == 0) {
-      } else {
-        var current = $('.on_story');
-        var next_lem = current.prev();
-        if (next_lem.length) {
-          next_lem.addClass("on_story");
-          $('html, body').stop();
-          $('html, body').animate({
-            scrollTop: next_lem.offset().top - 10
-            }, 200);
-          current.removeClass("on_story");
-        }
-      }
-    },
-
-    open_story: function(){
+    open_story: function(new_tab){
       if ($('.on_story').length != 0) {
         var story = $('.on_story .title > a');
-        window.location = story.attr("href");
+        if (new_tab) {
+          $('.on_story .title').addClass("link-highlight");
+          window.open(story.attr("href"));
+        }
+        else
+          window.location = story.attr("href");
       }
     },
 
-    view_comments: function(){
+    view_comments: function(new_tab){
       if ($('.on_story').length != 0) {
         var comments = $('.on_story .comments');
-        if (comments.length != 0)
-          window.location = comments.attr("href");
+        if (comments.length != 0) {
+          if (new_tab)
+            window.open(comments.attr("href"));
+          else
+            window.location = comments.attr("href");
+        }
       }
     },
 
@@ -1060,6 +1378,12 @@ var HN = {
         } else {
           $(this).addClass('hot');
         };
+      });
+    },
+
+    enableLinkHighlighting: function() {
+      $('.title a:link').click(function() {
+          $(this).closest('td').addClass('link-highlight');
       });
     }
 }
@@ -1087,6 +1411,33 @@ else {
   HN.init();
 
   $(document).ready(function(){
+    if ("Unknown or expired link." == $('body').html()) {
+      HN.setLocalStorage('expired', true);
+      window.location.replace("/");
+      return;
+    }
+    else {
+      HN.getLocalStorage('expired', function(response) {
+        if (response.data != undefined) {
+          var expired = JSON.parse(response.data);
+          if (expired) {
+            $('#header').after("<p id=\"alert\">You reached an <a href=\"//news.ycombinator.com/item?id=17705\" title=\"what?\">expired page</a> and have been redirected back to the front page.</p>");
+            HN.setLocalStorage('expired', false);
+          }
+        }
+      });
+    }
+
+    //redirect to profile page after updating it
+    if (window.location.pathname == "/x") {
+      HN.getLocalStorage('update_profile', function(response) {
+        if (response.data != undefined && response.data != "false") {
+          HN.setLocalStorage('update_profile', false);
+          window.location.replace(response.data);
+        }
+      });
+    }
+    
     $('body').css('visibility', 'visible');
   });
 }
