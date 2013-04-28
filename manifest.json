@@ -37,5 +37,8 @@
         "run_at": "document_end",
         "js": ["js/jquery-1.7.2.js", "js/hn.js"]
       }
+    ],
+    "web_accessible_resources": [
+      "images/spin.gif"
     ]
 }
