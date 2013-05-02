@@ -57,6 +57,15 @@ var InlineReply = {
       e.preventDefault();
       link = $(this).attr('data');
       text = $(this).prev().val();
+      //Hide cancel button and change reply text
+      $(this).next().hide();
+      $(this).attr("disabled","true");
+      $(this).attr("value","Posting...");
+      //Add loading spinner
+      image = $('<img style="vertical-align:middle;margin-left:5px;"/>');
+      image.attr('src',chrome.extension.getURL("images/spin.gif"));
+      $(this).after(image);
+      //Post
       InlineReply.postCommentTo(link, domain, text, $(this));
     });
     
