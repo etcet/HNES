@@ -1280,7 +1280,7 @@ var HN = {
             shiftKey = 16; //allow modifier
         $(document).keydown(function(e){
           //Keyboard shortcuts disabled when search focused
-          if (!HN.searchInputFocused) {
+          if (!HN.searchInputFocused && !e.ctrlKey) {
             if (e.which == j) {
               HN.next_story();
             } else if (e.which == k) {
