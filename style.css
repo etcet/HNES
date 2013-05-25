@@ -408,7 +408,7 @@ textarea {
 }
 form textarea {
   background: #fff;
-  font-family: font-family: "Helvetica Neue", Arial, sans-serif !important;
+  font-family: "Helvetica Neue", Arial, sans-serif !important;
   font-size: 14px;
   padding: 10px;
   height:80px;
@@ -473,7 +473,7 @@ a.original_poster,
   display: block;
   width: 100%;
   max-width: 800px;
-  font-family: font-family: "Helvetica Neue", Arial, sans-serif !important;
+  font-family: "Helvetica Neue", Arial, sans-serif !important;
   line-height: 1.5em;
 }
 .comment, .dead {
@@ -491,7 +491,7 @@ a.original_poster,
 }
 .comment p,
 .comment > font {
-  font-family: font-family: "Helvetica Neue", Arial, sans-serif !important;
+  font-family: "Helvetica Neue", Arial, sans-serif !important;
   font-size: 13px !important;
   margin-top: 6px !important;
   margin-bottom: 6px !important;
