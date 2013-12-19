@@ -941,24 +941,31 @@ var HN = {
     addScoreToUsers: function(commentsblock) {
       var commenters = $('.commenter');
       HN.getUserScores(commenters);
-      var upvote_links = commentsblock.find($('a[onclick="return vote(this)"]'));
-      upvote_links.click(HN.upvoteUser);
+      var vote_links = commentsblock.find($('a[onclick="return vote(this)"]'));
+      var upvote_links = $(vote_links).filter('a[id^="up_"]');
+      var downvote_links = $(vote_links).filter('a[id^="down_"]');
+      upvote_links.click(function(e) {
+        HN.upvoteUser(e, 1);
+      });
+      downvote_links.click(function(e) {
+        HN.upvoteUser(e, -1);
+      });
     },
 
-    upvoteUser: function(e) {
-      var author = $(this).parent().parent().next().find('.commenter').text();
+    upvoteUser: function(e, value) {
+      var author = $(e.target).parent().parent().parent().next().find('.commenter').text();
 
       var commenter = $('.commenter:contains('+author+')');
       HN.getLocalStorage(author, function(response) {
         if (response.data) {
           var count = Number(response.data);
-          var new_count = count + 1;
+          var new_count = count + value;
           HN.setLocalStorage(author, new_count);
           commenter.next().text(new_count);
         }
         else {
-          HN.setLocalStorage(author, 1);
-          HN.addUserScore(commenter, 1);
+          HN.setLocalStorage(author, value);
+          HN.addUserScore(commenter, value);
         }
       });
     },
