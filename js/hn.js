@@ -520,11 +520,17 @@ var HN = {
       }
       header.attr('id', 'header');
 
-      var content = $('body > center > table > tbody > tr:nth-child(3)');
+      var contentIndex = 2;
+      if ($('body > center > table > tbody > tr').eq(1).has('.pagetop').length > 0) {
+        // There's an announcement underneath header
+        contentIndex++;
+      }
+
+      var content = $('body > center > table > tbody > tr').eq(contentIndex);
       content.attr('id', 'content');
 
       //remove empty tr element between header and content
-      $('body > center > table > tbody > tr:nth-child(2)').remove();
+      $('body > center > table > tbody > tr').eq(contentIndex - 1).remove();
 
       $('#header table td').removeAttr('style');
       
