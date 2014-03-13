@@ -545,8 +545,8 @@ var HN = {
 
       $('.yclinks').parent('center').css({"width" : "100%"});
 
-      HN.setSearchInput($('input[name="q"]'));
-      $("input[name='q']").val("Search on hnsearch.com");
+      var search_domain = "hn.algolia.com";
+      HN.setSearchInput($('input[name="q"]'), search_domain);
 
       var icon = $('img[src="y18.gif"]');
       icon.parent().attr({"href": "http://news.ycombinator.com/"});
@@ -1119,9 +1119,9 @@ var HN = {
       var hidden_div = $('<div/>').attr('id', 'user-hidden')
                                   .addClass('nav-drop-down');
       var user_pages = [ ['profile', '/user', 'Your profile and settings'],
-                         ['threads', '/threads', 'Your comments and replies'],
-                         ['saved', '/saved', "Stories you've voted for"],
-                         ['stories', '/submitted', "Stories you've submitted"]
+                         ['comments', '/threads', 'Your comments and replies'],
+                         ['submitted', '/submitted', "Stories you've submitted"],
+                         ['saved', '/saved', "Stories you've voted for"]
                        ];
       var new_active = false;
       for (var i in user_pages) {
@@ -1264,17 +1264,19 @@ var HN = {
       others.toggle();
     },
 
-    setSearchInput: function(el) {
+    setSearchInput: function(el, domain) {
+      var text = "Search on " + domain;
+      $("input[name='q']").val(text);
       el.focus(function(){
         HN.searchInputFocused = true;
-        if (el.val() == "Search on hnsearch.com") {
+        if (el.val() == text) {
           el.val("");
         }
       });
       el.blur(function(){
         HN.searchInputFocused = false;
         if (el.val() == "") {
-          el.val("Search on hnsearch.com");
+          el.val(text);
         }
       });
     },
