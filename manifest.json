@@ -1,6 +1,6 @@
 {
     "name": "Hacker News Enhancement Suite",
-    "version": "1.3.0"
+    "version": "1.3.0",
     "description": "Hacker News Enhanced.",
     "manifest_version": 2,
     "background": {
