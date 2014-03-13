@@ -475,6 +475,7 @@ a.original_poster,
   max-width: 800px;
   font-family: font-family: "Helvetica Neue", Arial, sans-serif !important;
   line-height: 1.5em;
+  white-space: pre-wrap;
 }
 .comment, .dead {
   font-size: 13px !important;
@@ -495,6 +496,12 @@ a.original_poster,
   font-size: 13px !important;
   margin-top: 6px !important;
   margin-bottom: 6px !important;
+}
+
+/* Wrap <pre> tags (indented text) so they don't have an annoying horizontal scrollbar */
+pre {
+  white-space: pre-wrap;
+  margin-left: 1em;
 }
 
 /*make sure comment headers are on one line
