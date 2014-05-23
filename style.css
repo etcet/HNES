@@ -274,6 +274,7 @@ a:hover {
 }
 /*submit/add comment button*/
 input[type="submit"] {
+  display: block;
   font-family: "Helvetica Neue", Arial, sans-serif;
   font-size: 13px;
   color: white;
@@ -402,6 +403,7 @@ form textarea {
   padding: 10px;
   height:80px;
   overflow: auto;
+  margin-bottom: 10px;
 }
 textarea, input {
   border-width: 1px;
