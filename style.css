@@ -274,7 +274,6 @@ a:hover {
 }
 /*submit/add comment button*/
 input[type="submit"] {
-  display: block;
   font-family: "Helvetica Neue", Arial, sans-serif;
   font-size: 13px;
   color: white;
@@ -287,6 +286,10 @@ input[type="submit"] {
 input[type="submit"]:hover {
   cursor: pointer;
   background: #d74937;
+}
+/*format add comment button on its own line*/
+input[value="add comment"] {
+  display: block;
 }
 input[type="text"] {
   font-family: "Helvetica Neue", Arial, sans-serif;
