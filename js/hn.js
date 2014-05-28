@@ -81,18 +81,23 @@ var InlineReply = {
       accepts: "text/html",
       url: link
     }).success(function(html) {
-      input = $(html).find('input');
-      fnid = input.attr('value');
-      InlineReply.sendComment(domain, fnid, text);
+      fnid = $(html).find('input[name="parent"]').attr('value');
+      whence = $(html).find('input[name="whence"]').attr('value');
+      hmac = $(html).find('input[name="hmac"]').attr('value');
+      InlineReply.sendComment(domain, fnid, whence, hmac, text);
     }).error(function(xhr, status, error) {
       InlineReply.enableButtonAndBox(button);
     });
   },
 
-  sendComment: function(domain, fnidarg, textarg) {
+  sendComment: function(domain, fnidarg, whencearg, hmacarg, textarg) {
+    //console.log(domain, fnidarg, whencearg, hmacarg, textarg)
     $.post(
-      domain + "/r", 
-      {fnid : fnidarg, text: textarg }
+      domain + "/comment",
+      {'parent': fnidarg,
+       'whence': whencearg,
+       'hmac': hmacarg,
+       'text': textarg }
     ).complete(function(a) {
       window.location.reload(true);
     }); 
