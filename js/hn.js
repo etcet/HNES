@@ -545,6 +545,13 @@ var HN = {
 
       $('.yclinks').parent('center').css({"width" : "100%"});
 
+      // move search to top navbar
+      var searchForm = $('input[name="q"]').closest('form');
+      searchForm.contents()
+                .filter(function() { return this.nodeType == 3; })
+                .remove();
+      $('.pagetop:last').before(searchForm)
+
       var search_domain = "hn.algolia.com";
       HN.setSearchInput($('input[name="q"]'), search_domain);
 

@@ -12,6 +12,7 @@ body {
   /* hide content flash */
   visibility: hidden;
   margin: 0;
+  min-width: 640px;
 }
 /*ignore <center> elements*/
 body center {
@@ -416,11 +417,14 @@ form textarea:focus, textarea:focus, input:focus, input[name="q"] {
 form[action="http://hn.algolia.com/"],
 form[action="//hn.algolia.com/"],
 input[name="q"] {
-  width: 270px;
+  display: inline;
+  margin-right: 20px;
+  width: 60%;
+  max-width: 280px;
 }
 input[name="q"] {
   margin-left: 10px;
-  height: 32px;
+  height: 27px;
   padding-left: 10px;
   color: #888 !important;
 }
