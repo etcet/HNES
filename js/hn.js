@@ -446,12 +446,23 @@ var HN = {
           }
         }
 
-        var postPagesRE = /^(?:\/|\/news|\/newest|\/best|\/active|\/classic|\/submitted|\/saved|\/jobs|\/noobstories|\/ask|\/news2|\/over)$/;
+        var postPagesRE = /^(?:\/|\/news|\/newest|\/best|\/active|\/classic|\/submitted|\/saved|\/jobs|\/noobstories|\/ask|\/news2|\/over|\/show|\/shownew)$/;
         if (postPagesRE.test(pathname)) {
           HN.doPostsList();
+
+          function remove_first_tr() {
+            $("body #content td table tbody tr").filter(":first").remove();
+          }
+          if (pathname == '/show') {
+            remove_first_tr();
+          }
           if (pathname == '/jobs') {
-            //omg so broken - hack around it
             $("body").attr("id", "jobs-body");
+          }
+          if (pathname == '/show' || pathname == '/jobs') {
+            var blurb = $("body #content td table tbody tr td:nth-child(3)").filter(':first').html();
+            remove_first_tr();
+            $("body #content table").before("<p class='blurb'>"+blurb+"</p>");
           }
         }
         else if (pathname == '/edit') {
@@ -1184,7 +1195,9 @@ var HN = {
                               ['submit', '/submit', 'Submit a story'],
                             ];
 
-        var hidden_pages = [ ['classic', '/classic', 'Only count votes from accounts older than one year'],
+        var hidden_pages = [ ['show', '/show', 'Show HN'],
+                             ['shownew', '/shownew', 'New Show HN posts'],
+                             ['classic', '/classic', 'Only count votes from accounts older than one year'],
                              ['active', '/active', 'Active stories'],
                              ['ask', '/ask', 'Ask Hacker News'],
                              ['jobs', '/jobs', 'Sponsored job postings'],

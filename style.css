@@ -74,7 +74,8 @@ table tr td {
 }
 
 /*highlight every other story line except 'More' link*/
-#index-body #content tr:nth-child(2n) {
+#index-body #content tr:nth-child(2n),
+#jobs-body #content tr:nth-child(2n) {
   background-color: #e6e6df !important;
 }
 #index-body #content tr,
@@ -84,6 +85,11 @@ table tr td {
 #index-body #content tr.on_story {
   border: 1px solid black;
   background-color: #c6c6bf !important;
+}
+
+.blurb {
+  margin: 0 1em;
+  text-align: center;
 }
 
 /*position comment and score tally at the top even if story line is multi-line*/
@@ -597,10 +603,13 @@ form[action="/r"] input[type="submit"] {
   color: #d93b3d !important;
 }
 
-#jobs-body #content .pagetop,
-#jobs-body #content .pagetop * {
-  color: #000 !important;
-  text-shadow: none !important;
+#jobs-body table table {
+  padding-left: 7px;
+  margin: 0 auto;
+}
+#jobs-body #content>td {
+  margin: 0;
+  padding: 0;
 }
 
 .poll-graph {
