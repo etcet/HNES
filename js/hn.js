@@ -743,9 +743,6 @@ var HN = {
     doUserProfile: function() {
       $('#content > td').attr('id', 'user-profile');
 
-      //remove topcolor setting as this will cause problems (untested)
-      $('tr > td[valign="top"]:contains("topcolor:")').parent().remove();
-
       var options = $('tr > td[valign="top"]');
       var user = options[0];
       var created = $(options[1]);
@@ -770,7 +767,16 @@ var HN = {
         var noprocrast = $(options[7]);
         var maxvisit = $(options[8]);
         var minaway = $(options[9]);
-        var delay = $(options[10]);
+		var delay;
+		if($('tr > td[valign="top"]:contains("topcolor:")').length) {
+			var topcolor = $(options[10]);
+			topcolor.addClass('select-option');
+        topcolor.next().append($('<span>Default: FF6600</span>'));
+			delay = $(options[11]);		
+		}
+		else{
+			delay = $(options[10]);				
+		}
 
         //fix spacing
         email.addClass('select-option'); 
@@ -1181,6 +1187,7 @@ var HN = {
       user_drop.click(user_drop_toggle);
       hidden_div.click(user_drop_toggle);
       hidden_div.hide();
+	  HN.setTopColor();
     },
     rewriteNavigation: function() {
         var topsel = $('.topsel');
@@ -1282,6 +1289,14 @@ var HN = {
       others.toggle();
     },
 
+	setTopColor: function(){
+	  var topcolor = document.getElementById("header").firstChild.getAttribute("bgcolor");
+	  if(topcolor.toLowerCase() != '#ff6600')
+	  {
+		document.getElementById("header").style.setProperty("background-color", topcolor, "important");
+	  }
+	},
+	
     setSearchInput: function(el, domain) {
       var text = "Search on " + domain;
       $("input[name='q']").val(text);
