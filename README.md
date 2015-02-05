@@ -74,3 +74,8 @@ Thanks to Jiahua (jwang47) for his fork of Már Örlygsson's (maranomynet) linki
 Thanks for Dan Harper (danharper) and to Will Ridgers (wridgers) for some CSS fixes.
 
 Thanks for Nuno Santos (nfvs) for styling the login page and other fixes.
+
+Thanks to alanc10n for fixing issue 66
+
+Thanks to sglantz for adding support for topcolor, issue 52
+
