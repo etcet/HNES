@@ -1081,7 +1081,7 @@ var HN = {
     formatURL: function() {
         $('.comhead').each(function() {
           var url_el = $('<span/>').text(
-                         $(this).text().substring(2, $(this).text().length - 2)
+                         $(this).text().substring(2, $(this).text().length - 1)
                        );
           var left_paren = $('<span/>').addClass('paren')
                                        .text('(');
