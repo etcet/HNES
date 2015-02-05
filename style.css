@@ -92,14 +92,6 @@ table tr td {
   text-align: center;
 }
 
-/*position comment and score tally at the top even if story line is multi-line*/
-.score, .comments {
-  height: 100%;
-  top: 0px;
-  padding-top: 7px;
-  padding-right: 3px;
-  right: 0px;
-}
 .comments {
   left: 0;
 }
