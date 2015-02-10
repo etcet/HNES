@@ -1027,12 +1027,8 @@ var HN = {
         var score = $(this).find('span:first');
         var as = $(this).find('a');
         var comments;
-        //if self story pick, 2nd link is to comments (after name)
-        if (as.length == 4)
-          comments = $(as[1])
-        //otherwise it's the last one
-        else
-          comments = $(as[as.length - 1]);
+
+        comments = $(as[as.length - 1]);
 
         var by = $(this).find('a:eq(0)');
 
