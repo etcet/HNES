@@ -82,7 +82,7 @@ var InlineReply = {
       url: link
     }).success(function(html) {
       fnid = $(html).find('input[name="parent"]').attr('value');
-      whence = $(html).find('input[name="whence"]').attr('value');
+      whence = $(html).find('input[name="goto"]').attr('value');
       hmac = $(html).find('input[name="hmac"]').attr('value');
       InlineReply.sendComment(domain, fnid, whence, hmac, text);
     }).error(function(xhr, status, error) {
@@ -95,7 +95,7 @@ var InlineReply = {
     $.post(
       domain + "/comment",
       {'parent': fnidarg,
-       'whence': whencearg,
+       'goto': whencearg,
        'hmac': hmacarg,
        'text': textarg }
     ).complete(function(a) {
