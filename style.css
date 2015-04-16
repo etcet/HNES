@@ -475,13 +475,9 @@ a.original_poster,
   max-width: 800px;
   font-family: "Helvetica Neue", Arial, sans-serif !important;
   line-height: 1.5em;
-  white-space: pre-wrap;
 }
 .comment, .dead {
   font-size: 13px !important;
-}
-#content > td {
-  width: 
 }
 .comment code {
   font-size: 13px !important;
