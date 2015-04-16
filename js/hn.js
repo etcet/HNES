@@ -1123,7 +1123,11 @@ var HN = {
 
       logout.detach();
       user_profile.detach();
-      var score = pagetop.text().slice(2, -4);
+      var score_str = pagetop.text();
+      var regex = /\(([^)]+)\)/;
+      var matches = regex.exec(score_str);
+      var score = matches[1];
+
       var score_elem = $('<span/>').text('|')
                                    .append(
                                      $('<span/>').text(score)
