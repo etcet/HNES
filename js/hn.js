@@ -1038,7 +1038,7 @@ var HN = {
           score.text(score.text().substring(0, score.text().indexOf(' ')));
         score.addClass("score").attr('title', 'Points');
 
-        if (comments.text() == "discuss")
+        if (comments.text() == "discuss" || /ago$/.test(comments.text()))
           comments = $("<a/>").html('0')
                               .attr('href', comments.attr('href'));
         else if (comments.text() == "comments")
