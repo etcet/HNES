@@ -1289,13 +1289,13 @@ var HN = {
       others.toggle();
     },
 
-	setTopColor: function(){
-	  var topcolor = document.getElementById("header").children[0].getAttribute("bgcolor");
-	  if(topcolor.toLowerCase() != '#ff6600')
-	  {
-		document.getElementById("header").style.setProperty("background-color", topcolor, "important");
-	  }
-	},
+    setTopColor: function(){
+      var topcolor = document.getElementById("header").children[0].getAttribute("bgcolor");
+      if(topcolor.toLowerCase() != '#ff6600') {
+        $('#header').css('background-color', topcolor);
+        $('.nav-drop-down').css('background-color', topcolor);
+      }
+    },
 	
     setSearchInput: function(el, domain) {
       var text = "Search on " + domain;
