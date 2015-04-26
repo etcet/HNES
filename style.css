@@ -200,10 +200,6 @@ a.comments:hover {
   padding-top: 4px;
   padding-bottom: 4px;
 }
-/*highlight line*/
-.nav-drop-down a:hover {
-  background-color: #e75947 !important;
-}
 /*other main nav links*/
 #nav-others {
   padding-right: 16px;
