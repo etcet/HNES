@@ -747,8 +747,7 @@ var HN = {
       var user = options[0];
       var created = $(options[1]);
       var karma = $(options[2]);
-      var avg = $(options[3]);
-      var about = $(options[4]);
+      var about = $(options[3]);
 
       var days_ago = created.next();
       var days = days_ago.text().split(" ")[0];
@@ -762,21 +761,21 @@ var HN = {
       else {
         //your user page
         $('#user-profile').addClass('your-profile');
-        var email = $(options[5]);
-        var showdead = $(options[6]);
-        var noprocrast = $(options[7]);
-        var maxvisit = $(options[8]);
-        var minaway = $(options[9]);
-		var delay;
-		if($('tr > td[valign="top"]:contains("topcolor:")').length) {
-			var topcolor = $(options[10]);
-			topcolor.addClass('select-option');
-        topcolor.next().append($('<span>Default: FF6600</span>'));
-			delay = $(options[11]);		
-		}
-		else{
-			delay = $(options[10]);				
-		}
+        var email = $(options[4]);
+        var showdead = $(options[5]);
+        var noprocrast = $(options[6]);
+        var maxvisit = $(options[7]);
+        var minaway = $(options[8]);
+        var delay;
+        if($('tr > td[valign="top"]:contains("topcolor:")').length) {
+          var topcolor = $(options[9]);
+          topcolor.addClass('select-option');
+          topcolor.next().append($('<span>Default: ff6600</span>'));
+          delay = $(options[10]);		
+        }
+        else{
+          delay = $(options[11]);				
+        }
 
         //fix spacing
         email.addClass('select-option'); 
@@ -813,9 +812,6 @@ var HN = {
           can_downvote_msg = $('<p>You can downvote comments.</p>');
         }
         karma.next().append(can_flag_msg).append(can_create_polls_msg).append(can_downvote_msg);
-
-        var avg_explanation = $('<p>Average karma is calculated by averaging the scores of your last 50 comments except the comment with the highest score and your 5 most recent comments. It is generally recalculated every few days.</p>');
-        avg.next().append(avg_explanation);
 
         var about_help = about.next().find('a[href="formatdoc"]');
         about_help.click(function(e) {
