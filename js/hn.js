@@ -1290,11 +1290,12 @@ var HN = {
     },
 
     setTopColor: function(){
-      var topcolor = document.getElementById("header").children[0].getAttribute("bgcolor");
+/*      var topcolor = document.getElementById("header").children[0].getAttribute("bgcolor");
       if(topcolor.toLowerCase() != '#ff6600') {
         $('#header').css('background-color', topcolor);
         $('.nav-drop-down').css('background-color', topcolor);
-      }
+        $('.nav-drop-down a:hover').css('background-color', topcolor);
+      }*/
     },
 	
     setSearchInput: function(el, domain) {
