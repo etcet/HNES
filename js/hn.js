@@ -249,8 +249,10 @@ var CommentTracker = {
 
 var RedditComments = {
   init: function(comments) {
+    var self = this;
+    
     var collapse_button = $('<span/>').addClass('collapse')
-                                      .text('[−]')
+                                      .text('[\u2013]')
                                       .attr('title', 'Collapse comment');
     var link_to_parent = $('<span/>').text(' | ')
                                      .append($('<a/>')
@@ -259,7 +261,14 @@ var RedditComments = {
                                      .attr('title', 'Go to parent')
                                      .addClass('parent-link'));
 
-    comments.find('table').each(function() {
+    // Allocate an array for a the sequential list of nodes
+    // which is used to build parent/child map below. This
+    // array may be longer than the real data because dead
+    // comments are ignored.
+    var nodeList = new Array(comments.find('table').length),
+        nodeIndex = 0;
+
+    comments.find('table').each(function(i) {
       var $this = $(this);
       $this.addClass("comment-table");
 
@@ -300,7 +309,39 @@ var RedditComments = {
       if (comment_is_dead) {
         comment_is_dead.parent().next().remove();
       }
+
+      nodeList[nodeIndex++] = { id: id, level: level, children: [], table: $this, row: $this.parent().parent(), collapser: $this.find('.collapse') };
+
     });
+
+    // Build the node map. This could certainly be done in the main
+    // loop above, but we're not dealing with enough volume to
+    // warrant that mess. Long threads are ~1000 comments.
+    var s = [], m = {'root': {id: 'root', children: [] }}, data = nodeList;
+    if (data.length > 0) {
+      data[0].parentId = 'root';
+      m.root.children.push(data[0]);
+    }
+    for (var i = 0, j = 1, data = nodeList; j < data.length; i++, j++) {
+      var p = data[i], c = data[j];
+      if (!p || !c) break;
+      if (c.level > p.level) s.push(p.id);
+      for (var x = 0; x < p.level - c.level; x++) s.pop();
+      c.parentId = s[s.length - 1] || 'root';
+      m[p.id] = data[i];
+      m[c.parentId].children.push(c);
+    }
+    self.nodeMap = m;
+
+    // restore prior collapses
+    HN.getLocalStorage(CommentTracker.getInfo().id + '-collapsed', function(response) {
+      if (!response.data) return;
+      var collapsed = JSON.parse(response.data);
+      for (var i = 0; i < collapsed.length; i++) {
+        RedditComments._collapse(m[collapsed[i]]);
+      }
+    });
+
   },
 
   goToParent: function(e) {
@@ -326,69 +367,52 @@ var RedditComments = {
   },
 
   collapse: function(e) {
-    var $e = $(e.target);
-    var el = $e.closest("table");
-    var comment_row = el.parent().parent();
-    var indent = Number(el.attr('level'));
-    //var indent = RedditComments.stripPx(comment_row.find('td:eq(1) img').css('width'));
+    var commentId = $(e.target).closest('tr.athing').find('.comment-table').attr('id'),
+      node = RedditComments.nodeMap[commentId];
 
-    var has_children = false;
-    var has_visible_children = false;
-    var next_row = comment_row.next();
-    var next_indent = Number(next_row.find('.comment-table').attr('level'));
-    //var next_indent = RedditComments.stripPx(next_row.find('td:eq(1) img').css('width'));
-    if (indent < next_indent) {
-      has_children = true;
-      has_visible_children = next_row.is(":visible");
-    }
-
-    var num_children = 0;
-    if (has_children) {
-      do {
-        var next_row = comment_row.next();
-        var next_indent = Number(next_row.find('.comment-table').attr('level'));
-        //var next_indent = RedditComments.stripPx(next_row.find('td:eq(1) img').css('width'));
-
-        if (indent < next_indent) {
-          if (has_visible_children) {
-            next_row.attr('visible', next_row.is(":visible"));
-            next_row.hide();
-          }
-          else {
-            if (next_indent - indent == 1 || 
-                next_row.attr('visible') == "true") {
-              next_row.show();
-            }
-          }
-          num_children += 1;
-        }
-
-        comment_row = next_row;
-
-      } while (indent < next_indent);
-    }
-
-    var def = el.find('.default');
-    if (has_visible_children || !el.hasClass('collapsed')) {
-      var child_str = (num_children > 0 ? " (" + num_children + " child" + (num_children == 1? "" : "ren") + ")" : "");
-      $e.text("[+]" + child_str)
-        .attr('title', 'Restore comment')
-        .css('margin-left', def.prev().width() + 2 + 'px');
-      def.find('div').siblings().hide();
-      def.prev().hide();
-      el.addClass('collapsed');
+    if (node.collapsed) {
+      RedditComments._expand(node);
     }
     else {
-      $e.text("[−]")
-        .attr('title', 'Collapse comment')
-        .css('margin-left', '');
-      def.find('div').siblings().show();
-      def.prev().show();
-      el.removeClass('collapsed');
+      RedditComments._collapse(node);
     }
+    RedditComments._storeCollapsed();
+  },
+
+  _collapse: function(node) {
+    node.collapsed = true;
+    node.table.addClass('hnes-collapsed');
+    node.collapser.text('[+] expand');
+    preorder(node, function(n) { n.row.addClass('hnes-hidden'); }, true);
+  },
+
+  _expand: function(node) {
+    node.collapsed = false;
+    node.table.removeClass('hnes-collapsed');
+    node.collapser.text('[\u2013]');
+    preorder(node, function(n) { n.row.removeClass('hnes-hidden'); return n.collapsed; });
+  },
+
+  _storeCollapsed: function() {
+    var itemId = CommentTracker.getInfo().id;
+    var collapsed = [];
+    preorder(RedditComments.nodeMap.root, function(n) {
+      if (n.collapsed) collapsed.push(n.id);
+    });
+    HN.setLocalStorage(itemId + '-collapsed', JSON.stringify(collapsed));
   }
+
 }
 
+function preorder(n, visit, skip) {
+  var die;
+  if (!n) return;
+  if (!skip) die = visit(n);
+  if (die) return;
+  for (var i = 0; i < n.children.length; i++) {
+    preorder(n.children[i], visit);
+  }
+}
 
 var HN = {
     init: function() {
