@@ -317,7 +317,7 @@ var RedditComments = {
     // Build the node map. This could certainly be done in the main
     // loop above, but we're not dealing with enough volume to
     // warrant that mess. Long threads are ~1000 comments.
-    var s = [], m = {'root': {id: 'root', children: [] }}, data = nodeList;
+    var dne = $('#HNES-DNE'), s = [], m = {'root': {id: 'root', row: dne, table: dne, collapser: dne, children: [] }}, data = nodeList;
     if (data.length > 0) {
       data[0].parentId = 'root';
       m.root.children.push(data[0]);
@@ -342,6 +342,13 @@ var RedditComments = {
       }
     });
 
+    $('.item-header .subtext').append(document.createTextNode(' | ')).append(
+        $('<a href="#">expand all</a>').click(function(e) {
+          e.preventDefault();
+          preorder(RedditComments.nodeMap.root, function(n) { if (n.collapsed) RedditComments._expand(n); }); 
+          HN.setLocalStorage(CommentTracker.getInfo().id + '-collapsed', '[]');
+        })
+    );
   },
 
   goToParent: function(e) {
