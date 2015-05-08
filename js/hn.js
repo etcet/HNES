@@ -380,10 +380,11 @@ var RedditComments = {
   },
 
   _collapse: function(node) {
+    var count = 1;
     node.collapsed = true;
     node.table.addClass('hnes-collapsed');
-    node.collapser.text('[+] expand');
-    preorder(node, function(n) { n.row.addClass('hnes-hidden'); }, true);
+    preorder(node, function(n) { n.row.addClass('hnes-hidden'); count++; }, true);
+    node.collapser.text('[+] ' + (count == 1 ? '1 comment' :  count + ' comments'));
   },
 
   _expand: function(node) {
