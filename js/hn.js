@@ -265,8 +265,10 @@ var RedditComments = {
     // which is used to build parent/child map below. This
     // array may be longer than the real data because dead
     // comments are ignored.
-    var nodeList = new Array(comments.find('table').length),
-        nodeIndex = 0;
+    var nodeList = new Array(comments.find('table').length + 1),
+        nodeIndex = 1;
+
+    nodeList[0] = {id: 'root', level: 0, children: [] };
 
     comments.find('table').each(function(i) {
       var $this = $(this);
@@ -310,26 +312,21 @@ var RedditComments = {
         comment_is_dead.parent().next().remove();
       }
 
-      nodeList[nodeIndex++] = { id: id, level: level, children: [], table: $this, row: $this.parent().parent(), collapser: $this.find('.collapse') };
+      nodeList[nodeIndex++] = { id: id, level: level + 1, children: [], table: $this, row: $this.parent().parent(), collapser: $this.find('.collapse') };
 
     });
 
     // Build the node map. This could certainly be done in the main
     // loop above, but we're not dealing with enough volume to
     // warrant that mess. Long threads are ~1000 comments.
-    var dne = $('#HNES-DNE'), s = [], m = {'root': {id: 'root', row: dne, table: dne, collapser: dne, children: [] }}, data = nodeList;
-    if (data.length > 0) {
-      data[0].parentId = 'root';
-      m.root.children.push(data[0]);
-    }
-    for (var i = 0, j = 1, data = nodeList; j < data.length; i++, j++) {
+    var s = [], m = { root: nodeList[0] };
+    for (var i = 0, j = 1, data = nodeList; j < data.length && data[j]; i++, j++) {
       var p = data[i], c = data[j];
-      if (!p || !c) break;
       if (c.level > p.level) s.push(p.id);
       for (var x = 0; x < p.level - c.level; x++) s.pop();
-      c.parentId = s[s.length - 1] || 'root';
-      m[p.id] = data[i];
+      c.parentId = s[s.length - 1];
       m[c.parentId].children.push(c);
+      m[c.id] = c;
     }
     self.nodeMap = m;
 
