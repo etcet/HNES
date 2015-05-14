@@ -743,6 +743,14 @@ body#login-body {
     margin-left: 12px;
 }
 
+.hnes-new .comment-table td:first-child {
+    border-right: 2px solid #F60;
+}
+
+.hnes-new-parent .comment-table td:first-child {
+    border-right: 2px solid #BC9B85;
+}
+
 .athing {
 }
 

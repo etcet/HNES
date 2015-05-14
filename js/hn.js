@@ -144,8 +144,16 @@ var CommentTracker = {
 
   highlightNewComments: function(last_id) {
     $('.comment-table').each(function() {
-      if ($(this).attr('id') > last_id) {
-       $(this).find('td:eq(0)').css('border-right', '2px solid #f60'); 
+      var id = $(this).attr('id'),
+        comment = RedditComments.nodeMap[id];
+
+      if (id > last_id) {
+        comment.row.addClass('hnes-new');
+        comment = comment.parent;
+        while (comment && comment.level > 0) {
+          comment.row.addClass('hnes-new-parent');
+          comment = comment.parent;
+        }
       }
     });
   },
@@ -324,8 +332,8 @@ var RedditComments = {
       var p = data[i], c = data[j];
       if (c.level > p.level) s.push(p.id);
       for (var x = 0; x < p.level - c.level; x++) s.pop();
-      c.parentId = s[s.length - 1];
-      m[c.parentId].children.push(c);
+      c.parent = m[s[s.length - 1]];
+      m[c.parent.id].children.push(c);
       m[c.id] = c;
     }
     self.nodeMap = m;
