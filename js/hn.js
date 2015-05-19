@@ -380,14 +380,8 @@ var RedditComments = {
 
   collapse: function(e) {
     var commentId = $(e.target).closest('tr.athing').find('.comment-table').attr('id'),
-      node = RedditComments.nodeMap[commentId];
-
-    if (node.collapsed) {
-      RedditComments._expand(node);
-    }
-    else {
-      RedditComments._collapse(node);
-    }
+        node = RedditComments.nodeMap[commentId];
+    (node.collapsed ? RedditComments._expand : RedditComments._collapse)(node);
     RedditComments._storeCollapsed();
   },
 
