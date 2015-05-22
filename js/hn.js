@@ -332,7 +332,7 @@ var RedditComments = {
       var p = data[i], c = data[j];
       if (c.level > p.level) s.push(p.id);
       for (var x = 0; x < p.level - c.level; x++) s.pop();
-      c.parent = m[s[s.length - 1]];
+      c.parent = m[s[s.length - 1]] || data[0];
       m[c.parent.id].children.push(c);
       m[c.id] = c;
     }
