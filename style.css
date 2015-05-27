@@ -720,3 +720,37 @@ body#login-body {
 #login-body a:hover {
   text-decoration: underline;
 }
+
+/** collapsed comments */
+.comment-table .collapsed {
+    outline: 1px solid red;
+}
+
+.hnes-hidden {
+    background-color: #ccc;
+}
+
+.hnes-hidden,
+.hnes-collapsed p,
+.hnes-collapsed .comment,
+.hnes-collapsed .votearrow,
+.hnes-collapsed .comhead :not(.collapse) 
+{
+    display: none;
+}
+
+.hnes-collapsed .collapse {
+    margin-left: 12px;
+}
+
+.hnes-new .comment-table td:first-child {
+    border-right: 2px solid #F60;
+}
+
+.hnes-new-parent .comment-table td:first-child {
+    border-right: 2px solid #BC9B85;
+}
+
+.athing {
+}
+
