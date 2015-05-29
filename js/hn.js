@@ -375,7 +375,8 @@ var RedditComments = {
         .attr('title', 'Restore comment')
         .css('margin-left', def.prev().width() + 2 + 'px');
       // Hide everything but the comhead element.
-      def.find('div').siblings().slice(1).hide();
+      def.children('.comment').hide();
+      def.children('.reply').hide();
       def.prev().hide();
       el.addClass('collapsed');
     }
