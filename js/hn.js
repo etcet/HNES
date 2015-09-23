@@ -220,7 +220,15 @@ var CommentTracker = {
     $('.comments').each(function() {
       var href = $(this).attr('href');
       if (href) {
-        var id = Number($(this).attr('href').match(/id=(\d+)/)[1]);
+        var id=$(this).attr('href').match(/id=(\d+)/);
+        if(id){
+            id = Number(id[1]);
+        }
+        else{
+            //For some reason, the link we are processing is not to an HN comment section
+            //I have observed this happening on dead links, which seem to grab the URL from the "web" link
+            return;
+        }
         var el = $(this);
         HN.getLocalStorage(id, function(response) {
           if (response.data) {
