@@ -382,7 +382,9 @@ var RedditComments = {
       $e.text("[+]" + child_str)
         .attr('title', 'Restore comment')
         .css('margin-left', def.prev().width() + 2 + 'px');
-      def.find('div').siblings().hide();
+      // Hide everything but the comhead element.
+      def.children('.comment').hide();
+      def.children('.reply').hide();
       def.prev().hide();
       el.addClass('collapsed');
     }
