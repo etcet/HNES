@@ -1329,8 +1329,6 @@ var HN = {
     init_keys: function(){
         var j = 74, // Next Item
             k = 75, // Previous Item
-            downArrow = 40, // Next Item
-            upArrow = 38,   // Previous Item
             o = 79, // Open Story
             p = 80, // View Comments
             h = 72, // Open Help
@@ -1341,11 +1339,11 @@ var HN = {
         $(document).keydown(function(e){
           //Keyboard shortcuts disabled when search focused
           if (!HN.searchInputFocused && !e.ctrlKey) {
-            if (e.which == j || e.which == downArrow) {
+            if (e.which == j) {
               HN.next_story();
-            } else if (e.which == k || e.which == upArrow) {
+            } else if (e.which == k) {
               HN.previous_story();
-            } else if (e.which == l){
+            } else if (e.which == l) {
               HN.open_story_in_new_tab();
             } else if (e.which == o) {
               HN.open_story_in_current_tab();
