@@ -720,3 +720,15 @@ body#login-body {
 #login-body a:hover {
   text-decoration: underline;
 }
+
+/* Note, it is a child of body so that it has a higher specificity than the default style */
+body .votearrow {
+  /* SVG arrow so that it scales to high-resolution displays */
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="10" height="10"><path d="M 1,9 5,1 9,9 z" fill="#828282"/></svg>');
+}
+/* Instead of simply rotating the entire element, the svg is actually manually flipped.
+   This results in a pixel perfect reflection of the up arrow */
+body .votearrow.rotate180 {
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="10" height="10"><path d="M 1,1 5,9 9,1 z" fill="#828282"/></svg>');
+  transform: none;
+}
