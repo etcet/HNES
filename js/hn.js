@@ -1329,19 +1329,21 @@ var HN = {
     init_keys: function(){
         var j = 74, // Next Item
             k = 75, // Previous Item
+            downArrow = 40, // Next Item
+            upArrow = 38,   // Previous Item
             o = 79, // Open Story
             p = 80, // View Comments
-            h = 72; // Open Help
-            l = 76; // New tab
-            c = 67; // Comments in new tab
-            b = 66; // Open comments and link in new tab
-            shiftKey = 16; //allow modifier
+            h = 72, // Open Help
+            l = 76, // New tab
+            c = 67, // Comments in new tab
+            b = 66, // Open comments and link in new tab
+            shiftKey = 16; // allow modifier
         $(document).keydown(function(e){
           //Keyboard shortcuts disabled when search focused
           if (!HN.searchInputFocused && !e.ctrlKey) {
-            if (e.which == j) {
+            if (e.which == j || e.which == downArrow) {
               HN.next_story();
-            } else if (e.which == k) {
+            } else if (e.which == k || e.which == upArrow) {
               HN.previous_story();
             } else if (e.which == l){
               HN.open_story_in_new_tab();
