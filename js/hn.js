@@ -228,7 +228,15 @@ var CommentTracker = {
     $('.comments').each(function() {
       var href = $(this).attr('href');
       if (href) {
-        var id = Number($(this).attr('href').match(/id=(\d+)/)[1]);
+        var id=$(this).attr('href').match(/id=(\d+)/);
+        if(id){
+            id = Number(id[1]);
+        }
+        else{
+            //For some reason, the link we are processing is not to an HN comment section
+            //I have observed this happening on dead links, which seem to grab the URL from the "web" link
+            return;
+        }
         var el = $(this);
         HN.getLocalStorage(id, function(response) {
           if (response.data) {
@@ -258,7 +266,7 @@ var CommentTracker = {
 var RedditComments = {
   init: function(comments) {
     var self = this;
-    
+
     var collapse_button = $('<span/>').addClass('collapse')
                                       .text('[\u2013]')
                                       .attr('title', 'Collapse comment');
@@ -420,6 +428,7 @@ function preorder(n, visit, skip) {
     preorder(n.children[i], visit);
   }
 }
+
 
 var HN = {
     init: function() {
@@ -1352,11 +1361,11 @@ var HN = {
             k = 75, // Previous Item
             o = 79, // Open Story
             p = 80, // View Comments
-            h = 72; // Open Help
-            l = 76; // New tab
-            c = 67; // Comments in new tab
-            b = 66; // Open comments and link in new tab
-            shiftKey = 16; //allow modifier
+            h = 72, // Open Help
+            l = 76, // New tab
+            c = 67, // Comments in new tab
+            b = 66, // Open comments and link in new tab
+            shiftKey = 16; // allow modifier
         $(document).keydown(function(e){
           //Keyboard shortcuts disabled when search focused
           if (!HN.searchInputFocused && !e.ctrlKey) {
@@ -1364,7 +1373,7 @@ var HN = {
               HN.next_story();
             } else if (e.which == k) {
               HN.previous_story();
-            } else if (e.which == l){
+            } else if (e.which == l) {
               HN.open_story_in_new_tab();
             } else if (e.which == o) {
               HN.open_story_in_current_tab();
