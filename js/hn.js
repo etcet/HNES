@@ -398,7 +398,7 @@ var RedditComments = {
     node.collapsed = true;
     node.table.addClass('hnes-collapsed');
     preorder(node, function(n) { n.row.addClass('hnes-hidden'); count++; }, true);
-    node.collapser.text('[+] ' + (count == 1 ? '1 comment' :  count + ' comments'));
+    node.collapser.text('[+] ' + (count == 1 ? '(1 child)' :  '(' + count + ' children)'));
   },
 
   _expand: function(node) {

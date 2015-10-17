@@ -740,8 +740,7 @@ body .votearrow.rotate180 {
 .hnes-hidden,
 .hnes-collapsed p,
 .hnes-collapsed .comment,
-.hnes-collapsed .votearrow,
-.hnes-collapsed .comhead :not(.collapse)
+.hnes-collapsed .votearrow
 {
     display: none;
 }
