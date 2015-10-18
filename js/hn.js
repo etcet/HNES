@@ -282,7 +282,8 @@ var RedditComments = {
     // array may be longer than the real data because dead
     // comments are ignored.
     var nodeList = new Array(comments.find('table').length + 1),
-        nodeIndex = 1;
+        nodeIndex = 1,
+        deleted = 0;
 
     nodeList[0] = {id: 'root', level: 0, children: [] };
 
@@ -309,9 +310,14 @@ var RedditComments = {
      
       //add id attr to comment
       var id = $("a[href*=item]", comhead);
-      if (!id.length) return true;
-      id = id[0].href;
-      id = id.substr(id.indexOf("=") + 1);
+      if (!id.length) {
+        $this.addClass("hnes-deleted");
+        id = 'deleted' + deleted++;
+      }
+      else {
+        id = id[0].href;
+        id = id.substr(id.indexOf("=") + 1);
+      }
       $this.attr("id", id);
 
       //move reply link outside of comment span if it's in there

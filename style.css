@@ -749,6 +749,10 @@ body .votearrow.rotate180 {
     margin-left: 12px;
 }
 
+.hnes-collapsed.hnes-deleted .collapse {
+    margin-left: -2px;
+}
+
 .hnes-new .comment-table td:first-child {
     border-right: 2px solid #F60;
 }
