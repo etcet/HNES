@@ -1033,13 +1033,15 @@ var HN = {
 
     formatScore: function() {
       $('.subtext').each(function(){
-        var score = $(this).find('span:first');
-        var as = $(this).find('a');
+        var $this = $(this);
+
+        var score = $this.find('span:first');
+        var as = $this.find('a');
         var comments;
 
         comments = $(as[as.length - 1]);
 
-        var by = $(this).find('a:eq(0)');
+        var by = $this.find('a:eq(0)');
 
         if (score.length == 0)
           score = $("<span/>").text('0');
@@ -1072,11 +1074,19 @@ var HN = {
 
         var score_el = $('<td/>').append(score);
         var comments_el = $('<td/>').append(comments);
-        $(this).parent().prev().prepend(score_el);
-        $(this).parent().prev().prepend(comments_el);
-        $(this).parent().prev().find('.title').append(by_el);
-        $(this).parent().next().remove();
-        $(this).parent().remove();
+        var $prev = $this.parent().prev();
+        $prev.prepend(score_el);
+        $prev.prepend(comments_el);
+        $prev.find('.title').append(by_el);
+        $this.parent().next().remove();
+        $this.parent().remove();
+
+        $('<span />').addClass('hnes-actions').append(
+            $this.find('a[href^=flag]'),
+            $this.find('a[href^=vouch]'),
+            $this.find('a[href^="https://hn.algolia.com/?query="]'),
+            $this.find('a[href^="https://www.google.com/search?q="]')
+        ).insertAfter(by_el);
       });
     },
 
