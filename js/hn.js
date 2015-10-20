@@ -144,8 +144,16 @@ var CommentTracker = {
 
   highlightNewComments: function(last_id) {
     $('.comment-table').each(function() {
-      if ($(this).attr('id') > last_id) {
-       $(this).find('td:eq(0)').css('border-right', '2px solid #f60'); 
+      var id = $(this).attr('id'),
+        comment = RedditComments.nodeMap[id];
+
+      if (id > last_id) {
+        comment.row.addClass('hnes-new');
+        comment = comment.parent;
+        while (comment && comment.level > 0) {
+          comment.row.addClass('hnes-new-parent');
+          comment = comment.parent;
+        }
       }
     });
   },
@@ -257,8 +265,10 @@ var CommentTracker = {
 
 var RedditComments = {
   init: function(comments) {
+    var self = this;
+
     var collapse_button = $('<span/>').addClass('collapse')
-                                      .text('[−]')
+                                      .text('[\u2013]')
                                       .attr('title', 'Collapse comment');
     var link_to_parent = $('<span/>').text(' | ')
                                      .append($('<a/>')
@@ -267,7 +277,17 @@ var RedditComments = {
                                      .attr('title', 'Go to parent')
                                      .addClass('parent-link'));
 
-    comments.find('table').each(function() {
+    // Allocate an array for a the sequential list of nodes
+    // which is used to build parent/child map below. This
+    // array may be longer than the real data because dead
+    // comments are ignored.
+    var nodeList = new Array(comments.find('table').length + 1),
+        nodeIndex = 1,
+        deleted = 0;
+
+    nodeList[0] = {id: 'root', level: 0, children: [] };
+
+    comments.find('table').each(function(i) {
       var $this = $(this);
       $this.addClass("comment-table");
 
@@ -290,9 +310,14 @@ var RedditComments = {
      
       //add id attr to comment
       var id = $("a[href*=item]", comhead);
-      if (!id.length) return true;
-      id = id[0].href;
-      id = id.substr(id.indexOf("=") + 1);
+      if (!id.length) {
+        $this.addClass("hnes-deleted");
+        id = 'deleted' + deleted++;
+      }
+      else {
+        id = id[0].href;
+        id = id.substr(id.indexOf("=") + 1);
+      }
       $this.attr("id", id);
 
       //move reply link outside of comment span if it's in there
@@ -308,7 +333,41 @@ var RedditComments = {
       if (comment_is_dead) {
         comment_is_dead.parent().next().remove();
       }
+
+      nodeList[nodeIndex++] = { id: id, level: level + 1, children: [], table: $this, row: $this.parent().parent(), collapser: $this.find('.collapse') };
+
     });
+
+    // Build the node map. This could certainly be done in the main
+    // loop above, but we're not dealing with enough volume to
+    // warrant that mess. Long threads are ~1000 comments.
+    var s = [], m = { root: nodeList[0] };
+    for (var i = 0, j = 1, data = nodeList; j < data.length && data[j]; i++, j++) {
+      var p = data[i], c = data[j];
+      if (c.level > p.level) s.push(p.id);
+      for (var x = 0; x < p.level - c.level; x++) s.pop();
+      c.parent = m[s[s.length - 1]] || data[0];
+      m[c.parent.id].children.push(c);
+      m[c.id] = c;
+    }
+    self.nodeMap = m;
+
+    // restore prior collapses
+    HN.getLocalStorage(CommentTracker.getInfo().id + '-collapsed', function(response) {
+      if (!response.data) return;
+      var collapsed = JSON.parse(response.data);
+      for (var i = 0; i < collapsed.length; i++) {
+        RedditComments._collapse(m[collapsed[i]]);
+      }
+    });
+
+    $('.item-header .subtext').append(document.createTextNode(' | ')).append(
+        $('<a href="#">expand all</a>').click(function(e) {
+          e.preventDefault();
+          preorder(RedditComments.nodeMap.root, function(n) { if (n.collapsed) RedditComments._expand(n); }); 
+          HN.setLocalStorage(CommentTracker.getInfo().id + '-collapsed', '[]');
+        })
+    );
   },
 
   goToParent: function(e) {
@@ -334,68 +393,45 @@ var RedditComments = {
   },
 
   collapse: function(e) {
-    var $e = $(e.target);
-    var el = $e.closest("table");
-    var comment_row = el.parent().parent();
-    var indent = Number(el.attr('level'));
-    //var indent = RedditComments.stripPx(comment_row.find('td:eq(1) img').css('width'));
+    var commentId = $(e.target).closest('tr.athing').find('.comment-table').attr('id'),
+        node = RedditComments.nodeMap[commentId];
+    (node.collapsed ? RedditComments._expand : RedditComments._collapse)(node);
+    RedditComments._storeCollapsed();
+  },
 
-    var has_children = false;
-    var has_visible_children = false;
-    var next_row = comment_row.next();
-    var next_indent = Number(next_row.find('.comment-table').attr('level'));
-    //var next_indent = RedditComments.stripPx(next_row.find('td:eq(1) img').css('width'));
-    if (indent < next_indent) {
-      has_children = true;
-      has_visible_children = next_row.is(":visible");
-    }
+  _collapse: function(node) {
+    var count = 1;
+    node.collapsed = true;
+    node.table.addClass('hnes-collapsed');
+    preorder(node, function(n) { n.row.addClass('hnes-hidden'); count++; }, true);
+    node.collapser.text('[+] ' + (count == 1 ? '(1 child)' :  '(' + count + ' children)'));
+  },
 
-    var num_children = 0;
-    if (has_children) {
-      do {
-        var next_row = comment_row.next();
-        var next_indent = Number(next_row.find('.comment-table').attr('level'));
-        //var next_indent = RedditComments.stripPx(next_row.find('td:eq(1) img').css('width'));
+  _expand: function(node) {
+    node.collapsed = false;
+    node.table.removeClass('hnes-collapsed');
+    node.collapser.text('[\u2013]');
+    preorder(node, function(n) { n.row.removeClass('hnes-hidden'); return n.collapsed; });
+  },
 
-        if (indent < next_indent) {
-          if (has_visible_children) {
-            next_row.attr('visible', next_row.is(":visible"));
-            next_row.hide();
-          }
-          else {
-            if (next_indent - indent == 1 || 
-                next_row.attr('visible') == "true") {
-              next_row.show();
-            }
-          }
-          num_children += 1;
-        }
+  _storeCollapsed: function() {
+    var itemId = CommentTracker.getInfo().id;
+    var collapsed = [];
+    preorder(RedditComments.nodeMap.root, function(n) {
+      if (n.collapsed) collapsed.push(n.id);
+    });
+    HN.setLocalStorage(itemId + '-collapsed', JSON.stringify(collapsed));
+  }
 
-        comment_row = next_row;
+}
 
-      } while (indent < next_indent);
-    }
-
-    var def = el.find('.default');
-    if (has_visible_children || !el.hasClass('collapsed')) {
-      var child_str = (num_children > 0 ? " (" + num_children + " child" + (num_children == 1? "" : "ren") + ")" : "");
-      $e.text("[+]" + child_str)
-        .attr('title', 'Restore comment')
-        .css('margin-left', def.prev().width() + 2 + 'px');
-      // Hide everything but the comhead element.
-      def.children('.comment').hide();
-      def.children('.reply').hide();
-      def.prev().hide();
-      el.addClass('collapsed');
-    }
-    else {
-      $e.text("[−]")
-        .attr('title', 'Collapse comment')
-        .css('margin-left', '');
-      def.find('div').siblings().show();
-      def.prev().show();
-      el.removeClass('collapsed');
-    }
+function preorder(n, visit, skip) {
+  var die;
+  if (!n) return;
+  if (!skip) die = visit(n);
+  if (die) return;
+  for (var i = 0; i < n.children.length; i++) {
+    preorder(n.children[i], visit);
   }
 }
 
@@ -463,16 +499,15 @@ var HN = {
           function remove_first_tr() {
             $("body #content td table tbody tr").filter(":first").remove();
           }
-          if (pathname == '/show') {
-            remove_first_tr();
-          }
           if (pathname == '/jobs') {
             $("body").attr("id", "jobs-body");
           }
           if (pathname == '/show' || pathname == '/jobs') {
-            var blurb = $("body #content td table tbody tr td:nth-child(3)").filter(':first').html();
             remove_first_tr();
-            $("body #content table").before("<p class='blurb'>"+blurb+"</p>");
+            var blurbRow = $("body #content td table tbody tr:not(.athing):first"),
+                blurb = blurbRow.find("td:last").html();
+            blurbRow.remove();
+            $("body #content table").before($("<p>").addClass("blurb").html(blurb));
           }
         }
         else if (pathname == '/edit') {
