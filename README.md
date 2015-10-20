@@ -79,3 +79,4 @@ Thanks to alanc10n for fixing issue 66
 
 Thanks to sglantz for adding support for topcolor, issue 52
 
+Thanks to ibejoeb for fixing the collapsible comments and other improvements.
