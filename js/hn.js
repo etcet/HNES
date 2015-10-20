@@ -1077,6 +1077,7 @@ var HN = {
         comments = $(as[as.length - 1]);
 
         var by = $this.find('a:eq(0)');
+        var at = $this.find('a:eq(1)');
 
         if (score.length == 0)
           score = $("<span/>").text('0');
@@ -1122,6 +1123,8 @@ var HN = {
             $this.find('a[href^="https://hn.algolia.com/?query="]'),
             $this.find('a[href^="https://www.google.com/search?q="]')
         ).insertAfter(by_el);
+
+        $('<span />').addClass('hnes-age').text(at.text()).insertAfter(by_el);
       });
     },
 
