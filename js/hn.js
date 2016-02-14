@@ -1033,13 +1033,13 @@ var HN = {
         if (response.data)
           userInfo = JSON.parse(response.data);
 
-        if (userInfo.upvotes) { // If we already have upvoted this user before.
-          userInfo.upvotes += value;
+        if (userInfo.votes) { // If we already have up/downvoted this user before.
+          userInfo.votes += value;
           HN.setLocalStorage(author, JSON.stringify(userInfo));
-          commenter.next().text(userInfo.upvotes); // Update the upvote count
+          commenter.next().text(userInfo.votes); // Update the upvote count
         }
-        else { // If this is our first upvote for this user.
-          userInfo.upvotes = value;
+        else { // If this is our first up/downvote for this user.
+          userInfo.votes = value;
           HN.setLocalStorage(author, JSON.stringify(userInfo));
           HN.addUserScore(commenter, value); // Set the upvote count
         }
@@ -1055,18 +1055,18 @@ var HN = {
             var userInfo = JSON.parse(response.data);
             if (typeof userInfo === "number") {
               /*Convert the legacy format. 
-                Upvotes used to be saved in localStorage as (for example) etcet: '1', but are now etcet: '{"upvotes": 1}'.
+                Upvotes used to be saved in localStorage as (for example) etcet: '1', but are now etcet: '{"votes": 1}'.
                 This change in format was made so that tag information can be saved in the same location;
-                i.e. it will soon be saved as etcet: '{"upvotes": 1, "tag": "Creator of HNES"}'.
+                i.e. it will soon be saved as etcet: '{"votes": 1, "tag": "Creator of HNES"}'.
 
                 The conversion only needs to be done here, since this executes on page load,
                 which means that whatever username you see will have undergone the conversion to the new format.*/
-              userInfo = {'upvotes': userInfo};
+              userInfo = {'votes': userInfo};
               HN.setLocalStorage(name, JSON.stringify(userInfo));
               console.log('Converted legacy format for user', name);
             }
-            if (userInfo.upvotes)
-              HN.addUserScore(this_el, userInfo.upvotes);
+            if (userInfo.votes)
+              HN.addUserScore(this_el, userInfo.votes);
           }
         });
       });
