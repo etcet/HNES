@@ -1029,15 +1029,19 @@ var HN = {
 
       var commenter = $('.commenter:contains('+author+')');
       HN.getLocalStorage(author, function(response) {
-        if (response.data) {
-          var count = Number(response.data);
-          var new_count = count + value;
-          HN.setLocalStorage(author, new_count);
-          commenter.next().text(new_count);
+        var userInfo = {};
+        if (response.data)
+          userInfo = JSON.parse(response.data);
+
+        if (userInfo.upvotes) { // If we already have upvoted this user before.
+          userInfo.upvotes += value;
+          HN.setLocalStorage(author, JSON.stringify(userInfo));
+          commenter.next().text(userInfo.upvotes); // Update the upvote count
         }
-        else {
-          HN.setLocalStorage(author, value);
-          HN.addUserScore(commenter, value);
+        else { // If this is our first upvote for this user.
+          userInfo.upvotes = value;
+          HN.setLocalStorage(author, JSON.stringify(userInfo));
+          HN.addUserScore(commenter, value); // Set the upvote count
         }
       });
     },
@@ -1047,8 +1051,23 @@ var HN = {
         var this_el = $(this);
         var name = this_el.text();
         HN.getLocalStorage(name, function(response) {
-          if (response.data)
-            HN.addUserScore(this_el, response.data);
+          if (response.data) {
+            var userInfo = JSON.parse(response.data);
+            if (typeof userInfo === "number") {
+              /*Convert the legacy format. 
+                Upvotes used to be saved in localStorage as (for example) etcet: '1', but are now etcet: '{"upvotes": 1}'.
+                This change in format was made so that tag information can be saved in the same location;
+                i.e. it will soon be saved as etcet: '{"upvotes": 1, "tag": "Creator of HNES"}'.
+
+                The conversion only needs to be done here, since this executes on page load,
+                which means that whatever username you see will have undergone the conversion to the new format.*/
+              userInfo = {'upvotes': userInfo};
+              HN.setLocalStorage(name, JSON.stringify(userInfo));
+              console.log('Converted legacy format for user', name);
+            }
+            if (userInfo.upvotes)
+              HN.addUserScore(this_el, userInfo.upvotes);
+          }
         });
       });
     },
