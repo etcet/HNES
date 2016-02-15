@@ -533,7 +533,7 @@ var HN = {
                  pathname == '/bestcomments' || 
                  pathname == '/noobcomments' ) {
           HN.addClassToCommenters();
-          HN.addScoreToUsers($('body'));
+          HN.addInfoToUsers($('body'));
         }
         else if (pathname == '/user') {
           HN.doUserProfile();
@@ -987,7 +987,7 @@ var HN = {
       });
 
       HN.removeCommentSpacing();
-      HN.addScoreToUsers(comments);
+      HN.addInfoToUsers(comments);
       RedditComments.init(comments);
       HN.replaceVoteButtons(false);
     },
@@ -1010,9 +1010,10 @@ var HN = {
       }
     },
 
-    addScoreToUsers: function(commentsblock) {
+    addInfoToUsers: function(commentsblock) {
       var commenters = $('.commenter');
-      HN.getUserScores(commenters);
+      HN.getUserInfo(commenters);
+
       var vote_links = commentsblock.find($('a[onclick="return vote(this)"]'));
       var upvote_links = $(vote_links).filter('a[id^="up_"]');
       var downvote_links = $(vote_links).filter('a[id^="down_"]');
@@ -1022,9 +1023,32 @@ var HN = {
       downvote_links.click(function(e) {
         HN.upvoteUser(e, -1);
       });
+
+      $(document).on('click', '.tag, .tagText', function(e) {
+      // Using .on() so that the event applies to all elements generated in the future
+        HN.editUserTag(e);
+      });
+
+      $(document).on('keyup', '.tagEdit', function(e) {
+        var code = e.keyCode || e.which;
+        var parent = $(e.target).parent();
+        if (code === 13) { // Enter
+          var author = parent.find('.commenter').text();
+          var tagEdit = parent.find('.tagEdit');
+          HN.setUserTag(author, tagEdit.val());
+        }
+        if (code === 27) { // Escape
+          var tagText = parent.find('.tagText');
+          var tagEdit = parent.find('.tagEdit');
+          tagText.show();
+          tagEdit.val(tagText.text())
+                 .hide();
+        }
+      });
+
     },
 
-    upvoteUser: function(e, value) {
+    upvoteUser: function(e, value) { // Adds value to the user's upvote count, saves and displays it.
       var author = $(e.target).parent().parent().parent().next().find('.commenter').text();
 
       var commenter = $('.commenter:contains('+author+')');
@@ -1046,7 +1070,7 @@ var HN = {
       });
     },
 
-    getUserScores: function(commenters) {
+    getUserInfo: function(commenters) { // Gets the user's votes and tag, and displays them.
       commenters.each(function() {
         var this_el = $(this);
         var name = this_el.text();
@@ -1065,9 +1089,16 @@ var HN = {
               HN.setLocalStorage(name, JSON.stringify(userInfo));
               console.log('Converted legacy format for user', name);
             }
-            if (userInfo.votes)
+
+            if (userInfo.tag) // If the user has a tag, show it.
+              HN.addUserTag(this_el, userInfo.tag);
+            else // Otherwise, just add an empty tag.
+              HN.addUserTag(this_el);
+            if (userInfo.votes) // If the user has a vote count, show it.
               HN.addUserScore(this_el, userInfo.votes);
           }
+          else // If we don't have any data about the user, add an empty tag.
+            HN.addUserTag(this_el);
         });
       });
     },
@@ -1079,6 +1110,62 @@ var HN = {
                       .text(upvotes)
                       .attr('title', 'User score')
       );
+    },
+
+    addUserTag: function(el, tag) {
+      var username = el.text();
+      el.after(
+          $('<img/>').addClass('tag')
+                     .attr('src', chrome.extension.getURL('/images/tag.svg'))
+                     .attr('title', 'Tag user')
+      );
+      el.after(
+        $('<span/>').addClass('tagText')
+                    .text(tag)
+                    .attr('title', 'User tag')
+      );
+      el.after(
+        $('<input/>').attr('type', 'text')
+                     .addClass('tagEdit')
+                     .attr('placeholder', 'Tag ' + username)
+                     .val(tag)
+      )
+      el.parent().find('.tagEdit').hide();
+    },
+
+    editUserTag: function(e) {
+      var parent = $(e.target).parent();
+      var tagText = parent.find('.tagText');
+      var tagEdit = parent.find('.tagEdit');
+      
+      // Go in edit mode
+      tagText.hide();
+      tagEdit.show();
+      tagEdit.focus();
+    },
+
+    setUserTag: function(author, tag) {
+      HN.getLocalStorage(author, function(response) {
+        var userInfo = {};
+        if (response.data)
+          userInfo = JSON.parse(response.data);
+        userInfo.tag = tag;
+        HN.setLocalStorage(author, JSON.stringify(userInfo));
+      });
+
+      var commenter = $('.commenter:contains('+author+')');
+      for (i = 0; i < commenter.length; i++) {
+        var tagText = $(commenter[i]).parent().find('.tagText');
+        var tagEdit = $(commenter[i]).parent().find('.tagEdit');
+
+        // Change it all to the new value:
+        tagText.text(tag);
+        tagEdit.val(tag);
+
+        // Show the text, hide the input:
+        tagEdit.hide();
+        tagText.show();
+      }
     },
 
     removeNumbers: function() {
