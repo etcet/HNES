@@ -1149,7 +1149,10 @@ var HN = {
         var userInfo = {};
         if (response.data)
           userInfo = JSON.parse(response.data);
-        userInfo.tag = tag;
+        if (tag !== '')
+          userInfo.tag = tag;
+        else
+          delete userInfo.tag;
         HN.setLocalStorage(author, JSON.stringify(userInfo));
       });
 
