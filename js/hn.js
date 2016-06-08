@@ -148,10 +148,11 @@ var CommentTracker = {
         comment = RedditComments.nodeMap[id];
 
       if (id > last_id) {
-        comment.row.addClass('hnes-new');
+        comment.row.removeClass('hnes-new-parent').addClass('hnes-new');
         comment = comment.parent;
         while (comment && comment.level > 0) {
-          comment.row.addClass('hnes-new-parent');
+          if (!comment.row.hasClass('hnes-new'))
+            comment.row.addClass('hnes-new-parent');
           comment = comment.parent;
         }
       }
