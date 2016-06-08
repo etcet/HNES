@@ -267,7 +267,7 @@ var RedditComments = {
   init: function(comments) {
     var self = this;
 
-    var collapse_button = $('<span/>').addClass('collapse')
+    var collapse_button = $('<a/>').addClass('collapse')
                                       .text('[\u2013]')
                                       .attr('title', 'Collapse comment');
     var link_to_parent = $('<span/>').text(' | ')
