@@ -755,6 +755,7 @@ body .votearrow.rotate180 {
     content: " ]";
 }
 
+
 .hnes-hidden {
     background-color: #ccc;
 }
@@ -783,3 +784,25 @@ body .votearrow.rotate180 {
     border-right: 2px solid #BC9B85;
 }
 
+.tag, .tagText:not(:empty) {
+    margin-left: 4px;
+    cursor: pointer;
+}
+
+.tag {
+    margin-bottom: -2px;
+}
+
+.tagText:not(:empty) {
+  border-color: #828282;
+  border-radius: 1px;
+  border-width: 1px;
+  border-style: solid;
+  padding: 0 4px;
+}
+
+.tagEdit {
+    padding-left: 2px;
+    width: 120px;
+    margin: 0 4px;
+}

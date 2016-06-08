@@ -40,6 +40,7 @@
       }
     ],
     "web_accessible_resources": [
-      "images/spin.gif"
+      "images/spin.gif",
+      "images/tag.svg"
     ]
 }

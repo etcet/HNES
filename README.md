@@ -28,6 +28,7 @@ Features
   * p - View comments
   * c - View comments in a new tab
   * b - Open both the comments and the story in new tabs
+* Tag users
 
 Chrome web store link
 ---------------------
@@ -39,7 +40,7 @@ TODO
 * Put search in a better place + ajax auto-complete
 * Do something with un-threaded comment lists (e.g. best comments)
 * Make profiles prettier
-* Allow user to highlight friends and make notes about users (ala RES)
+* Allow user to highlight friends (ala RES)
 * Show dead/grayed-out comments on mouse hover (or maybe a button)
 * Test / make it work when user can see downvotes
 
