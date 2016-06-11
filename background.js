@@ -1,5 +1,5 @@
 // Add event listeners
-chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   console.log('REQUEST', request.method, request)
   if (request.method == "getAllLocalStorage") {
     sendResponse({data: localStorage});

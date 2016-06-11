@@ -630,14 +630,14 @@ var HN = {
     },
 
     getLocalStorage: function(key, callback) {
-      chrome.extension.sendRequest({
+      chrome.runtime.sendMessage({
         method: "getLocalStorage",
         key: key
       }, callback);
     },
 
     setLocalStorage: function(key, value) {
-      chrome.extension.sendRequest(
+      chrome.runtime.sendMessage(
         { method: "setLocalStorage",
           key: key,
           value: value },
@@ -1617,7 +1617,7 @@ var HN = {
 //show new comment count on hckrnews.com
 if (window.location.host == "hckrnews.com") {
   $('ul.entries li').each(function() {
-    chrome.extension.sendRequest({method: "getLocalStorage", key: Number($(this).attr('id'))}, function(response) {
+    chrome.runtime.sendMessage({method: "getLocalStorage", key: Number($(this).attr('id'))}, function(response) {
       if (response.data != undefined) {
         var data = JSON.parse(response.data);
         var id = data.id;
