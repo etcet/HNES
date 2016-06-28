@@ -1019,25 +1019,27 @@ var HN = {
         HN.upvoteUser(e, -1);
       });
 
-      $(document).on('click', '.tag, .tagText', function(e) {
+      $(document).on('click', '.hnes-tag, .hnes-tagText', function(e) {
       // Using .on() so that the event applies to all elements generated in the future
         HN.editUserTag(e);
       });
 
-      $(document).on('keyup', '.tagEdit', function(e) {
-        var code = e.keyCode || e.which;
-        var parent = $(e.target).parent();
+      $(document).on('keyup', '.hnes-tagEdit', function(e) {
+        var code = e.keyCode || e.which,
+            parent = $(e.target).parent(),
+            gp = parent.parent();
+
         if (code === 13) { // Enter
-          var author = parent.find('.commenter').text();
-          var tagEdit = parent.find('.tagEdit');
+          var author = gp.find('.commenter').text(),
+              tagEdit = parent.find('.hnes-tagEdit');
           HN.setUserTag(author, tagEdit.val());
+          parent.removeClass('edit');
         }
         if (code === 27) { // Escape
-          var tagText = parent.find('.tagText');
-          var tagEdit = parent.find('.tagEdit');
-          tagText.show();
-          tagEdit.val(tagText.text())
-                 .hide();
+          var tagText = gp.find('.hnes-tagText'),
+              tagEdit = parent.find('.hnes-tagEdit');
+          tagEdit.val(tagText.text());
+          parent.removeClass('edit');
         }
       });
 
@@ -1108,34 +1110,27 @@ var HN = {
     },
 
     addUserTag: function(el, tag) {
-      var username = el.text();
-      el.after(
-          $('<img/>').addClass('tag')
-                     .attr('src', chrome.extension.getURL('/images/tag.svg'))
-                     .attr('title', 'Tag user')
-      );
-      el.after(
-        $('<span/>').addClass('tagText')
-                    .text(tag)
-                    .attr('title', 'User tag')
-      );
-      el.after(
-        $('<input/>').attr('type', 'text')
-                     .addClass('tagEdit')
-                     .attr('placeholder', 'Tag ' + username)
-                     .val(tag)
-      )
-      el.parent().find('.tagEdit').hide();
+      var username = el.text(),
+          tagContainer = $('<span>').addClass('hnes-tag-cont');
+
+      tagContainer.append(
+          $('<img/>').addClass('hnes-tag')
+              .attr('src', chrome.extension.getURL('/images/tag.svg'))
+              .attr('title', 'Tag user'),
+          $('<span/>').addClass('hnes-tagText')
+              .text(tag)
+              .attr('title', 'User tag'),
+          $('<input/>').attr('type', 'text')
+              .addClass('hnes-tagEdit')
+              .attr('placeholder', 'Tag ' + username)
+              .val(tag)
+      ).insertAfter(el);
     },
 
     editUserTag: function(e) {
-      var parent = $(e.target).parent();
-      var tagText = parent.find('.tagText');
-      var tagEdit = parent.find('.tagEdit');
-      
-      // Go in edit mode
-      tagText.hide();
-      tagEdit.show();
+      var parent = $(e.target).parent(),
+          tagEdit = parent.find('.hnes-tagEdit');
+      parent.addClass('edit');
       tagEdit.focus();
     },
 
@@ -1153,16 +1148,12 @@ var HN = {
 
       var commenter = $('.commenter:contains('+author+')');
       for (i = 0; i < commenter.length; i++) {
-        var tagText = $(commenter[i]).parent().find('.tagText');
-        var tagEdit = $(commenter[i]).parent().find('.tagEdit');
+        var tagText = $(commenter[i]).parent().find('.hnes-tagText'),
+            tagEdit = $(commenter[i]).parent().find('.hnes-tagEdit');
 
         // Change it all to the new value:
         tagText.text(tag);
         tagEdit.val(tag);
-
-        // Show the text, hide the input:
-        tagEdit.hide();
-        tagText.show();
       }
     },
 
