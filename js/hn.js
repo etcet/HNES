@@ -266,7 +266,8 @@ var CommentTracker = {
 
 var RedditComments = {
   init: function(comments) {
-    var self = this;
+    var self = this,
+        bareComments = comments[0];
 
     var collapse_button = $('<a/>').addClass('collapse')
                                       .text('[\u2013]')
@@ -282,44 +283,37 @@ var RedditComments = {
     // which is used to build parent/child map below. This
     // array may be longer than the real data because dead
     // comments are ignored.
-    var nodeList = new Array(comments.find('table').length + 1),
+    var commentTables = bareComments.querySelectorAll('table'),
+        nodeList = new Array(commentTables.length + 1),
         nodeIndex = 1,
         deleted = 0;
 
     nodeList[0] = {id: 'root', level: 0, children: [] };
 
-    comments.find('table').each(function(i) {
-      var $this = $(this);
-      $this.addClass("comment-table");
+    for (var i = 0; i < commentTables.length; i++) {
+      var thisCommentTable = commentTables[i],
+          $this = $(thisCommentTable),
+          comhead = $this.find("span.comhead"),
+          level = Math.floor(thisCommentTable.querySelector('img').getAttribute('width') / 40),
+          idEl = comhead.find("a[href*=item]"),
+          isDeleted = (idEl.length == 0),
+          id = deleted ? 'deleted' + deleted++ : /id=(\d+)/.exec(idEl[0].href)[1],
+          newClasses = 'comment-table' + (isDeleted ? ' hnes-deleted' : '');
 
-      //get and store indentation
-      var level = Math.floor($this.find('img')[0].width / 40);
-      $this.attr('level', level);
+      $this.addClass(newClasses);
+      $this.attr({ 'id': id, 'level': level });
+
+      comhead.parent().removeAttr('style');
 
       //create default collapsing markup
-      var comhead = $("span.comhead", this);
       comhead.prepend(
         collapse_button.clone().click(RedditComments.collapse)
       );
-      comhead.parent().removeAttr('style');
 
       //add link to parent if the comment has any indentation
-      if (level > 0) 
-        comhead.append(
-          link_to_parent.clone().click(RedditComments.goToParent)
-        );
-     
-      //add id attr to comment
-      var id = $("a[href*=item]", comhead);
-      if (!id.length) {
-        $this.addClass("hnes-deleted");
-        id = 'deleted' + deleted++;
+      if (level > 0) {
+        comhead.append(link_to_parent.clone().click(RedditComments.goToParent));
       }
-      else {
-        id = id[0].href;
-        id = id.substr(id.indexOf("=") + 1);
-      }
-      $this.attr("id", id);
 
       //move reply link outside of comment span if it's in there
       //very weird formatting in hn's part
@@ -337,7 +331,7 @@ var RedditComments = {
 
       nodeList[nodeIndex++] = { id: id, level: level + 1, children: [], table: $this, row: $this.parent().parent(), collapser: $this.find('.collapse') };
 
-    });
+    }
 
     // Build the node map. This could certainly be done in the main
     // loop above, but we're not dealing with enough volume to
