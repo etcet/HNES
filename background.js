@@ -11,10 +11,24 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     localStorage[request.key] = request.value;
     sendResponse({});
   }
+  else if (request.method == "getUserData") {
+    var data = getUserData(request.usernames);
+    sendResponse({ data: data });
+  }
   else {
     sendResponse({});
   }
 });
+
+function getUserData(usernames) {
+  var results = {};
+  for (var i = 0; i < usernames.length; i++) {
+    var key = usernames[i],
+        value = localStorage[key];
+    results[key] = value;
+  }
+  return results;
+}
 
 //expire old entries
 (function() {

@@ -755,35 +755,6 @@ body .votearrow.rotate180 {
     content: " ]";
 }
 
-
-.hnes-hidden {
-    background-color: #ccc;
-}
-
-.hnes-hidden,
-.hnes-collapsed p,
-.hnes-collapsed .comment,
-.hnes-collapsed .votearrow
-{
-    display: none;
-}
-
-.hnes-collapsed .collapse {
-    margin-left: 13px;
-}
-
-.hnes-collapsed.hnes-deleted .collapse {
-    margin-left: -2px;
-}
-
-.hnes-new .comment-table td:first-child {
-    border-right: 2px solid #F60;
-}
-
-.hnes-new-parent .comment-table td:first-child {
-    border-right: 2px solid #BC9B85;
-}
-
 .hnes-tag, .hnes-tagText:not(:empty) {
     margin-left: 4px;
     cursor: pointer;
@@ -813,4 +784,107 @@ body .votearrow.rotate180 {
 }
 .hnes-tag-cont.edit .hnes-tagEdit {
     display: initial;
+}
+
+#hnmain table.comment-tree {
+  display: none;
+}
+
+#hnes-comments {
+  color: black;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-size: 13px;
+  line-height: 1.5em;
+}
+
+#hnes-comments a, #hnes-comments a:visited {
+  color: black;
+}
+
+#hnes-comments .replies {
+  margin: 8px 0 0 16px;
+}
+
+.hnes-comment {
+  padding: 8px;
+  margin: 0 0 16px 0;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 3px;
+}
+
+.hnes-comment header {
+  display: flex;
+  font-size: 93%;
+  color: rgb(152, 152, 152);
+}
+
+.hnes-comment header > span {
+  margin-right: 4px;
+}
+
+.hnes-comment .upvote {
+  display: block;
+  height: 10px;
+  width: 10px;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="10" height="10"><path d="M 1,9 5,1 9,9 z" fill="#828282"/></svg>');
+}
+
+.hnes-comment .downvote {
+  display: block;
+  height: 10px;
+  width: 10px;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="10" height="10"><path d="M 1,1 5,9 9,1 z" fill="#828282"/></svg>');
+}
+
+.hnes-comment .reply-count {
+  display: none;
+}
+
+.hnes-comment.collapsed .reply-count {
+  display: initial;
+}
+
+.hnes-comment .text {
+  max-width: 800px;
+}
+
+.hnes-comment.level-odd {
+  background-color: #FFFFFD;
+  border-color: #ABAB93;
+}
+
+.hnes-comment.level-even {
+  background-color: #F6F6EF;
+  border-color: #CECEC0;
+}
+
+.hnes-comment:last-child {
+  margin: 0;
+}
+
+.hnes-comment a:hover {
+  text-decoration: underline;
+}
+
+.hnes-comment.collapsed > section {
+  display: none;
+}
+
+.hnes-comment .collapser {
+  display: block;
+  width: 1em;
+  cursor: pointer;
+}
+
+.hnes-comment .collapser::after {
+  content: "[\2013]";
+}
+
+.hnes-comment.collapsed .collapser::after {
+  content: "[+]";
+}
+
+.hnes-comment footer {
+  font-size: smaller;
 }

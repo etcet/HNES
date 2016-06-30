@@ -145,7 +145,7 @@ var CommentTracker = {
   highlightNewComments: function(last_id) {
     $('.comment-table').each(function() {
       var id = $(this).attr('id'),
-        comment = RedditComments.nodeMap[id];
+        comment = HNComments.nodeMap[id];
 
       if (id > last_id) {
         comment.row.removeClass('hnes-new-parent').addClass('hnes-new');
@@ -263,9 +263,256 @@ var CommentTracker = {
   }
 }
 
+class HNComments {
+  constructor(storyId) {
+    var injector = document.createElement('div');
+    injector.innerHTML = `
+      <template id="hnes-comment-tmpl">
+          <div id="" class="hnes-comment" data-hnes-level="">
+              <header>
+                  <span class="collapser"></span>
+                  <span class="voter"><a href="#" class="upvote"></a><a href="#" class="downvote"></a></span>
+                  <span class="author"><a href=""></a></span>
+                  <span class="age"></span>
+                  <span class="reply-count"></span>
+              </header>
+              <section class="body">
+                  <div class="text">
+                  </div>
+                  <footer>
+                      <a class="reply">reply</a>
+                      <a class="permalink">permalink</a>
+                      <a class="parent">parent</a></span>
+                  </footer>
+              </section>
+              <section class="replies"></div>
+          </div>
+      </template>
+      `
+    this.commentTemplate = injector.firstElementChild;
+    this.storyId = storyId;
+  }
+
+  extractCommentParts(commentEl) {
+    const parts = [];
+    if (!commentEl) return parts;
+
+    const container = commentEl.firstElementChild;
+    if (!container) return parts;
+    
+    const p = document.createElement('p');
+
+    let n = container.firstChild;
+    while (n && !(n.nodeName == 'P' || n.nodeName == 'SPAN' || n.nodeName == 'DIV')) {
+      p.appendChild(n.cloneNode(true));
+      n = n.nextSibling;
+    }
+    parts.push(p);
+
+    while (n && n.nodeName != 'DIV') {
+      parts.push(n.cloneNode(true));
+      n = n.nextSibling;
+    }
+    return parts;
+  }
+
+  markupToNodeList(commentTree) {
+    if (!commentTree) return;
+
+    const commentTables = commentTree.querySelectorAll('tr.athing table');
+    if (!commentTables) return;
+
+    const nodeList = new Array(commentTables.length + 1);
+
+    let nodeIndex = 1,
+        deleted = 0;
+
+    nodeList[0] = { id: 'root', level: 0, children: [] };
+
+    for (let i = 0; i < commentTables.length; i++) {
+      const
+        t = commentTables[i],
+        level = (t.querySelector('img').getAttribute('width') / 40) + 1,
+        id = t.parentElement.parentElement.id,
+        upVoteEl = document.getElementById('up_' + id),
+        upVoteUrl = upVoteEl ? upVoteEl.href : '',
+        downVoteEl = document.getElementById('down_' + id),
+        downVoteUrl = downVoteEl ? downVoteEl.href : '',
+        isVoted = upVoteEl && (upVoteEl.style.visibility == 'hidden'),
+        replyEl = t.querySelector('.reply a'),
+        replyUrl = replyEl ? replyEl.href : '',
+        ageEl = t.querySelector('.age a'),
+        age = ageEl ? ageEl.textContent : '',
+        permalinkUrl = ageEl ? ageEl.href : '',
+        userEl = t.querySelector('a.hnuser'),
+        username = userEl ? userEl.textContent : '',
+        userUrl = userEl ? userEl.href : '',
+        commentEl = t.querySelector('span.comment'),
+        isDeleted  = !(commentEl && commentEl.firstElementChild),
+        textParts = isDeleted ? [] : this.extractCommentParts(commentEl);
+
+      nodeList[nodeIndex++] = { 
+        id,
+        level,
+        upVoteUrl,
+        downVoteUrl,
+        isVoted,
+        replyUrl,
+        age,
+        username,
+        userUrl,
+        isDeleted,
+        textParts,
+        permalinkUrl,
+        children: [],
+        isCollapsed: false,
+        isDirty: false,
+      }
+    };
+    return nodeList;
+  }
+
+  nodeListToTree(nodeList) {
+    const s = [], m = { root: nodeList[0] };
+    for (let i = 0, j = 1, data = nodeList; j < data.length && data[j]; i++, j++) {
+      const p = data[i], c = data[j];
+      if (c.level > p.level) s.push(p.id);
+      for (let x = 0; x < p.level - c.level; x++) s.pop();
+      c.parent = m[s[s.length - 1]] || data[0];
+      m[c.parent.id].children.push(c);
+      m[c.id] = c;
+    }
+    return m;
+  }
+
+  renderComment(c, into) {
+    const
+      kids = c.children,
+      oddOrEven = c.level % 2 ? 'odd' : 'even',
+      clone = document.importNode(this.commentTemplate.content, true),
+      commentEl = clone.firstElementChild,
+      voterEl = commentEl.querySelector('.voter'),
+      parentEl = commentEl.querySelector('.parent'),
+      authorEl = commentEl.querySelector('.author a');
+
+    c.el = commentEl;
+    commentEl.id = c.id;
+    commentEl.classList.add(`level-${oddOrEven}`);
+    commentEl.querySelector('.age').textContent = c.age;
+    if (c.descCount > 0) {
+      commentEl.querySelector('.reply-count').textContent = `(${c.descCount} repl${c.descCount == 1 ? 'y' : 'ies'})`;
+    }
+    commentEl.querySelector('.reply').href = c.replyUrl;
+    commentEl.querySelector('.permalink').href = c.permalinkUrl;
+    authorEl.textContent = c.username;
+    authorEl.href = c.userUrl;
+
+    if (c.isCollapsed) commentEl.classList.add('collapsed');
+
+    if (c.level == 1) {
+      parentEl.parentNode.removeChild(parentEl);
+    }
+    else {
+      parentEl.href = `#${c.parent.id}`;
+    }
+
+    if (c.isVoted) {
+      voterEl.classList.add('voted')
+    }
+    else {
+      commentEl.querySelector('a.upvote').href = c.upVoteUrl;
+      commentEl.querySelector('a.downvote').href = c.downVoteUrl;
+    }
+
+    for (let parts = c.textParts, textContainer = commentEl.querySelector('.text'), i = 0; i < parts.length; i++) {
+      textContainer.appendChild(parts[i]);
+    }
+
+    commentEl.querySelector('.collapser').addEventListener('click', e => {
+      e.preventDefault();
+      this.collapse(c);
+    }, true);
+
+    this.renderComments(kids, commentEl.querySelector('.replies'))
+    into.appendChild(clone);
+  }
+
+  renderComments(comments, into) {
+    for (let i = 0; i < comments.length; i++) {
+      this.renderComment(comments[i], into);
+    }
+  }
+
+  collapse(c) {
+    c.isCollapsed = !c.isCollapsed;
+    c.isDirty = true;
+    c.el.classList.toggle('collapsed', c.isCollapsed);
+    this.storeMeta();
+  }
+
+  getMeta() {
+    const toStore = {};
+    preorder(this.nodeMap.root, n => {
+      if (n.isDirty) toStore[n.id] = { 'isCollapsed': n.isCollapsed };
+    });
+    return toStore;
+  }
+
+  storeMeta(items) {
+    chrome.storage.local.set(this.getMeta());
+  }
+
+  loadMeta(nodeMap, callback) {
+    const keys = [];
+    preorder(nodeMap.root, n => {
+      keys.push(n.id);
+    });
+    chrome.storage.local.get(keys, items => {
+      callback(items);
+    })
+  }
+
+  prepare(nodeMap, callback) {
+    this.loadMeta(nodeMap, meta => {
+      const visit = (n) => {
+        let acc = 0;
+        for (let i = 0; i < n.children.length; i++) {
+          acc += visit(n.children[i], acc);
+        }
+        const res = acc + n.children.length;
+        n.descCount = res;
+        n.isCollapsed = (meta[n.id] && meta[n.id].isCollapsed);
+        return res;
+      };
+      visit(nodeMap.root);
+      callback(nodeMap);
+    });
+  }
+
+  apply() {
+    const commentTree = document.querySelector('#hnmain table.comment-tree');
+    if (!commentTree) {
+      console.warn('unrecognized markup detected');
+      return;
+    }
+
+    const nodeMap = this.nodeListToTree(this.markupToNodeList(commentTree));
+
+    this.prepare(nodeMap, nodeMap => {
+      this.nodeMap = nodeMap;
+      const commentsContainer = document.createElement('div');
+      commentsContainer.id = 'hnes-comments';
+      this.renderComments(this.nodeMap.root.children, commentsContainer);
+      commentTree.parentNode.replaceChild(commentsContainer, commentTree);
+    });
+  }
+}
 
 var RedditComments = {
+
   init: function(comments) {
+    if (comments.length < 1) return;
+
     var self = this,
         bareComments = comments[0];
 
@@ -307,12 +554,12 @@ var RedditComments = {
 
       //create default collapsing markup
       comhead.prepend(
-        collapse_button.clone().click(RedditComments.collapse)
+        collapse_button.clone().click(HNComments.collapse)
       );
 
       //add link to parent if the comment has any indentation
       if (level > 0) {
-        comhead.append(link_to_parent.clone().click(RedditComments.goToParent));
+        comhead.append(link_to_parent.clone().click(HNComments.goToParent));
       }
 
       //move reply link outside of comment span if it's in there
@@ -352,14 +599,14 @@ var RedditComments = {
       if (!response.data) return;
       var collapsed = JSON.parse(response.data);
       for (var i = 0; i < collapsed.length; i++) {
-        RedditComments._collapse(m[collapsed[i]]);
+        HNComments._collapse(m[collapsed[i]]);
       }
     });
 
     $('.item-header .subtext').append(document.createTextNode(' | ')).append(
         $('<a href="#">expand all</a>').click(function(e) {
           e.preventDefault();
-          preorder(RedditComments.nodeMap.root, function(n) { if (n.collapsed) RedditComments._expand(n); }); 
+          preorder(HNComments.nodeMap.root, function(n) { if (n.collapsed) HNComments._expand(n); }); 
           HN.setLocalStorage(CommentTracker.getInfo().id + '-collapsed', '[]');
         })
     );
@@ -389,9 +636,9 @@ var RedditComments = {
 
   collapse: function(e) {
     var commentId = $(e.target).closest('tr.athing').find('.comment-table').attr('id'),
-        node = RedditComments.nodeMap[commentId];
-    (node.collapsed ? RedditComments._expand : RedditComments._collapse)(node);
-    RedditComments._storeCollapsed();
+        node = HNComments.nodeMap[commentId];
+    (node.collapsed ? HNComments._expand : HNComments._collapse)(node);
+    HNComments._storeCollapsed();
   },
 
   _collapse: function(node) {
@@ -412,7 +659,7 @@ var RedditComments = {
   _storeCollapsed: function() {
     var itemId = CommentTracker.getInfo().id;
     var collapsed = [];
-    preorder(RedditComments.nodeMap.root, function(n) {
+    preorder(HNComments.nodeMap.root, function(n) {
       if (n.collapsed) collapsed.push(n.id);
     });
     HN.setLocalStorage(itemId + '-collapsed', JSON.stringify(collapsed));
@@ -511,6 +758,8 @@ var HN = {
         }
         else if (pathname == '/item' ||
                  pathname == "/more") {
+          let storyId = /id=(\d+)/.exec(window.location.search)[1];
+          HN.hnComments = new HNComments(storyId);
           HN.doCommentsList(pathname, track_comments);
         }
         else if (pathname == '/threads') {
@@ -594,8 +843,6 @@ var HN = {
       //$('.title a[rel="nofollow"]:contains(More)').parent().attr('id', 'more');
       //$('.title a[href="news2"]').parent().attr('id', 'more');
 
-      //remove spacing
-      HN.removeCommentSpacing();
       $('tr[style="height:7px"]').remove();
       $('tr[style="height:2px"]').remove();
 
@@ -613,16 +860,6 @@ var HN = {
       $('head').append('<link rel="stylesheet" type="text/css" href="news.css">');
     },
 
-    removeCommentSpacing: function() {
-      //remove spacing if comment doesn't have reply
-      $('font[size="1"]').each(function() {
-        if ($(this).text() == '-----')
-          $(this).remove();
-      });
-      $('tr[style="height:10px"]').remove();
-      $('br').remove();
-    },
-
     getLocalStorage: function(key, callback) {
       chrome.runtime.sendMessage({
         method: "getLocalStorage",
@@ -638,6 +875,13 @@ var HN = {
         function(response) {
           //console.log('RESPONSE', response.data);
         });
+    },
+
+    getUserData: function(usernames, callback) {
+      chrome.extension.sendRequest({
+        method: "getUserData",
+        usernames: usernames
+      }, callback);
     },
 
     doLogin: function() {
@@ -962,6 +1206,9 @@ var HN = {
     },
 
     doAfterCommentsLoad: function(comments) {
+      //HNComments.init();
+      HN.hnComments.apply();
+
       var original_poster = $('.subtext a:eq(0)').addClass('original_poster').text();
       $('.commenter').each(function() {
         //add title to new users
@@ -981,10 +1228,8 @@ var HN = {
         }
       });
 
-      HN.removeCommentSpacing();
-      HN.addInfoToUsers(comments);
-      RedditComments.init(comments);
-      HN.replaceVoteButtons(false);
+      //HN.addInfoToUsers(comments);
+      //HN.replaceVoteButtons(false);
     },
 
     replaceVoteButtons: function(isPostList) {
@@ -1068,34 +1313,44 @@ var HN = {
     },
 
     getUserInfo: function(commenters) { // Gets the user's votes and tag, and displays them.
-      commenters.each(function() {
-        var this_el = $(this);
-        var name = this_el.text();
-        HN.getLocalStorage(name, function(response) {
-          if (response.data) {
-            var userInfo = JSON.parse(response.data);
-            if (typeof userInfo === "number") {
-              /*Convert the legacy format. 
-                Upvotes used to be saved in localStorage as (for example) etcet: '1', but are now etcet: '{"votes": 1}'.
-                This change in format was made so that tag information can be saved in the same location;
-                i.e. it will soon be saved as etcet: '{"votes": 1, "tag": "Creator of HNES"}'.
+      var usernames = commenters.map( (x,y) => y.textContent );
 
-                The conversion only needs to be done here, since this executes on page load,
-                which means that whatever username you see will have undergone the conversion to the new format.*/
-              userInfo = {'votes': userInfo};
-              HN.setLocalStorage(name, JSON.stringify(userInfo));
-              console.log('Converted legacy format for user', name);
+      HN.getUserData(usernames, response => {
+        if (!response) return;
+        var userData =  response.data;
+        commenters.each(function() {
+          var this_el = $(this),
+              name = this_el.text(),
+              userInfo = userData[name];
+
+              if (userInfo) {
+                if (typeof userInfo === "number") {
+                  /*Convert the legacy format.
+                    Upvotes used to be saved in localStorage as (for example) etcet: '1', but are now etcet: '{"votes": 1}'.
+                    This change in format was made so that tag information can be saved in the same location;
+                    i.e. it will soon be saved as etcet: '{"votes": 1, "tag": "Creator of HNES"}'.
+
+                    The conversion only needs to be done here, since this executes on page load,
+                    which means that whatever username you see will have undergone the conversion to the new format.*/
+                  userInfo = {'votes': userInfo};
+                  HN.setLocalStorage(name, JSON.stringify(userInfo));
+                  console.log('Converted legacy format for user', name);
+                }
+                else {
+                  var info;
+                  try {
+                    info = JSON.parse(userInfo);
+                  }
+                  catch (e) {
+                    info = {}
+                  }
+                  HN.addUserTag(this_el, info.tag || '');
+                  if (info.votes) HN.addUserScore(this_el, userInfo.votes);
+                }
             }
-
-            if (userInfo.tag) // If the user has a tag, show it.
-              HN.addUserTag(this_el, userInfo.tag);
-            else // Otherwise, just add an empty tag.
+            else {// If we don't have any data about the user, add an empty tag.
               HN.addUserTag(this_el);
-            if (userInfo.votes) // If the user has a vote count, show it.
-              HN.addUserScore(this_el, userInfo.votes);
-          }
-          else // If we don't have any data about the user, add an empty tag.
-            HN.addUserTag(this_el);
+            }
         });
       });
     },

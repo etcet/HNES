@@ -7,7 +7,11 @@
     "background": {
       "scripts": ["background.js"]
     },
-    "permissions": ["tabs"],
+    "permissions": [
+      "tabs",
+      "storage",
+      "unlimitedStorage"
+    ],
     "icons": {
         "16" : "images/icon-16.png",
         "48" : "images/icon-48.png",
@@ -41,6 +45,7 @@
     ],
     "web_accessible_resources": [
       "images/spin.gif",
-      "images/tag.svg"
+      "images/tag.svg",
+      "templates/comment.html"
     ]
 }
