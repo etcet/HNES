@@ -640,6 +640,13 @@ var HN = {
         });
     },
 
+    getUserData: function(usernames, callback) {
+      chrome.extension.sendRequest({
+        method: "getUserData",
+        usernames: usernames
+      }, callback);
+    },
+
     doLogin: function() {
       $('body').attr('id', 'login-body');
       document.title = "Login | Hacker News";
@@ -1068,34 +1075,43 @@ var HN = {
     },
 
     getUserInfo: function(commenters) { // Gets the user's votes and tag, and displays them.
-      commenters.each(function() {
-        var this_el = $(this);
-        var name = this_el.text();
-        HN.getLocalStorage(name, function(response) {
-          if (response.data) {
-            var userInfo = JSON.parse(response.data);
-            if (typeof userInfo === "number") {
-              /*Convert the legacy format. 
-                Upvotes used to be saved in localStorage as (for example) etcet: '1', but are now etcet: '{"votes": 1}'.
-                This change in format was made so that tag information can be saved in the same location;
-                i.e. it will soon be saved as etcet: '{"votes": 1, "tag": "Creator of HNES"}'.
+      var usernames = commenters.map( (x,y) => y.textContent );
 
-                The conversion only needs to be done here, since this executes on page load,
-                which means that whatever username you see will have undergone the conversion to the new format.*/
-              userInfo = {'votes': userInfo};
-              HN.setLocalStorage(name, JSON.stringify(userInfo));
-              console.log('Converted legacy format for user', name);
+      HN.getUserData(usernames, response => {
+        var userData =  response.data;
+        commenters.each(function() {
+          var this_el = $(this),
+              name = this_el.text(),
+              userInfo = userData[name];
+
+              if (userInfo) {
+                if (typeof userInfo === "number") {
+                  /*Convert the legacy format.
+                    Upvotes used to be saved in localStorage as (for example) etcet: '1', but are now etcet: '{"votes": 1}'.
+                    This change in format was made so that tag information can be saved in the same location;
+                    i.e. it will soon be saved as etcet: '{"votes": 1, "tag": "Creator of HNES"}'.
+
+                    The conversion only needs to be done here, since this executes on page load,
+                    which means that whatever username you see will have undergone the conversion to the new format.*/
+                  userInfo = {'votes': userInfo};
+                  HN.setLocalStorage(name, JSON.stringify(userInfo));
+                  console.log('Converted legacy format for user', name);
+                }
+                else {
+                  var info;
+                  try {
+                    info = JSON.parse(userInfo);
+                  }
+                  catch (e) {
+                    info = {}
+                  }
+                  HN.addUserTag(this_el, info.tag || '');
+                  if (info.votes) HN.addUserScore(this_el, userInfo.votes);
+                }
             }
-
-            if (userInfo.tag) // If the user has a tag, show it.
-              HN.addUserTag(this_el, userInfo.tag);
-            else // Otherwise, just add an empty tag.
+            else {// If we don't have any data about the user, add an empty tag.
               HN.addUserTag(this_el);
-            if (userInfo.votes) // If the user has a vote count, show it.
-              HN.addUserScore(this_el, userInfo.votes);
-          }
-          else // If we don't have any data about the user, add an empty tag.
-            HN.addUserTag(this_el);
+            }
         });
       });
     },
