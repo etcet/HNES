@@ -148,10 +148,11 @@ var CommentTracker = {
         comment = RedditComments.nodeMap[id];
 
       if (id > last_id) {
-        comment.row.addClass('hnes-new');
+        comment.row.removeClass('hnes-new-parent').addClass('hnes-new');
         comment = comment.parent;
         while (comment && comment.level > 0) {
-          comment.row.addClass('hnes-new-parent');
+          if (!comment.row.hasClass('hnes-new'))
+            comment.row.addClass('hnes-new-parent');
           comment = comment.parent;
         }
       }
@@ -267,7 +268,7 @@ var RedditComments = {
   init: function(comments) {
     var self = this;
 
-    var collapse_button = $('<span/>').addClass('collapse')
+    var collapse_button = $('<a/>').addClass('collapse')
                                       .text('[\u2013]')
                                       .attr('title', 'Collapse comment');
     var link_to_parent = $('<span/>').text(' | ')
@@ -1186,6 +1187,7 @@ var HN = {
         comments = $(as[as.length - 1]);
 
         var by = $this.find('a:eq(0)');
+        var at = $this.find('a:eq(1)');
 
         if (score.length == 0)
           score = $("<span/>").text('0');
@@ -1231,6 +1233,8 @@ var HN = {
             $this.find('a[href^="https://hn.algolia.com/?query="]'),
             $this.find('a[href^="https://www.google.com/search?q="]')
         ).insertAfter(by_el);
+
+        $('<span />').addClass('hnes-age').text(at.text()).insertAfter(by_el);
       });
     },
 
