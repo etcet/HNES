@@ -1015,7 +1015,7 @@ var HN = {
       var commenters = $('.commenter');
       HN.getUserInfo(commenters);
 
-      var vote_links = commentsblock.find($('a[onclick="return vote(this)"]'));
+      var vote_links = commentsblock.find($('a[onclick^="return vote(this"]'));
       var upvote_links = $(vote_links).filter('a[id^="up_"]');
       var downvote_links = $(vote_links).filter('a[id^="down_"]');
       upvote_links.click(function(e) {
