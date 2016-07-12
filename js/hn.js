@@ -749,8 +749,8 @@ var HN = {
       var comments;
 
       const
-        itemId = /id=(\d+)/.exec(window.location.search)[1],
-        below_header = jQuery(document.getElementById(itemId).parentElement.parentElement); // tr < tbody < table
+        itemId = /id=(\w+)/.exec(window.location.search)[1],
+        below_header = $('#content table');
 
       if (pathname == "/item") {
         $("body").attr("id", "item-body");
