@@ -516,9 +516,15 @@ var HN = {
           $("tr:nth-child(3) td td:first-child").remove();
         }
         else if (pathname == '/item' ||
-                 pathname == "/more") {
+                 pathname == '/more') {
           HN.doCommentsList(pathname, track_comments);
         }
+		else if (pathname == '/favorites' ||
+		         pathname == '/upvoted') {
+	      $("td[colspan='2']").hide();
+		  $(".votelinks").hide();
+		  HN.doCommentsList(pathname, track_comments);
+		}
         else if (pathname == '/threads') {
           $("body").attr("id", "threads-body");
 
