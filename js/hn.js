@@ -521,7 +521,7 @@ var HN = {
         }
 		else if (pathname == '/favorites' ||
 		         pathname == '/upvoted') {
-	      $("td[colspan='2']").hide();
+		  $("td[colspan='2']").hide();
 		  $(".votelinks").hide();
 		  HN.doCommentsList(pathname, track_comments);
 		}
