@@ -144,8 +144,17 @@ var CommentTracker = {
 
   highlightNewComments: function(last_id) {
     $('.comment-table').each(function() {
-      if ($(this).attr('id') > last_id) {
-       $(this).find('td:eq(0)').css('border-right', '2px solid #f60'); 
+      var id = $(this).attr('id'),
+        comment = RedditComments.nodeMap[id];
+
+      if (id > last_id) {
+        comment.row.removeClass('hnes-new-parent').addClass('hnes-new');
+        comment = comment.parent;
+        while (comment && comment.level > 0) {
+          if (!comment.row.hasClass('hnes-new'))
+            comment.row.addClass('hnes-new-parent');
+          comment = comment.parent;
+        }
       }
     });
   },
@@ -257,8 +266,10 @@ var CommentTracker = {
 
 var RedditComments = {
   init: function(comments) {
-    var collapse_button = $('<span/>').addClass('collapse')
-                                      .text('[−]')
+    var self = this;
+
+    var collapse_button = $('<a/>').addClass('collapse')
+                                      .text('[\u2013]')
                                       .attr('title', 'Collapse comment');
     var link_to_parent = $('<span/>').text(' | ')
                                      .append($('<a/>')
@@ -267,7 +278,17 @@ var RedditComments = {
                                      .attr('title', 'Go to parent')
                                      .addClass('parent-link'));
 
-    comments.find('table').each(function() {
+    // Allocate an array for a the sequential list of nodes
+    // which is used to build parent/child map below. This
+    // array may be longer than the real data because dead
+    // comments are ignored.
+    var nodeList = new Array(comments.find('table').length + 1),
+        nodeIndex = 1,
+        deleted = 0;
+
+    nodeList[0] = {id: 'root', level: 0, children: [] };
+
+    comments.find('table').each(function(i) {
       var $this = $(this);
       $this.addClass("comment-table");
 
@@ -290,9 +311,14 @@ var RedditComments = {
      
       //add id attr to comment
       var id = $("a[href*=item]", comhead);
-      if (!id.length) return true;
-      id = id[0].href;
-      id = id.substr(id.indexOf("=") + 1);
+      if (!id.length) {
+        $this.addClass("hnes-deleted");
+        id = 'deleted' + deleted++;
+      }
+      else {
+        id = id[0].href;
+        id = id.substr(id.indexOf("=") + 1);
+      }
       $this.attr("id", id);
 
       //move reply link outside of comment span if it's in there
@@ -308,7 +334,41 @@ var RedditComments = {
       if (comment_is_dead) {
         comment_is_dead.parent().next().remove();
       }
+
+      nodeList[nodeIndex++] = { id: id, level: level + 1, children: [], table: $this, row: $this.parent().parent(), collapser: $this.find('.collapse') };
+
     });
+
+    // Build the node map. This could certainly be done in the main
+    // loop above, but we're not dealing with enough volume to
+    // warrant that mess. Long threads are ~1000 comments.
+    var s = [], m = { root: nodeList[0] };
+    for (var i = 0, j = 1, data = nodeList; j < data.length && data[j]; i++, j++) {
+      var p = data[i], c = data[j];
+      if (c.level > p.level) s.push(p.id);
+      for (var x = 0; x < p.level - c.level; x++) s.pop();
+      c.parent = m[s[s.length - 1]] || data[0];
+      m[c.parent.id].children.push(c);
+      m[c.id] = c;
+    }
+    self.nodeMap = m;
+
+    // restore prior collapses
+    HN.getLocalStorage(CommentTracker.getInfo().id + '-collapsed', function(response) {
+      if (!response.data) return;
+      var collapsed = JSON.parse(response.data);
+      for (var i = 0; i < collapsed.length; i++) {
+        RedditComments._collapse(m[collapsed[i]]);
+      }
+    });
+
+    $('.item-header .subtext').append(document.createTextNode(' | ')).append(
+        $('<a href="#">expand all</a>').click(function(e) {
+          e.preventDefault();
+          preorder(RedditComments.nodeMap.root, function(n) { if (n.collapsed) RedditComments._expand(n); }); 
+          HN.setLocalStorage(CommentTracker.getInfo().id + '-collapsed', '[]');
+        })
+    );
   },
 
   goToParent: function(e) {
@@ -334,66 +394,45 @@ var RedditComments = {
   },
 
   collapse: function(e) {
-    var $e = $(e.target);
-    var el = $e.closest("table");
-    var comment_row = el.parent().parent();
-    var indent = Number(el.attr('level'));
-    //var indent = RedditComments.stripPx(comment_row.find('td:eq(1) img').css('width'));
+    var commentId = $(e.target).closest('tr.athing').find('.comment-table').attr('id'),
+        node = RedditComments.nodeMap[commentId];
+    (node.collapsed ? RedditComments._expand : RedditComments._collapse)(node);
+    RedditComments._storeCollapsed();
+  },
 
-    var has_children = false;
-    var has_visible_children = false;
-    var next_row = comment_row.next();
-    var next_indent = Number(next_row.find('.comment-table').attr('level'));
-    //var next_indent = RedditComments.stripPx(next_row.find('td:eq(1) img').css('width'));
-    if (indent < next_indent) {
-      has_children = true;
-      has_visible_children = next_row.is(":visible");
-    }
+  _collapse: function(node) {
+    var count = 1;
+    node.collapsed = true;
+    node.table.addClass('hnes-collapsed');
+    preorder(node, function(n) { n.row.addClass('hnes-hidden'); count++; }, true);
+    node.collapser.text('[+] ' + (count == 1 ? '(1 child)' :  '(' + count + ' children)'));
+  },
 
-    var num_children = 0;
-    if (has_children) {
-      do {
-        var next_row = comment_row.next();
-        var next_indent = Number(next_row.find('.comment-table').attr('level'));
-        //var next_indent = RedditComments.stripPx(next_row.find('td:eq(1) img').css('width'));
+  _expand: function(node) {
+    node.collapsed = false;
+    node.table.removeClass('hnes-collapsed');
+    node.collapser.text('[\u2013]');
+    preorder(node, function(n) { n.row.removeClass('hnes-hidden'); return n.collapsed; });
+  },
 
-        if (indent < next_indent) {
-          if (has_visible_children) {
-            next_row.attr('visible', next_row.is(":visible"));
-            next_row.hide();
-          }
-          else {
-            if (next_indent - indent == 1 || 
-                next_row.attr('visible') == "true") {
-              next_row.show();
-            }
-          }
-          num_children += 1;
-        }
+  _storeCollapsed: function() {
+    var itemId = CommentTracker.getInfo().id;
+    var collapsed = [];
+    preorder(RedditComments.nodeMap.root, function(n) {
+      if (n.collapsed) collapsed.push(n.id);
+    });
+    HN.setLocalStorage(itemId + '-collapsed', JSON.stringify(collapsed));
+  }
 
-        comment_row = next_row;
+}
 
-      } while (indent < next_indent);
-    }
-
-    var def = el.find('.default');
-    if (has_visible_children || !el.hasClass('collapsed')) {
-      var child_str = (num_children > 0 ? " (" + num_children + " child" + (num_children == 1? "" : "ren") + ")" : "");
-      $e.text("[+]" + child_str)
-        .attr('title', 'Restore comment')
-        .css('margin-left', def.prev().width() + 2 + 'px');
-      def.find('div').siblings().hide();
-      def.prev().hide();
-      el.addClass('collapsed');
-    }
-    else {
-      $e.text("[−]")
-        .attr('title', 'Collapse comment')
-        .css('margin-left', '');
-      def.find('div').siblings().show();
-      def.prev().show();
-      el.removeClass('collapsed');
-    }
+function preorder(n, visit, skip) {
+  var die;
+  if (!n) return;
+  if (!skip) die = visit(n);
+  if (die) return;
+  for (var i = 0; i < n.children.length; i++) {
+    preorder(n.children[i], visit);
   }
 }
 
@@ -461,16 +500,15 @@ var HN = {
           function remove_first_tr() {
             $("body #content td table tbody tr").filter(":first").remove();
           }
-          if (pathname == '/show') {
-            remove_first_tr();
-          }
           if (pathname == '/jobs') {
             $("body").attr("id", "jobs-body");
           }
           if (pathname == '/show' || pathname == '/jobs') {
-            var blurb = $("body #content td table tbody tr td:nth-child(3)").filter(':first').html();
             remove_first_tr();
-            $("body #content table").before("<p class='blurb'>"+blurb+"</p>");
+            var blurbRow = $("body #content td table tbody tr:not(.athing):first"),
+                blurb = blurbRow.find("td:last").html();
+            blurbRow.remove();
+            $("body #content table").before($("<p>").addClass("blurb").html(blurb));
           }
         }
         else if (pathname == '/edit') {
@@ -478,9 +516,15 @@ var HN = {
           $("tr:nth-child(3) td td:first-child").remove();
         }
         else if (pathname == '/item' ||
-                 pathname == "/more") {
+                 pathname == '/more') {
           HN.doCommentsList(pathname, track_comments);
         }
+		else if (pathname == '/favorites' ||
+		         pathname == '/upvoted') {
+		  $("td[colspan='2']").hide();
+		  $(".votelinks").hide();
+		  HN.doCommentsList(pathname, track_comments);
+		}
         else if (pathname == '/threads') {
           $("body").attr("id", "threads-body");
 
@@ -496,7 +540,7 @@ var HN = {
                  pathname == '/bestcomments' || 
                  pathname == '/noobcomments' ) {
           HN.addClassToCommenters();
-          HN.addScoreToUsers($('body'));
+          HN.addInfoToUsers($('body'));
         }
         else if (pathname == '/user') {
           HN.doUserProfile();
@@ -592,14 +636,14 @@ var HN = {
     },
 
     getLocalStorage: function(key, callback) {
-      chrome.extension.sendRequest({
+      chrome.runtime.sendMessage({
         method: "getLocalStorage",
         key: key
       }, callback);
     },
 
     setLocalStorage: function(key, value) {
-      chrome.extension.sendRequest(
+      chrome.runtime.sendMessage(
         { method: "setLocalStorage",
           key: key,
           value: value },
@@ -709,7 +753,11 @@ var HN = {
 
       //add classes to comment page header (OP post) and the table containing all the comments
       var comments;
-      var below_header = $('body > center > table > tbody > tr:nth-child(2) > td > table');
+
+      const
+        itemId = /id=(\w+)/.exec(window.location.search)[1],
+        below_header = $('#content table');
+
       if (pathname == "/item") {
         $("body").attr("id", "item-body");
         $(below_header[0]).addClass('item-header');
@@ -950,7 +998,7 @@ var HN = {
       });
 
       HN.removeCommentSpacing();
-      HN.addScoreToUsers(comments);
+      HN.addInfoToUsers(comments);
       RedditComments.init(comments);
       HN.replaceVoteButtons(false);
     },
@@ -973,10 +1021,11 @@ var HN = {
       }
     },
 
-    addScoreToUsers: function(commentsblock) {
+    addInfoToUsers: function(commentsblock) {
       var commenters = $('.commenter');
-      HN.getUserScores(commenters);
-      var vote_links = commentsblock.find($('a[onclick="return vote(this)"]'));
+      HN.getUserInfo(commenters);
+
+      var vote_links = commentsblock.find($('a[onclick^="return vote(this"]'));
       var upvote_links = $(vote_links).filter('a[id^="up_"]');
       var downvote_links = $(vote_links).filter('a[id^="down_"]');
       upvote_links.click(function(e) {
@@ -985,33 +1034,82 @@ var HN = {
       downvote_links.click(function(e) {
         HN.upvoteUser(e, -1);
       });
+
+      $(document).on('click', '.tag, .tagText', function(e) {
+      // Using .on() so that the event applies to all elements generated in the future
+        HN.editUserTag(e);
+      });
+
+      $(document).on('keyup', '.tagEdit', function(e) {
+        var code = e.keyCode || e.which;
+        var parent = $(e.target).parent();
+        if (code === 13) { // Enter
+          var author = parent.find('.commenter').text();
+          var tagEdit = parent.find('.tagEdit');
+          HN.setUserTag(author, tagEdit.val());
+        }
+        if (code === 27) { // Escape
+          var tagText = parent.find('.tagText');
+          var tagEdit = parent.find('.tagEdit');
+          tagText.show();
+          tagEdit.val(tagText.text())
+                 .hide();
+        }
+      });
+
     },
 
-    upvoteUser: function(e, value) {
+    upvoteUser: function(e, value) { // Adds value to the user's upvote count, saves and displays it.
       var author = $(e.target).parent().parent().parent().next().find('.commenter').text();
 
       var commenter = $('.commenter:contains('+author+')');
       HN.getLocalStorage(author, function(response) {
-        if (response.data) {
-          var count = Number(response.data);
-          var new_count = count + value;
-          HN.setLocalStorage(author, new_count);
-          commenter.next().text(new_count);
+        var userInfo = {};
+        if (response.data)
+          userInfo = JSON.parse(response.data);
+
+        if (userInfo.votes) { // If we already have up/downvoted this user before.
+          userInfo.votes += value;
+          HN.setLocalStorage(author, JSON.stringify(userInfo));
+          commenter.next().text(userInfo.votes); // Update the upvote count
         }
-        else {
-          HN.setLocalStorage(author, value);
-          HN.addUserScore(commenter, value);
+        else { // If this is our first up/downvote for this user.
+          userInfo.votes = value;
+          HN.setLocalStorage(author, JSON.stringify(userInfo));
+          HN.addUserScore(commenter, value); // Set the upvote count
         }
       });
     },
 
-    getUserScores: function(commenters) {
+    getUserInfo: function(commenters) { // Gets the user's votes and tag, and displays them.
       commenters.each(function() {
         var this_el = $(this);
         var name = this_el.text();
         HN.getLocalStorage(name, function(response) {
-          if (response.data)
-            HN.addUserScore(this_el, response.data);
+          if (response.data) {
+            var userInfo = JSON.parse(response.data);
+            if (typeof userInfo === "number") {
+              /*Convert the legacy format. 
+                Upvotes used to be saved in localStorage as (for example) etcet: '1', but are now etcet: '{"votes": 1}'.
+                This change in format was made so that tag information can be saved in the same location;
+                i.e. it will soon be saved as etcet: '{"votes": 1, "tag": "Creator of HNES"}'.
+
+                The conversion only needs to be done here, since this executes on page load,
+                which means that whatever username you see will have undergone the conversion to the new format.*/
+              userInfo = {'votes': userInfo};
+              HN.setLocalStorage(name, JSON.stringify(userInfo));
+              console.log('Converted legacy format for user', name);
+            }
+
+            if (userInfo.tag) // If the user has a tag, show it.
+              HN.addUserTag(this_el, userInfo.tag);
+            else // Otherwise, just add an empty tag.
+              HN.addUserTag(this_el);
+            if (userInfo.votes) // If the user has a vote count, show it.
+              HN.addUserScore(this_el, userInfo.votes);
+          }
+          else // If we don't have any data about the user, add an empty tag.
+            HN.addUserTag(this_el);
         });
       });
     },
@@ -1025,19 +1123,81 @@ var HN = {
       );
     },
 
+    addUserTag: function(el, tag) {
+      var username = el.text();
+      el.after(
+          $('<img/>').addClass('tag')
+                     .attr('src', chrome.extension.getURL('/images/tag.svg'))
+                     .attr('title', 'Tag user')
+      );
+      el.after(
+        $('<span/>').addClass('tagText')
+                    .text(tag)
+                    .attr('title', 'User tag')
+      );
+      el.after(
+        $('<input/>').attr('type', 'text')
+                     .addClass('tagEdit')
+                     .attr('placeholder', 'Tag ' + username)
+                     .val(tag)
+      )
+      el.parent().find('.tagEdit').hide();
+    },
+
+    editUserTag: function(e) {
+      var parent = $(e.target).parent();
+      var tagText = parent.find('.tagText');
+      var tagEdit = parent.find('.tagEdit');
+      
+      // Go in edit mode
+      tagText.hide();
+      tagEdit.show();
+      tagEdit.focus();
+    },
+
+    setUserTag: function(author, tag) {
+      HN.getLocalStorage(author, function(response) {
+        var userInfo = {};
+        if (response.data)
+          userInfo = JSON.parse(response.data);
+        if (tag !== '')
+          userInfo.tag = tag;
+        else
+          delete userInfo.tag;
+        HN.setLocalStorage(author, JSON.stringify(userInfo));
+      });
+
+      var commenter = $('.commenter:contains('+author+')');
+      for (i = 0; i < commenter.length; i++) {
+        var tagText = $(commenter[i]).parent().find('.tagText');
+        var tagEdit = $(commenter[i]).parent().find('.tagEdit');
+
+        // Change it all to the new value:
+        tagText.text(tag);
+        tagEdit.val(tag);
+
+        // Show the text, hide the input:
+        tagEdit.hide();
+        tagText.show();
+      }
+    },
+
     removeNumbers: function() {
       $('td[align="right"]').remove();
     },
 
     formatScore: function() {
       $('.subtext').each(function(){
-        var score = $(this).find('span:first');
-        var as = $(this).find('a');
+        var $this = $(this);
+
+        var score = $this.find('span:first');
+        var as = $this.find('a');
         var comments;
 
         comments = $(as[as.length - 1]);
 
-        var by = $(this).find('a:eq(0)');
+        var by = $this.find('a:eq(0)');
+        var at = $this.find('a:eq(1)');
 
         if (score.length == 0)
           score = $("<span/>").text('0');
@@ -1070,11 +1230,21 @@ var HN = {
 
         var score_el = $('<td/>').append(score);
         var comments_el = $('<td/>').append(comments);
-        $(this).parent().prev().prepend(score_el);
-        $(this).parent().prev().prepend(comments_el);
-        $(this).parent().prev().find('.title').append(by_el);
-        $(this).parent().next().remove();
-        $(this).parent().remove();
+        var $prev = $this.parent().prev();
+        $prev.prepend(score_el);
+        $prev.prepend(comments_el);
+        $prev.find('.title').append(by_el);
+        $this.parent().next().remove();
+        $this.parent().remove();
+
+        $('<span />').addClass('hnes-actions').append(
+            $this.find('a[href^=flag]'),
+            $this.find('a[href^=vouch]'),
+            $this.find('a[href^="https://hn.algolia.com/?query="]'),
+            $this.find('a[href^="https://www.google.com/search?q="]')
+        ).insertAfter(by_el);
+
+        $('<span />').addClass('hnes-age').text(at.text()).insertAfter(by_el);
       });
     },
 
@@ -1329,11 +1499,11 @@ var HN = {
             k = 75, // Previous Item
             o = 79, // Open Story
             p = 80, // View Comments
-            h = 72; // Open Help
-            l = 76; // New tab
-            c = 67; // Comments in new tab
-            b = 66; // Open comments and link in new tab
-            shiftKey = 16; //allow modifier
+            h = 72, // Open Help
+            l = 76, // New tab
+            c = 67, // Comments in new tab
+            b = 66, // Open comments and link in new tab
+            shiftKey = 16; // allow modifier
         $(document).keydown(function(e){
           //Keyboard shortcuts disabled when search focused
           if (!HN.searchInputFocused && !e.ctrlKey) {
@@ -1341,7 +1511,7 @@ var HN = {
               HN.next_story();
             } else if (e.which == k) {
               HN.previous_story();
-            } else if (e.which == l){
+            } else if (e.which == l) {
               HN.open_story_in_new_tab();
             } else if (e.which == o) {
               HN.open_story_in_current_tab();
@@ -1457,7 +1627,7 @@ var HN = {
 //show new comment count on hckrnews.com
 if (window.location.host == "hckrnews.com") {
   $('ul.entries li').each(function() {
-    chrome.extension.sendRequest({method: "getLocalStorage", key: Number($(this).attr('id'))}, function(response) {
+    chrome.runtime.sendMessage({method: "getLocalStorage", key: Number($(this).attr('id'))}, function(response) {
       if (response.data != undefined) {
         var data = JSON.parse(response.data);
         var id = data.id;

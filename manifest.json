@@ -1,7 +1,7 @@
 {
     "name": "Hacker News Enhancement Suite",
     "short_name": "HNES",
-    "version": "1.3.4.9",
+    "version": "1.4.0.2",
     "description": "Hacker News Enhanced.",
     "manifest_version": 2,
     "background": {
@@ -40,6 +40,7 @@
       }
     ],
     "web_accessible_resources": [
-      "images/spin.gif"
+      "images/spin.gif",
+      "images/tag.svg"
     ]
 }

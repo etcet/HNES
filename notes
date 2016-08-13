@@ -5,7 +5,3 @@ welcome: http://news.ycombinator.com/welcome
 rss: http://news.ycombinator.com/rss
 bigrss: http://news.ycombinator.com/bigrss
 leaders: https://news.ycombinator.com/leaders
-
-x-browser:
-crossrider.com
-trigger.io

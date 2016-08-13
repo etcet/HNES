@@ -1,4 +1,4 @@
-/*
+﻿/*
 * Hacker News Enhancement Suite (HNES)
 * Chris James / etcet.net / chris@etcet.net
 *
@@ -264,11 +264,10 @@ body#item-body .title {
 }
 
 /*make self posts text black*/
-/*
 .item-header tr:nth-child(3) td {
   color: #000 !important;
 }
-*/
+
 a:link {
   color: #202020;
 }
@@ -450,12 +449,9 @@ br {
 
 /*usernames are usually black*/
 #item-body .comhead a.commenter,
-/*
-Interferes with user stylesheet
 #threads-body .comhead a.commenter {
   color: #000 !important;
 }
-*/
 /*but new users are green*/
 a.new_user,
 #item-body .comhead a.new_user {
@@ -723,4 +719,90 @@ body#login-body {
 }
 #login-body a:hover {
   text-decoration: underline;
+}
+
+/* Note, it is a child of body so that it has a higher specificity than the default style */
+body .votearrow {
+  /* SVG arrow so that it scales to high-resolution displays */
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="10" height="10"><path d="M 1,9 5,1 9,9 z" fill="#828282"/></svg>');
+}
+/* Instead of simply rotating the entire element, the svg is actually manually flipped.
+   This results in a pixel perfect reflection of the up arrow */
+body .votearrow.rotate180 {
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="10" height="10"><path d="M 1,1 5,9 9,1 z" fill="#828282"/></svg>');
+  transform: none;
+}
+
+.hnes-age,
+.hnes-actions {
+    margin-left: .5em;
+    font-size: 11px;
+}
+
+.hnes-actions a:after {
+    content: " | ";
+}
+
+.hnes-actions a:last-child:after {
+    content: "";
+}
+
+.hnes-actions:before {
+    content: "[ ";
+}
+
+.hnes-actions:after {
+    content: " ]";
+}
+
+
+.hnes-hidden {
+    background-color: #ccc;
+}
+
+.hnes-hidden,
+.hnes-collapsed p,
+.hnes-collapsed .comment,
+.hnes-collapsed .votearrow
+{
+    display: none;
+}
+
+.hnes-collapsed .collapse {
+    margin-left: 13px;
+}
+
+.hnes-collapsed.hnes-deleted .collapse {
+    margin-left: -2px;
+}
+
+.hnes-new .comment-table td:first-child {
+    border-right: 2px solid #F60;
+}
+
+.hnes-new-parent .comment-table td:first-child {
+    border-right: 2px solid #BC9B85;
+}
+
+.tag, .tagText:not(:empty) {
+    margin-left: 4px;
+    cursor: pointer;
+}
+
+.tag {
+    margin-bottom: -2px;
+}
+
+.tagText:not(:empty) {
+  border-color: #828282;
+  border-radius: 1px;
+  border-width: 1px;
+  border-style: solid;
+  padding: 0 4px;
+}
+
+.tagEdit {
+    padding-left: 2px;
+    width: 120px;
+    margin: 0 4px;
 }
