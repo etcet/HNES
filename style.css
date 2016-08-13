@@ -264,10 +264,11 @@ body#item-body .title {
 }
 
 /*make self posts text black*/
+/*
 .item-header tr:nth-child(3) td {
   color: #000 !important;
 }
-
+*/
 a:link {
   color: #202020;
 }
@@ -449,9 +450,12 @@ br {
 
 /*usernames are usually black*/
 #item-body .comhead a.commenter,
+/*
+Interferes with user stylesheet
 #threads-body .comhead a.commenter {
   color: #000 !important;
 }
+*/
 /*but new users are green*/
 a.new_user,
 #item-body .comhead a.new_user {
