@@ -1215,7 +1215,7 @@ var HN = {
           score.text('');
         else
           comments.text(
-            comments.text().substring(0, comments.text().indexOf(' '))
+            comments.text().substring(0, comments.text().indexOf('\xa0'))
           );
         comments.addClass("comments")
                 .attr('title', 'Comments');
