@@ -107,6 +107,10 @@ table tr td {
 .comments:hover {
   color: #dd4b39;
 }
+/* show a fallback if parsing comment number fails */
+.comments:empty::before {
+  content: '💬';
+}
 
 /*spacing for comment and score tally*/
 #index-body #content table td:first-child {
