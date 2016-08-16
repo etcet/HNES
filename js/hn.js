@@ -266,7 +266,8 @@ var CommentTracker = {
 
 var RedditComments = {
   init: function(comments) {
-    var self = this;
+    var self = this,
+        bareComments = comments[0];
 
     var collapse_button = $('<a/>').addClass('collapse')
                                       .text('[\u2013]')
@@ -282,44 +283,37 @@ var RedditComments = {
     // which is used to build parent/child map below. This
     // array may be longer than the real data because dead
     // comments are ignored.
-    var nodeList = new Array(comments.find('table').length + 1),
+    var commentTables = bareComments.querySelectorAll('table'),
+        nodeList = new Array(commentTables.length + 1),
         nodeIndex = 1,
         deleted = 0;
 
     nodeList[0] = {id: 'root', level: 0, children: [] };
 
-    comments.find('table').each(function(i) {
-      var $this = $(this);
-      $this.addClass("comment-table");
+    for (var i = 0; i < commentTables.length; i++) {
+      var thisCommentTable = commentTables[i],
+          $this = $(thisCommentTable),
+          comhead = $this.find("span.comhead"),
+          level = Math.floor(thisCommentTable.querySelector('img').getAttribute('width') / 40),
+          idEl = comhead.find("a[href*=item]"),
+          isDeleted = (idEl.length == 0),
+          id = deleted ? 'deleted' + deleted++ : /id=(\d+)/.exec(idEl[0].href)[1],
+          newClasses = 'comment-table' + (isDeleted ? ' hnes-deleted' : '');
 
-      //get and store indentation
-      var level = Math.floor($this.find('img')[0].width / 40);
-      $this.attr('level', level);
+      $this.addClass(newClasses);
+      $this.attr({ 'id': id, 'level': level });
+
+      comhead.parent().removeAttr('style');
 
       //create default collapsing markup
-      var comhead = $("span.comhead", this);
       comhead.prepend(
         collapse_button.clone().click(RedditComments.collapse)
       );
-      comhead.parent().removeAttr('style');
 
       //add link to parent if the comment has any indentation
-      if (level > 0) 
-        comhead.append(
-          link_to_parent.clone().click(RedditComments.goToParent)
-        );
-     
-      //add id attr to comment
-      var id = $("a[href*=item]", comhead);
-      if (!id.length) {
-        $this.addClass("hnes-deleted");
-        id = 'deleted' + deleted++;
+      if (level > 0) {
+        comhead.append(link_to_parent.clone().click(RedditComments.goToParent));
       }
-      else {
-        id = id[0].href;
-        id = id.substr(id.indexOf("=") + 1);
-      }
-      $this.attr("id", id);
 
       //move reply link outside of comment span if it's in there
       //very weird formatting in hn's part
@@ -337,7 +331,7 @@ var RedditComments = {
 
       nodeList[nodeIndex++] = { id: id, level: level + 1, children: [], table: $this, row: $this.parent().parent(), collapser: $this.find('.collapse') };
 
-    });
+    }
 
     // Build the node map. This could certainly be done in the main
     // loop above, but we're not dealing with enough volume to
@@ -650,6 +644,13 @@ var HN = {
         function(response) {
           //console.log('RESPONSE', response.data);
         });
+    },
+
+    getUserData: function(usernames, callback) {
+      chrome.extension.sendRequest({
+        method: "getUserData",
+        usernames: usernames
+      }, callback);
     },
 
     doLogin: function() {
@@ -1035,25 +1036,27 @@ var HN = {
         HN.upvoteUser(e, -1);
       });
 
-      $(document).on('click', '.tag, .tagText', function(e) {
+      $(document).on('click', '.hnes-tag, .hnes-tagText', function(e) {
       // Using .on() so that the event applies to all elements generated in the future
         HN.editUserTag(e);
       });
 
-      $(document).on('keyup', '.tagEdit', function(e) {
-        var code = e.keyCode || e.which;
-        var parent = $(e.target).parent();
+      $(document).on('keyup', '.hnes-tagEdit', function(e) {
+        var code = e.keyCode || e.which,
+            parent = $(e.target).parent(),
+            gp = parent.parent();
+
         if (code === 13) { // Enter
-          var author = parent.find('.commenter').text();
-          var tagEdit = parent.find('.tagEdit');
+          var author = gp.find('.commenter').text(),
+              tagEdit = parent.find('.hnes-tagEdit');
           HN.setUserTag(author, tagEdit.val());
+          parent.removeClass('edit');
         }
         if (code === 27) { // Escape
-          var tagText = parent.find('.tagText');
-          var tagEdit = parent.find('.tagEdit');
-          tagText.show();
-          tagEdit.val(tagText.text())
-                 .hide();
+          var tagText = gp.find('.hnes-tagText'),
+              tagEdit = parent.find('.hnes-tagEdit');
+          tagEdit.val(tagText.text());
+          parent.removeClass('edit');
         }
       });
 
@@ -1082,34 +1085,43 @@ var HN = {
     },
 
     getUserInfo: function(commenters) { // Gets the user's votes and tag, and displays them.
-      commenters.each(function() {
-        var this_el = $(this);
-        var name = this_el.text();
-        HN.getLocalStorage(name, function(response) {
-          if (response.data) {
-            var userInfo = JSON.parse(response.data);
-            if (typeof userInfo === "number") {
-              /*Convert the legacy format. 
-                Upvotes used to be saved in localStorage as (for example) etcet: '1', but are now etcet: '{"votes": 1}'.
-                This change in format was made so that tag information can be saved in the same location;
-                i.e. it will soon be saved as etcet: '{"votes": 1, "tag": "Creator of HNES"}'.
+      var usernames = commenters.map( (x,y) => y.textContent );
 
-                The conversion only needs to be done here, since this executes on page load,
-                which means that whatever username you see will have undergone the conversion to the new format.*/
-              userInfo = {'votes': userInfo};
-              HN.setLocalStorage(name, JSON.stringify(userInfo));
-              console.log('Converted legacy format for user', name);
+      HN.getUserData(usernames, response => {
+        var userData =  response.data;
+        commenters.each(function() {
+          var this_el = $(this),
+              name = this_el.text(),
+              userInfo = userData[name];
+
+              if (userInfo) {
+                if (typeof userInfo === "number") {
+                  /*Convert the legacy format.
+                    Upvotes used to be saved in localStorage as (for example) etcet: '1', but are now etcet: '{"votes": 1}'.
+                    This change in format was made so that tag information can be saved in the same location;
+                    i.e. it will soon be saved as etcet: '{"votes": 1, "tag": "Creator of HNES"}'.
+
+                    The conversion only needs to be done here, since this executes on page load,
+                    which means that whatever username you see will have undergone the conversion to the new format.*/
+                  userInfo = {'votes': userInfo};
+                  HN.setLocalStorage(name, JSON.stringify(userInfo));
+                  console.log('Converted legacy format for user', name);
+                }
+                else {
+                  var info;
+                  try {
+                    info = JSON.parse(userInfo);
+                  }
+                  catch (e) {
+                    info = {}
+                  }
+                  HN.addUserTag(this_el, info.tag || '');
+                  if (info.votes) HN.addUserScore(this_el, userInfo.votes);
+                }
             }
-
-            if (userInfo.tag) // If the user has a tag, show it.
-              HN.addUserTag(this_el, userInfo.tag);
-            else // Otherwise, just add an empty tag.
+            else {// If we don't have any data about the user, add an empty tag.
               HN.addUserTag(this_el);
-            if (userInfo.votes) // If the user has a vote count, show it.
-              HN.addUserScore(this_el, userInfo.votes);
-          }
-          else // If we don't have any data about the user, add an empty tag.
-            HN.addUserTag(this_el);
+            }
         });
       });
     },
@@ -1124,34 +1136,27 @@ var HN = {
     },
 
     addUserTag: function(el, tag) {
-      var username = el.text();
-      el.after(
-          $('<img/>').addClass('tag')
-                     .attr('src', chrome.extension.getURL('/images/tag.svg'))
-                     .attr('title', 'Tag user')
-      );
-      el.after(
-        $('<span/>').addClass('tagText')
-                    .text(tag)
-                    .attr('title', 'User tag')
-      );
-      el.after(
-        $('<input/>').attr('type', 'text')
-                     .addClass('tagEdit')
-                     .attr('placeholder', 'Tag ' + username)
-                     .val(tag)
-      )
-      el.parent().find('.tagEdit').hide();
+      var username = el.text(),
+          tagContainer = $('<span>').addClass('hnes-tag-cont');
+
+      tagContainer.append(
+          $('<img/>').addClass('hnes-tag')
+              .attr('src', chrome.extension.getURL('/images/tag.svg'))
+              .attr('title', 'Tag user'),
+          $('<span/>').addClass('hnes-tagText')
+              .text(tag)
+              .attr('title', 'User tag'),
+          $('<input/>').attr('type', 'text')
+              .addClass('hnes-tagEdit')
+              .attr('placeholder', 'Tag ' + username)
+              .val(tag)
+      ).insertAfter(el);
     },
 
     editUserTag: function(e) {
-      var parent = $(e.target).parent();
-      var tagText = parent.find('.tagText');
-      var tagEdit = parent.find('.tagEdit');
-      
-      // Go in edit mode
-      tagText.hide();
-      tagEdit.show();
+      var parent = $(e.target).parent(),
+          tagEdit = parent.find('.hnes-tagEdit');
+      parent.addClass('edit');
       tagEdit.focus();
     },
 
@@ -1169,16 +1174,12 @@ var HN = {
 
       var commenter = $('.commenter:contains('+author+')');
       for (i = 0; i < commenter.length; i++) {
-        var tagText = $(commenter[i]).parent().find('.tagText');
-        var tagEdit = $(commenter[i]).parent().find('.tagEdit');
+        var tagText = $(commenter[i]).parent().find('.hnes-tagText'),
+            tagEdit = $(commenter[i]).parent().find('.hnes-tagEdit');
 
         // Change it all to the new value:
         tagText.text(tag);
         tagEdit.val(tag);
-
-        // Show the text, hide the input:
-        tagEdit.hide();
-        tagText.show();
       }
     },
 
