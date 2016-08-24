@@ -1202,7 +1202,7 @@ var HN = {
         if (score.length == 0)
           score = $("<span/>").text('0');
         else
-          score.text(score.text().substring(0, score.text().indexOf('\xa0')));
+          score.text(score.text().substring(0, score.text().indexOf(' ')));
         score.addClass("score").attr('title', 'Points');
 
         if (comments.text() == "discuss" || /ago$/.test(comments.text()))
