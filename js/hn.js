@@ -1202,7 +1202,7 @@ var HN = {
         if (score.length == 0)
           score = $("<span/>").text('0');
         else
-          score.text(score.text().substring(0, score.text().indexOf('\xa0')));
+          score.text(score.text().match(/\d+/)[0]);
         score.addClass("score").attr('title', 'Points');
 
         if (comments.text() == "discuss" || /ago$/.test(comments.text()))
@@ -1213,9 +1213,9 @@ var HN = {
                               .attr('href', comments.attr('href'));
         else if (comments.text() == "")
           score.text('');
-        else
+        else if (comments.text().match(/\d+/))
           comments.text(
-            comments.text().substring(0, comments.text().indexOf('\xa0'))
+            comments.text().match(/\d+/)[0]
           );
         comments.addClass("comments")
                 .attr('title', 'Comments');
