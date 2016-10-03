@@ -68,7 +68,7 @@ var InlineReply = {
       //Post
       InlineReply.postCommentTo(link, domain, text, $(this));
     });
-    
+
     /* Cancel button */
     $('.cbutton').live('click', function(e) {
       InlineReply.hideButtonAndBox($(this).prev());
@@ -100,7 +100,7 @@ var InlineReply = {
        'text': textarg }
     ).complete(function(a) {
       window.location.reload(true);
-    }); 
+    });
   },
 
   disableButtonAndBox: function(button) {
@@ -114,7 +114,7 @@ var InlineReply = {
     button.next().removeAttr('disabled');
     button.prev().removeAttr('disabled');
   },
-  
+
   hideButtonAndBox: function(button) {
     var button_and_box = button.parent();
     var reply_link = button_and_box.prev();
@@ -175,7 +175,7 @@ var CommentTracker = {
               }
 
     var page_id = comment_info_el.attr('href').match(/id=(\d+)/);
-    if (page_id.length) 
+    if (page_id.length)
       page_id = Number(page_id[1]);
     else {
       page_id = window.location.search.match(/id=(\d+)/);
@@ -304,11 +304,11 @@ var RedditComments = {
       comhead.parent().removeAttr('style');
 
       //add link to parent if the comment has any indentation
-      if (level > 0) 
+      if (level > 0)
         comhead.append(
           link_to_parent.clone().click(RedditComments.goToParent)
         );
-     
+
       //add id attr to comment
       var id = $("a[href*=item]", comhead);
       if (!id.length) {
@@ -365,7 +365,7 @@ var RedditComments = {
     $('.item-header .subtext').append(document.createTextNode(' | ')).append(
         $('<a href="#">expand all</a>').click(function(e) {
           e.preventDefault();
-          preorder(RedditComments.nodeMap.root, function(n) { if (n.collapsed) RedditComments._expand(n); }); 
+          preorder(RedditComments.nodeMap.root, function(n) { if (n.collapsed) RedditComments._expand(n); });
           HN.setLocalStorage(CommentTracker.getInfo().id + '-collapsed', '[]');
         })
     );
@@ -444,7 +444,7 @@ var HN = {
         HN.removeNumbers();
 
         if (/*window.location.pathname != '/submit' &&*/
-            window.location.pathname != '/changepw') { 
+            window.location.pathname != '/changepw') {
           HN.rewriteNavigation();
         }
 
@@ -469,7 +469,7 @@ var HN = {
           else if (words[1] == "comments") {
             //paginated comments, anything other than first page of comments
             //"more comments | Hacker News"
-            if (words[0] == "more") 
+            if (words[0] == "more")
               pathname = "/more";
             //"user's comments | Hacker News"
             else
@@ -537,7 +537,7 @@ var HN = {
           HN.doCommentsList(pathname, track_comments);
         }
         else if (pathname == '/newcomments' ||
-                 pathname == '/bestcomments' || 
+                 pathname == '/bestcomments' ||
                  pathname == '/noobcomments' ) {
           HN.addClassToCommenters();
           HN.addInfoToUsers($('body'));
@@ -553,7 +553,7 @@ var HN = {
           HN.doLogin(); // reply when not logged in
         }
         else if ((pathname == '/submit') && HN.isLoginPage()) {
-          HN.doLogin(); // submit when not logged in 
+          HN.doLogin(); // submit when not logged in
         }
         else if (pathname == '/newpoll') {
           HN.doPoll();
@@ -601,7 +601,7 @@ var HN = {
       $('body > center > table > tbody > tr').eq(contentIndex - 1).remove();
 
       $('#header table td').removeAttr('style');
-      
+
       $('tr:last-child .title').attr('id', 'more');
       //$('.title a[rel="nofollow"]:contains(More)').parent().attr('id', 'more');
       //$('.title a[href="news2"]').parent().attr('id', 'more');
@@ -673,7 +673,7 @@ var HN = {
       $('form:first input[type=submit]').remove();
 
       var headerHtml = '<tr id="header"><td bgcolor="#ff6600"><table border="0" cellpadding="0" cellspacing="0" width="100%" style="padding:2px"><tbody><tr><td><a href="http://ycombinator.com"><img src="y18.gif" width="18" height="18" style="border:1px #ffffff solid;"></a></td><td><span class="pagetop" id="top-navigation"><span class="nav-links"><span><a href="/news" class="top" title="Top stories">top</a>|</span><span><a href="/newest" class="new" title="Newest stories">new</a>|</span><span><a href="/best" class="best" title="Best stories">best</a></span></div></span></span></td></tr></tbody></table></td></tr>';
-      
+
       // wrap content into a table
       $('body > form:first').attr('id', 'login-form');
       $('#login-form').wrap('<tr id="content"><td></td></tr>');
@@ -688,7 +688,7 @@ var HN = {
 
       if (recover_password_link.length > 0)
         $('#login-form').before(recover_password_link);
-      
+
       // re-add rogue messages previously removed
       if (message)
         $('tr#content > td:first > h1').before(' <p id="login-msg">' + message + '</p>');
@@ -738,11 +738,11 @@ var HN = {
       //enable highlighting of clicked links
       HN.enableLinkHighlighting();
 
-      HN.replaceVoteButtons(true);      
+      HN.replaceVoteButtons(true);
     },
 
     addClassToCommenters: function() {
-      //add class to comment author 
+      //add class to comment author
       var commenters = $(".comhead a[href*=user]");
       commenters.addClass('commenter');
     },
@@ -777,7 +777,7 @@ var HN = {
 
         var more = $('#more');
         //recursively load more pages on closed thread
-        if (more) 
+        if (more)
           HN.loadMoreLink(more);
 
         var addcomment = $('input[value="add comment"]');
@@ -830,14 +830,14 @@ var HN = {
           var topcolor = $(options[9]);
           topcolor.addClass('select-option');
           topcolor.next().append($('<span>Default: ff6600</span>'));
-          delay = $(options[10]);		
+          delay = $(options[10]);
         }
         else{
-          delay = $(options[11]);				
+          delay = $(options[11]);
         }
 
         //fix spacing
-        email.addClass('select-option'); 
+        email.addClass('select-option');
         showdead.addClass('select-option');
         noprocrast.addClass('select-option');
         maxvisit.addClass('select-option');
@@ -901,7 +901,7 @@ var HN = {
           HN.setLocalStorage('update_profile', window.location.href);
         });
       }
-    }, 
+    },
 
     getFormattingHelp: function(links_work) {
       help = '<p>Blank lines separate paragraphs.</p>' +
@@ -1006,7 +1006,7 @@ var HN = {
     replaceVoteButtons: function(isPostList) {
       $('img[src$="grayarrow.gif"]').replaceWith('<div class="up-arrow"></div>');
       $('img[src$="graydown.gif"]').replaceWith('<div class="down-arrow last-arrow"></div>');
-      
+
       if (isPostList) {
         $('div.up-arrow').addClass('postlist-arrow');
       } else {
@@ -1089,7 +1089,7 @@ var HN = {
           if (response.data) {
             var userInfo = JSON.parse(response.data);
             if (typeof userInfo === "number") {
-              /*Convert the legacy format. 
+              /*Convert the legacy format.
                 Upvotes used to be saved in localStorage as (for example) etcet: '1', but are now etcet: '{"votes": 1}'.
                 This change in format was made so that tag information can be saved in the same location;
                 i.e. it will soon be saved as etcet: '{"votes": 1, "tag": "Creator of HNES"}'.
@@ -1148,7 +1148,7 @@ var HN = {
       var parent = $(e.target).parent();
       var tagText = parent.find('.tagText');
       var tagEdit = parent.find('.tagEdit');
-      
+
       // Go in edit mode
       tagText.hide();
       tagEdit.show();
@@ -1202,7 +1202,7 @@ var HN = {
         if (score.length == 0)
           score = $("<span/>").text('0');
         else
-          score.text(score.text().substring(0, score.text().indexOf('\xa0')));
+          score.text(parseInt(score.text()));
         score.addClass("score").attr('title', 'Points');
 
         if (comments.text() == "discuss" || /ago$/.test(comments.text()))
@@ -1331,7 +1331,7 @@ var HN = {
                             .attr('href', link_href + '?id=' + user_name)
                             .attr('title', link_title);
 
-        if (window.location.pathname == link_href) 
+        if (window.location.pathname == link_href)
           new_active = link.clone().addClass('nav-active-link')
                                    .addClass('new-active-link');
 
@@ -1436,7 +1436,7 @@ var HN = {
                                   .text(link_text)
                                   .addClass(link_text);
 
-          if (window.location.pathname == link_href) 
+          if (window.location.pathname == link_href)
             new_active = new_link.clone().addClass('nav-active-link')
                                          .addClass('new-active-link');
 
@@ -1449,7 +1449,7 @@ var HN = {
           topsel.append($('<span/>').text('|').append(new_active));
 
         navigation.empty().append(topsel);
-        
+
         toggle_more_link = function() {
           more_link.find('a').toggleClass('active');
           hidden_div.toggle();
@@ -1460,7 +1460,7 @@ var HN = {
         hidden_div.offset({'left': more_link.position().left});
         hidden_div.hide();
     },
-    
+
     toggleMoreNavLinks: function(e) {
       var others = $('#nav-others');
       others.toggle();
@@ -1474,7 +1474,7 @@ var HN = {
         $('.nav-drop-down a:hover').css('background-color', topcolor);
       }
     },
-	
+
     setSearchInput: function(el, domain) {
       var text = "Search on " + domain;
       $("input[name='q']").val(text);
@@ -1633,7 +1633,7 @@ if (window.location.host == "hckrnews.com") {
         var id = data.id;
         var num = data.num ? data.num : 0;
         var now = Number($('#'+id).find('.comments').text());
-        var unread = Math.max(now - num, 0); 
+        var unread = Math.max(now - num, 0);
         var prepend = unread == 0 ? "" + unread + " / " : "<span>"+unread+"</span> / ";
         $(document).ready(function() {
           $('#'+id).find('.comments').prepend(prepend);
@@ -1672,7 +1672,7 @@ else {
         }
       });
     }
-    
+
     $('body').css('visibility', 'visible');
   });
 }
