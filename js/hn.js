@@ -1320,7 +1320,8 @@ var HN = {
       var user_pages = [ ['profile', '/user', 'Your profile and settings'],
                          ['comments', '/threads', 'Your comments and replies'],
                          ['submitted', '/submitted', "Stories you've submitted"],
-                         ['saved', '/saved', "Stories you've voted for"]
+                         ['upvoted', '/upvoted', "Stories you've voted for"],
+                         ['favorites', '/favorites', "Stories you've favorited"]
                        ];
       var new_active = false;
       for (var i in user_pages) {
@@ -1338,7 +1339,7 @@ var HN = {
         hidden_div.append(link);
       }
       if (new_active) {
-        if (window.location.pathname != '/saved') {
+        if (window.location.pathname != '/upvoted' || window.location.pathname != '/favorites') {
           var user_id = window.location.search.match(/id=(\w+)/)[1];
           if (user_id == user_name)
             user_id = 'Your';
