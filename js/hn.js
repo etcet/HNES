@@ -1191,12 +1191,9 @@ var HN = {
 
         var score = $this.find('span:first');
         var as = $this.find('a');
-        var comments;
-
-        comments = $(as[as.length - 1]);
-
         var by = $this.find('a:eq(0)');
         var at = $this.find('a:eq(1)');
+        var comments;
 
         if (score.length == 0)
           score = $("<span/>").text('0');
@@ -1204,20 +1201,33 @@ var HN = {
           score.text(parseInt(score.text()));
         score.addClass("score").attr('title', 'Points');
 
-        if (comments.text() == "discuss" || /ago$/.test(comments.text()))
+        if ($(as[as.length - 1]).text() != 'web') {
+          comments = $(as[as.length - 1]);
+        }
+        else {
+          comments = $('<a>-</a>');
+        }
+
+        comments_link = $(at).attr('href');
+
+        if (comments.text() == "discuss" || /ago$/.test(comments.text())) {
           comments = $("<a/>").html('0')
                               .attr('href', comments.attr('href'));
-        else if (comments.text() == "comments")
+        }
+        else if (comments.text() == "comments") {
           comments = $("<a/>").html('?')
                               .attr('href', comments.attr('href'));
-        else if (comments.text() == "")
+        }
+        else if (comments.text() == "") {
           score.text('');
-        else
-          comments.text(
-            comments.text().substring(0, comments.text().indexOf('\xa0'))
-          );
+        }
+        else {
+          comments.text(parseInt(comments.text()) || '-');
+        }
+
+        comments.attr('href', comments_link);
         comments.addClass("comments")
-                .attr('title', 'Comments');
+        comments.attr('title', 'Comments');
 
         var by_el;
         if (by.length == 0)
