@@ -42,5 +42,10 @@
     "web_accessible_resources": [
       "images/spin.gif",
       "images/tag.svg"
-    ]
+    ],
+    "applications": {
+      "gecko": {
+        "id": "hnes@etcet.net"
+      }
+    }
 }
