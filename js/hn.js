@@ -492,7 +492,7 @@ var HN = {
           }
         }
 
-        var postPagesRE = /^(?:\/|\/news|\/newest|\/best|\/active|\/classic|\/submitted|\/saved|\/jobs|\/noobstories|\/ask|\/news2|\/over|\/show|\/shownew)$/;
+        var postPagesRE = /^(?:\/|\/news|\/newest|\/best|\/active|\/classic|\/submitted|\/saved|\/jobs|\/noobstories|\/ask|\/news2|\/over|\/show|\/shownew|\/hidden)$/;
         if (postPagesRE.test(pathname)) {
           HN.doPostsList();
 
@@ -1250,6 +1250,7 @@ var HN = {
             $this.find('a[href^=flag]'),
             $this.find('a[href^=vouch]'),
             $this.find('a[href^="https://hn.algolia.com/?query="]'),
+            $this.find('a[href^=hide]'),
             $this.find('a[href^="https://www.google.com/search?q="]')
         ).insertAfter(by_el);
 
