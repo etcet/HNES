@@ -771,8 +771,8 @@ var HN = {
         //linkify self-post text
         $('.item-header tr:nth-child(3)').addClass('self-post-text').linkify();
 
-        //fix spacing issue #86
-        $(".item-header td[colspan='2']").attr('colspan', '1');
+	// move reply button to new line.
+        $(".item-header input[type='submit']").css("display", "block");
 
         var more = $('#more');
         //recursively load more pages on closed thread
