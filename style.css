@@ -250,7 +250,6 @@ body#item-body .title {
 /*story title*/
 .title {
   color: #242222;
-  font-family:  "Helvetica Neue", Arial, sans-serif !important;
   font-size: 16px !important;
   line-height: 18px;
   font-weight: medium;
@@ -290,7 +289,6 @@ a:hover {
 }
 /*submit/add comment button*/
 input[type="submit"] {
-  font-family: "Helvetica Neue", Arial, sans-serif;
   font-size: 13px;
   color: white;
   background: -webkit-gradient(linear,left top,left bottom,from(#d74937),to(#c23422));
@@ -308,7 +306,6 @@ input[value="add comment"] {
   display: block;
 }
 input[type="text"] {
-  font-family: "Helvetica Neue", Arial, sans-serif;
   font-size: 12px !important;
 }
 font[color="#ff6600"] {
@@ -329,7 +326,6 @@ font[color="#ff6600"] {
 }
 .subtext, .submitter {
   color: #b8b8b8;
-  font-family: "Helvetica Neue", Arial, sans-serif;
   font-size: 11px !important;
   padding-bottom: 15px;
 }
@@ -342,7 +338,6 @@ body#index-body .submitter a:visited {
 }
 .comhead {
   color: #000;
-  font-family: "Helvetica Neue", Arial, sans-serif;
   font-size: 11px !important;
 }
 div > .comhead {
@@ -403,7 +398,6 @@ div > .comhead {
 }
 .pagetop {
   font-size: 10pt;
-  font-family: "Helvetica Neue", Arial, sans-serif !important;
 }
 .pagetop b a {
   font-size: 11px;
@@ -413,12 +407,10 @@ div > .comhead {
 textarea {
   border: 1px solid #c6cfd6 !important;
   padding: 4px !important;
-  font-family: "Helvetica Neue", Arial, sans-serif !important;
   font-size: 12px !important;
 }
 form textarea {
   background: #fff;
-  font-family: "Helvetica Neue", Arial, sans-serif !important;
   font-size: 14px;
   padding: 10px;
   height:80px;
@@ -484,7 +476,6 @@ a.original_poster,
   display: block;
   width: 100%;
   max-width: 800px;
-  font-family: "Helvetica Neue", Arial, sans-serif !important;
   line-height: 1.5em;
 }
 .comment, .dead {
@@ -499,7 +490,6 @@ a.original_poster,
 }
 .comment p,
 .comment > font {
-  font-family: "Helvetica Neue", Arial, sans-serif !important;
   font-size: 13px !important;
   margin-top: 6px !important;
   margin-bottom: 6px !important;
@@ -821,4 +811,9 @@ body .votearrow.rotate180 {
     padding-left: 2px;
     width: 120px;
     margin: 0 4px;
+}
+
+/* removes some extraneous spacing between comments as mentioned in issue #140 */
+.comtr td {
+  padding: 0px;
 }
