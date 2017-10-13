@@ -771,7 +771,13 @@ var HN = {
         //linkify self-post text
         $('.item-header tr:nth-child(3)').addClass('self-post-text').linkify();
 
-	// move reply button to new line.
+        //fix spacing issue #86
+        $(".item-header td").removeAttr('colspan');
+
+        //fixes issue #121 (indent on individual comment pages)
+        $(".item-header td[class='ind']").remove()
+
+        // move reply button to new line.
         $(".item-header input[type='submit']").css("display", "block");
 
         var more = $('#more');
