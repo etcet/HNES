@@ -1,7 +1,7 @@
 Hacker News Enhancement Suite
 =============================
 
-A Hacker News extension for Chrome which changes lots of things.
+A Hacker News extension for Firefox and Chrome which changes lots of things.
 
 Features
 --------
@@ -29,6 +29,10 @@ Features
   * c - View comments in a new tab
   * b - Open both the comments and the story in new tabs
 * Tag users
+
+Firefox AMO link
+----------------
+https://addons.mozilla.org/en-US/firefox/addon/hnes/
 
 Chrome web store link
 ---------------------
