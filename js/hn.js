@@ -193,11 +193,12 @@ var CommentTracker = {
 
   getLastCommentId: function() {
     var ids = new Array();
-    var comments = $('.comment-table');
+    var comments = $('.comment-table:not(.hnes-deleted)');
 
     //don't include 'More' link if it's there
-    if ($('#more').length)
+    if ($('#more').length) {
       comments = comments.slice(0, -1);
+    }
 
     comments.each(function() {
       var id = $(this).attr('id');
@@ -519,12 +520,12 @@ var HN = {
                  pathname == '/more') {
           HN.doCommentsList(pathname, track_comments);
         }
-		else if (pathname == '/favorites' ||
-		         pathname == '/upvoted') {
-		  $("td[colspan='2']").hide();
-		  $(".votelinks").hide();
-		  HN.doCommentsList(pathname, track_comments);
-		}
+        else if (pathname == '/favorites' ||
+                 pathname == '/upvoted') {
+          $("td[colspan='2']").hide();
+          $(".votelinks").hide();
+          HN.doCommentsList(pathname, track_comments);
+        }
         else if (pathname == '/threads') {
           $("body").attr("id", "threads-body");
 
@@ -785,11 +786,6 @@ var HN = {
         //recursively load more pages on closed thread
         if (more)
           HN.loadMoreLink(more);
-
-        var addcomment = $('input[value="add comment"]');
-        //don't track comments on closed threads
-        if (addcomment.length == 0)
-          track_comments = false;
       }
       else {// if (pathname == "/threads") {
         $("body").attr("id", "threads-body");
@@ -801,8 +797,9 @@ var HN = {
 
       //do not want to track comments on 'more' pages
       //TODO: infinite scroll and tracking on 'more' pages
-      if (track_comments)
+      if (track_comments) {
         CommentTracker.init();
+      }
     },
 
     doUserProfile: function() {
@@ -972,7 +969,6 @@ var HN = {
       var moreurl = elem.find('a').attr('href');
       var load_div = $('<div/>');
       load_div.load(moreurl + " > center > table > tbody > tr:nth-child(3) > td > table > tbody > tr", function(response) {
-        console.log('load', moreurl);
         $(".comments-table > tbody").append(load_div.children());
         $("#more").remove();
         morelink = $('.title a[rel="nofollow"]:contains(More)').parent();
