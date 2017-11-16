@@ -31,7 +31,7 @@ var InlineReply = {
 
       /*remove the 'reply' link without actually hide()ing it because it
         doesn't work that way with collapsible comments*/
-      $(this).addClass('no-font-size');
+      $(this).css('display', 'none');
 
       domain = window.location.origin;
       link = domain + '/' + $(this).attr('href');
@@ -41,37 +41,38 @@ var InlineReply = {
       }
       else {
         //add buttons and box
-        $(this).after(
-          '<div class="reply_form"> \
-          <textarea rows="4" cols="60"/> \
-          <input type="submit" value="Reply" class="rbutton"/> \
-          <input type="submit" value="Cancel" class="cbutton"/> \
-          </div>'
-        );
-        $(this).parent().find('.rbutton').attr('data', link);
+        var reply_form = $('<div class="reply_form"/>');
+        var text_area = $('<textarea rows="4" cols="60"/>');
+        var submit_button = $('<input/>')
+            .attr('type', 'submit')
+            .val('Submit')
+            .attr('data', link)
+            .on('click', function(e) {
+              e.preventDefault();
+              link = $(this).attr('data');
+              text = $(this).prev().val();
+              //Hide cancel button and change reply text
+              $(this).next().hide();
+              $(this).attr("disabled","true");
+              $(this).attr("value","Posting...");
+              //Add loading spinner
+              image = $('<img style="vertical-align:middle;margin-left:5px;"/>');
+              image.attr('src',chrome.extension.getURL("images/spin.gif"));
+              $(this).after(image);
+              //Post
+              InlineReply.postCommentTo(link, domain, text, $(this));
+            });
+        var cancel_button = $('<input/>')
+            .attr('type', 'submit')
+            .val('Cancel')
+            .on('click', function(e) {
+              InlineReply.hideButtonAndBox($(this).prev());
+            });
+
+        $(this).after(reply_form.append(text_area)
+                                         .append(submit_button)
+                                         .append(cancel_button))
       }
-    });
-
-    /* Reply button */
-    $('.rbutton').live('click', function(e) {
-      e.preventDefault();
-      link = $(this).attr('data');
-      text = $(this).prev().val();
-      //Hide cancel button and change reply text
-      $(this).next().hide();
-      $(this).attr("disabled","true");
-      $(this).attr("value","Posting...");
-      //Add loading spinner
-      image = $('<img style="vertical-align:middle;margin-left:5px;"/>');
-      image.attr('src',chrome.extension.getURL("images/spin.gif"));
-      $(this).after(image);
-      //Post
-      InlineReply.postCommentTo(link, domain, text, $(this));
-    });
-
-    /* Cancel button */
-    $('.cbutton').live('click', function(e) {
-      InlineReply.hideButtonAndBox($(this).prev());
     });
   },
 
@@ -125,7 +126,7 @@ var InlineReply = {
     else {
       reply_link.text("reply");
     }
-    reply_link.removeClass('no-font-size');
+    reply_link.css('display', 'inline')
     button_and_box.hide();
   }
 }
@@ -404,7 +405,7 @@ var RedditComments = {
     node.collapsed = true;
     node.table.addClass('hnes-collapsed');
     preorder(node, function(n) { n.row.addClass('hnes-hidden'); count++; }, true);
-    node.collapser.text('[+] ' + (count == 1 ? '(1 child)' :  '(' + count + ' children)'));
+    node.collapser.text('[+' + count + ']');
   },
 
   _expand: function(node) {
