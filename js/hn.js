@@ -81,12 +81,12 @@ var InlineReply = {
     $.ajax({
       accepts: "text/html",
       url: link
-    }).success(function(html) {
+    }).done(function(html) {
       fnid = $(html).find('input[name="parent"]').attr('value');
       whence = $(html).find('input[name="goto"]').attr('value');
       hmac = $(html).find('input[name="hmac"]').attr('value');
       InlineReply.sendComment(domain, fnid, whence, hmac, text);
-    }).error(function(xhr, status, error) {
+    }).fail(function(xhr, status, error) {
       InlineReply.enableButtonAndBox(button);
     });
   },
@@ -99,7 +99,7 @@ var InlineReply = {
        'goto': whencearg,
        'hmac': hmacarg,
        'text': textarg }
-    ).complete(function(a) {
+    ).always(function(a) {
       window.location.reload(true);
     });
   },
