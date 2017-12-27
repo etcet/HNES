@@ -542,9 +542,9 @@ td::selection,
   border: 1px solid #fff;
   background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAAkCAIAAABuYg/PAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA+FpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczpkYz0iaHR0cDovL3B1cmwub3JnL2RjL2VsZW1lbnRzLzEuMS8iIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdFJlZj0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlUmVmIyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCIgeG1wOkNyZWF0ZURhdGU9IjIwMTEtMDYtMzBUMjI6Mjc6MDUtMDc6MDAiIHhtcDpNb2RpZnlEYXRlPSIyMDExLTA3LTAxVDA2OjAxKzE3OjAwIiB4bXA6TWV0YWRhdGFEYXRlPSIyMDExLTA3LTAxVDA2OjAxKzE3OjAwIiBkYzpmb3JtYXQ9ImltYWdlL3BuZyIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpGQTNBQkM1RjlCQzkxMUUwQTFDNUUxMkQzOUQ0MjY0MCIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpGQTNBQkM2MDlCQzkxMUUwQTFDNUUxMkQzOUQ0MjY0MCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZBM0FCQzVEOUJDOTExRTBBMUM1RTEyRDM5RDQyNjQwIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkZBM0FCQzVFOUJDOTExRTBBMUM1RTEyRDM5RDQyNjQwIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+HtChkAAAAS9JREFUeNpifH388Kdls3/duclAS8Cmos4Xlcp4M9Lz34d3DLQHTAJCTPSxCQiAFjEx0BGMWjZq2Qi1jIWgClZxSeX56yHsV7MmvNuwAi7F7+otWVgLYd9NDPz98jmlPgMa8WbpHAhbJDqFmZsXwgYyxNMKIez3G1cStInYYHy/YeXvVy9Aqrl5xNILoBbHpAC5oHLo65c3S+ZQLc7+fv38amY/NOhcvLn0jIBhK+gfDhF53tcMVECdOIOAz8cPfrt8nkvXEByYqXBxoCBQivqp8XlfE4QBtBJiK7IglS1DTikQAOQSky7IzGfwlAKy+9ULIJeGmRqYED7u3gJhAxlEpovRsnEIW8Z43dN8NBhHLRu1bNQyMi1jFhKhj01Ai5gE0guBfUI6dDuBFgEEGAAManVd0fe0qQAAAABJRU5ErkJggg%3D%3D) no-repeat !important;
 }
-html body center table tbody tr td table tbody tr td a img[src="http://ycombinator.com/images/y18.gif"],
-html body center table tbody tr td table tbody tr td a img[src="y18.gif"],
-html body center table tbody tr td table tbody tr td a img[src="/sslyc/images/y18.gif"] {
+html body center table tbody tr td table tbody tr td a img[img-src="http://ycombinator.com/images/y18.gif"],
+html body center table tbody tr td table tbody tr td a img[img-src="y18.gif"],
+html body center table tbody tr td table tbody tr td a img[img-src="/sslyc/images/y18.gif"] {
   /*zoom: 60%;*/
   height: 0px !important;
   width: 0px !important;
@@ -734,12 +734,12 @@ body#login-body {
 /* Note, it is a child of body so that it has a higher specificity than the default style */
 body .votearrow {
   /* SVG arrow so that it scales to high-resolution displays */
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="10" height="10"><path d="M 1,9 5,1 9,9 z" fill="%23828282"/></svg>');
+  background-image: img-src('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="10" height="10"><path d="M 1,9 5,1 9,9 z" fill="%23828282"/></svg>');
 }
 /* Instead of simply rotating the entire element, the svg is actually manually flipped.
    This results in a pixel perfect reflection of the up arrow */
 body .votearrow.rotate180 {
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="10" height="10"><path d="M 1,1 5,9 9,1 z" fill="%23828282"/></svg>');
+  background-image: img-src('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="10" height="10"><path d="M 1,1 5,9 9,1 z" fill="%23828282"/></svg>');
   transform: none;
 }
 
