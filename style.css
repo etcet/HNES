@@ -254,27 +254,6 @@ body#item-body .title {
   line-height: 18px;
   font-weight: medium;
 }
-/*upvote arrow*/
-#item-body img[src="http://ycombinator.com/images/grayarrow.gif"],
-#item-body img[src="/sslyc/images/grayarrow.gif"] {
-  position: relative;
-  top: -4px;
-  position-right: 3px;
-}
-/*upvotes on index page*/
-#index-body #content td:nth-child(3) {
-  width: 30px;
-}
-#index-body #content td:nth-child(3) center {
-  position: absolute;
-  top: 5px;
-}
-/* poll vote ups */
-#item-body .item-header tr:last-child img[src="http://ycombinator.com/images/grayarrow.gif"],
-#item-body .item-header tr:last-child img[src="/sslyc/images/grayarrow.gif"] {
-  top: 0px;
-  position-right: 0px;
-}
 
 /*make self posts text black*/
 .item-header tr:nth-child(3) td {
@@ -507,11 +486,7 @@ pre {
 #comment-table {
   width: 100%;
 }
-/*and force up arrow width for said bugfix*/
-img[src="http://ycombinator.com/images/grayarrow.gif"],
-img[src="/sslyc/images/grayarrow.gif"] {
-  width: 10px;
-}
+
 .reply_form {
   width: 300px;
 }
@@ -615,31 +590,6 @@ form[action="/r"] input[type="submit"] {
 td #more.link-highlight {
   border: none;
   padding: 5px 18px 5px 8px !important;
-}
-
-div.up-arrow, div.down-arrow {
-  width: 0;
-  height: 0;
-  border-left: 5pt solid transparent;
-  border-right: 5pt solid transparent;
-}
-div.up-arrow {
-  border-bottom: 7pt solid #999;
-}
-
-div.down-arrow {
-  border-top: 7pt solid #999;
-  margin-top: 7px;
-}
-
-div.last-arrow {
-  margin-right: 4pt;
-}
-
-div.postlist-arrow {
-  display: block;
-  margin-top: 4pt;
-  margin-left: 4pt;
 }
 
 #alert {
