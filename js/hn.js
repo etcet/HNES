@@ -849,9 +849,9 @@ var HN = {
         $('#user-profile a[href="changepw"]').parent().attr('id', 'your-profile-change-password');
 
         var current_karma = parseInt(karma.next().text());
-        var karma_for_flag = 20;
+        var karma_for_flag = 21;
         var karma_for_polls = 201;
-        var karma_for_downvotes = 500;
+        var karma_for_downvotes = 501;
         var can_flag_msg;
         var can_create_polls_msg;
         var can_downvote_msg;
