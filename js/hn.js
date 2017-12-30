@@ -850,7 +850,7 @@ var HN = {
 
         var current_karma = parseInt(karma.next().text());
         var karma_for_flag = 20;
-        var karma_for_polls = 200;
+        var karma_for_polls = 201;
         var karma_for_downvotes = 500;
         var can_flag_msg;
         var can_create_polls_msg;
