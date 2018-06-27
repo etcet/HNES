@@ -1,4 +1,4 @@
-/*
+﻿/*
 * Hacker News Enhancement Suite (HNES)
 * Chris James / etcet.net / chris@etcet.net
 *
@@ -107,15 +107,29 @@ table tr td {
 .comments:hover {
   color: #dd4b39;
 }
+/* show a fallback if parsing comment number fails */
+.comments:empty::before {
+  content: '💬';
+}
 
 /*spacing for comment and score tally*/
+#index-body #content table { /* Firefox */
+  width: 100%;
+  max-width: 1170px;
+}
 #index-body #content table td:first-child {
   width: 80px;
+  max-width: 80px; /* Firefox */
   text-align: right;
 }
 #index-body #content table td:nth-child(2) {
   width: 64px;
+  max-width: 64px; /* Firefox */
   text-align: right;
+}
+
+#index-body #content table td.title { /* Firefox */
+  width: auto;
 }
 
 /*spacing between story lines*/
@@ -155,7 +169,7 @@ a.comments:hover {
 .nav-links a:hover,
 .more-arrow:hover,
 .more-arrow:hover a,
-.more-arrow a.active, 
+.more-arrow a.active,
 .nav-active-link {
   color: #fff !important;
 }
@@ -236,31 +250,9 @@ body#item-body .title {
 /*story title*/
 .title {
   color: #242222;
-  font-family:  "Helvetica Neue", Arial, sans-serif !important;
   font-size: 16px !important;
   line-height: 18px;
   font-weight: medium;
-}
-/*upvote arrow*/
-#item-body img[src="http://ycombinator.com/images/grayarrow.gif"],
-#item-body img[src="/sslyc/images/grayarrow.gif"] {
-  position: relative;
-  top: -4px;
-  position-right: 3px;
-}
-/*upvotes on index page*/
-#index-body #content td:nth-child(3) {
-  width: 30px;
-}
-#index-body #content td:nth-child(3) center {
-  position: absolute;
-  top: 5px;
-}
-/* poll vote ups */
-#item-body .item-header tr:last-child img[src="http://ycombinator.com/images/grayarrow.gif"],
-#item-body .item-header tr:last-child img[src="/sslyc/images/grayarrow.gif"] {
-  top: 0px;
-  position-right: 0px;
 }
 
 /*make self posts text black*/
@@ -276,7 +268,6 @@ a:hover {
 }
 /*submit/add comment button*/
 input[type="submit"] {
-  font-family: "Helvetica Neue", Arial, sans-serif;
   font-size: 13px;
   color: white;
   background: -webkit-gradient(linear,left top,left bottom,from(#d74937),to(#c23422));
@@ -294,7 +285,6 @@ input[value="add comment"] {
   display: block;
 }
 input[type="text"] {
-  font-family: "Helvetica Neue", Arial, sans-serif;
   font-size: 12px !important;
 }
 font[color="#ff6600"] {
@@ -315,7 +305,6 @@ font[color="#ff6600"] {
 }
 .subtext, .submitter {
   color: #b8b8b8;
-  font-family: "Helvetica Neue", Arial, sans-serif;
   font-size: 11px !important;
   padding-bottom: 15px;
 }
@@ -328,7 +317,6 @@ body#index-body .submitter a:visited {
 }
 .comhead {
   color: #000;
-  font-family: "Helvetica Neue", Arial, sans-serif;
   font-size: 11px !important;
 }
 div > .comhead {
@@ -367,6 +355,7 @@ div > .comhead {
 .title:first-child {
   padding-left: 5px !important;
 }
+.pagetop a:hover,
 .pagetop a:active {
   color: #000;
 }
@@ -387,8 +376,7 @@ div > .comhead {
   display: block;
 }
 .pagetop {
-  font-size: 10px;
-  font-family: "Helvetica Neue", Arial, sans-serif !important;
+  font-size: 10pt;
 }
 .pagetop b a {
   font-size: 11px;
@@ -398,12 +386,10 @@ div > .comhead {
 textarea {
   border: 1px solid #c6cfd6 !important;
   padding: 4px !important;
-  font-family: "Helvetica Neue", Arial, sans-serif !important;
   font-size: 12px !important;
 }
 form textarea {
   background: #fff;
-  font-family: "Helvetica Neue", Arial, sans-serif !important;
   font-size: 14px;
   padding: 10px;
   height:80px;
@@ -469,7 +455,6 @@ a.original_poster,
   display: block;
   width: 100%;
   max-width: 800px;
-  font-family: "Helvetica Neue", Arial, sans-serif !important;
   line-height: 1.5em;
 }
 .comment, .dead {
@@ -484,7 +469,6 @@ a.original_poster,
 }
 .comment p,
 .comment > font {
-  font-family: "Helvetica Neue", Arial, sans-serif !important;
   font-size: 13px !important;
   margin-top: 6px !important;
   margin-bottom: 6px !important;
@@ -502,13 +486,12 @@ pre {
 #comment-table {
   width: 100%;
 }
-/*and force up arrow width for said bugfix*/
-img[src="http://ycombinator.com/images/grayarrow.gif"],
-img[src="/sslyc/images/grayarrow.gif"] {
-  width: 10px;
-}
+
 .reply_form {
   width: 300px;
+}
+.reply_form input[type="submit"] {
+  margin: 3px;
 }
 a[href^="reply"]:visited {
   color: #000
@@ -528,24 +511,7 @@ td::selection,
   background: #dd4b39 !important;
   color: #fff;
 }
-.icon {
-  width: 36px;
-  height: 36px;
-  border: 1px solid #fff;
-  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAAkCAIAAABuYg/PAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA+FpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczpkYz0iaHR0cDovL3B1cmwub3JnL2RjL2VsZW1lbnRzLzEuMS8iIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdFJlZj0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlUmVmIyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCIgeG1wOkNyZWF0ZURhdGU9IjIwMTEtMDYtMzBUMjI6Mjc6MDUtMDc6MDAiIHhtcDpNb2RpZnlEYXRlPSIyMDExLTA3LTAxVDA2OjAxKzE3OjAwIiB4bXA6TWV0YWRhdGFEYXRlPSIyMDExLTA3LTAxVDA2OjAxKzE3OjAwIiBkYzpmb3JtYXQ9ImltYWdlL3BuZyIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpGQTNBQkM1RjlCQzkxMUUwQTFDNUUxMkQzOUQ0MjY0MCIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpGQTNBQkM2MDlCQzkxMUUwQTFDNUUxMkQzOUQ0MjY0MCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZBM0FCQzVEOUJDOTExRTBBMUM1RTEyRDM5RDQyNjQwIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkZBM0FCQzVFOUJDOTExRTBBMUM1RTEyRDM5RDQyNjQwIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+HtChkAAAAS9JREFUeNpifH388Kdls3/duclAS8Cmos4Xlcp4M9Lz34d3DLQHTAJCTPSxCQiAFjEx0BGMWjZq2Qi1jIWgClZxSeX56yHsV7MmvNuwAi7F7+otWVgLYd9NDPz98jmlPgMa8WbpHAhbJDqFmZsXwgYyxNMKIez3G1cStInYYHy/YeXvVy9Aqrl5xNILoBbHpAC5oHLo65c3S+ZQLc7+fv38amY/NOhcvLn0jIBhK+gfDhF53tcMVECdOIOAz8cPfrt8nkvXEByYqXBxoCBQivqp8XlfE4QBtBJiK7IglS1DTikQAOQSky7IzGfwlAKy+9ULIJeGmRqYED7u3gJhAxlEpovRsnEIW8Z43dN8NBhHLRu1bNQyMi1jFhKhj01Ai5gE0guBfUI6dDuBFgEEGAAManVd0fe0qQAAAABJRU5ErkJggg%3D%3D) no-repeat !important;
-}
-html body center table tbody tr td table tbody tr td a img[src="http://ycombinator.com/images/y18.gif"],
-html body center table tbody tr td table tbody tr td a img[src="y18.gif"],
-html body center table tbody tr td table tbody tr td a img[src="/sslyc/images/y18.gif"] {
-  zoom: 60%;
-  height: 0px !important;
-  width: 0px !important;
-  /* these numbers match the new image's dimensions */
-  padding-left: 36px !important;
-  padding-top: 36px !important;
-  border-color: 0px 0px 3px #000;
-  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAAkCAIAAABuYg/PAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA+FpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczpkYz0iaHR0cDovL3B1cmwub3JnL2RjL2VsZW1lbnRzLzEuMS8iIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdFJlZj0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlUmVmIyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCIgeG1wOkNyZWF0ZURhdGU9IjIwMTEtMDYtMzBUMjI6Mjc6MDUtMDc6MDAiIHhtcDpNb2RpZnlEYXRlPSIyMDExLTA3LTAxVDA2OjAxKzE3OjAwIiB4bXA6TWV0YWRhdGFEYXRlPSIyMDExLTA3LTAxVDA2OjAxKzE3OjAwIiBkYzpmb3JtYXQ9ImltYWdlL3BuZyIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpGQTNBQkM1RjlCQzkxMUUwQTFDNUUxMkQzOUQ0MjY0MCIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpGQTNBQkM2MDlCQzkxMUUwQTFDNUUxMkQzOUQ0MjY0MCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZBM0FCQzVEOUJDOTExRTBBMUM1RTEyRDM5RDQyNjQwIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkZBM0FCQzVFOUJDOTExRTBBMUM1RTEyRDM5RDQyNjQwIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+HtChkAAAAS9JREFUeNpifH388Kdls3/duclAS8Cmos4Xlcp4M9Lz34d3DLQHTAJCTPSxCQiAFjEx0BGMWjZq2Qi1jIWgClZxSeX56yHsV7MmvNuwAi7F7+otWVgLYd9NDPz98jmlPgMa8WbpHAhbJDqFmZsXwgYyxNMKIez3G1cStInYYHy/YeXvVy9Aqrl5xNILoBbHpAC5oHLo65c3S+ZQLc7+fv38amY/NOhcvLn0jIBhK+gfDhF53tcMVECdOIOAz8cPfrt8nkvXEByYqXBxoCBQivqp8XlfE4QBtBJiK7IglS1DTikQAOQSky7IzGfwlAKy+9ULIJeGmRqYED7u3gJhAxlEpovRsnEIW8Z43dN8NBhHLRu1bNQyMi1jFhKhj01Ai5gE0guBfUI6dDuBFgEEGAAManVd0fe0qQAAAABJRU5ErkJggg%3D%3D) no-repeat !important;
-}
+
 /* Submit Page */
 form[action="/r"] table {
   width: 400px;
@@ -626,38 +592,14 @@ td #more.link-highlight {
   padding: 5px 18px 5px 8px !important;
 }
 
-div.up-arrow, div.down-arrow {
-  width: 0;
-  height: 0;
-  border-left: 5pt solid transparent;
-  border-right: 5pt solid transparent;
-}
-div.up-arrow {
-  border-bottom: 7pt solid #999;
-}
-
-div.down-arrow {
-  border-top: 7pt solid #999;
-  margin-top: 7px;
-}
-
-div.last-arrow {
-  margin-right: 4pt;
-}
-
-div.postlist-arrow {
-  display: block;
-  margin-top: 4pt;
-  margin-left: 4pt;
-}
-
 #alert {
   color: #dd4b39;
   padding: 5px;
   text-align: center;
 }
+
 #alert a {
-  color #000;
+  color: #000;
 }
 
 .mourning {
@@ -719,18 +661,6 @@ body#login-body {
 }
 #login-body a:hover {
   text-decoration: underline;
-}
-
-/* Note, it is a child of body so that it has a higher specificity than the default style */
-body .votearrow {
-  /* SVG arrow so that it scales to high-resolution displays */
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="10" height="10"><path d="M 1,9 5,1 9,9 z" fill="#828282"/></svg>');
-}
-/* Instead of simply rotating the entire element, the svg is actually manually flipped.
-   This results in a pixel perfect reflection of the up arrow */
-body .votearrow.rotate180 {
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="10" height="10"><path d="M 1,1 5,9 9,1 z" fill="#828282"/></svg>');
-  transform: none;
 }
 
 .hnes-age,
@@ -887,4 +817,12 @@ body .votearrow.rotate180 {
 
 .hnes-comment footer {
   font-size: smaller;
+}/* removes some extraneous spacing between comments as mentioned in issue #140 */
+.comtr td {
+  padding: 0px;
+}
+
+/* hide native comment collapse */
+.togg {
+  display: none;
 }
