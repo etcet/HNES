@@ -53,7 +53,7 @@ var InlineReply = {
     });
 
     /* Reply button */
-    $('.rbutton').live('click', function(e) {
+    $('.rbutton').on('click', function(e) {
       e.preventDefault();
       link = $(this).attr('data');
       text = $(this).prev().val();
@@ -70,7 +70,7 @@ var InlineReply = {
     });
     
     /* Cancel button */
-    $('.cbutton').live('click', function(e) {
+    $('.cbutton').on('click', function(e) {
       InlineReply.hideButtonAndBox($(this).prev());
     });
   },
@@ -266,6 +266,7 @@ var CommentTracker = {
 
 class HNComments {
   constructor(storyId) {
+	console.log('hncomments constructor');
     var injector = document.createElement('div');
     injector.innerHTML = `
       <template id="hnes-comment-tmpl">
@@ -491,6 +492,7 @@ class HNComments {
   }
 
   apply() {
+	console.log('apply');
     const commentTree = document.querySelector('#hnmain table.comment-tree');
     if (!commentTree) {
       console.warn('unrecognized markup detected');
@@ -761,7 +763,6 @@ var HN = {
                  pathname == "/more") {
           let storyId = /id=(\d+)/.exec(window.location.search)[1];
           HN.hnComments = new HNComments(storyId);
-                 pathname == '/more') {
           HN.doCommentsList(pathname, track_comments);
         }
         else if (pathname == '/favorites' ||
@@ -988,6 +989,7 @@ var HN = {
     },
 
     doCommentsList: function(pathname, track_comments) {
+	  console.log('docommentslist');
       InlineReply.init();
       HN.addClassToCommenters();
 
@@ -1200,6 +1202,7 @@ var HN = {
     },
 
     loadMoreLink: function(elem) {
+	  console.log('loadmorelink');
       if (elem.length == 0) {
         HN.doAfterCommentsLoad($('.comments-table'));
         return;
@@ -1219,6 +1222,7 @@ var HN = {
     },
 
     doAfterCommentsLoad: function(comments) {
+	  console.log('doaftercommentsload');
       //HNComments.init();
       HN.hnComments.apply();
 

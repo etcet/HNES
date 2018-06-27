@@ -757,14 +757,14 @@ body#login-body {
   display: block;
   height: 10px;
   width: 10px;
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="10" height="10"><path d="M 1,9 5,1 9,9 z" fill="#828282"/></svg>');
+  background-image: url('https://news.ycombinator.com/grayarrow.gif');
 }
 
 .hnes-comment .downvote {
   display: block;
   height: 10px;
   width: 10px;
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="10" height="10"><path d="M 1,1 5,9 9,1 z" fill="#828282"/></svg>');
+  background-image: url('https://news.ycombinator.com/graydown.gif');
 }
 
 .hnes-comment .reply-count {
