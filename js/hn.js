@@ -80,12 +80,12 @@ var InlineReply = {
     $.ajax({
       accepts: "text/html",
       url: link
-    }).success(function(html) {
+    }).done(function(html) {
       fnid = $(html).find('input[name="parent"]').attr('value');
       whence = $(html).find('input[name="goto"]').attr('value');
       hmac = $(html).find('input[name="hmac"]').attr('value');
       InlineReply.sendComment(domain, fnid, whence, hmac, text);
-    }).error(function(xhr, status, error) {
+    }).fail(function(xhr, status, error) {
       InlineReply.enableButtonAndBox(button);
     });
   },
@@ -98,9 +98,9 @@ var InlineReply = {
        'goto': whencearg,
        'hmac': hmacarg,
        'text': textarg }
-    ).complete(function(a) {
+    ).always(function(a) {
       window.location.reload(true);
-    }); 
+    });
   },
 
   disableButtonAndBox: function(button) {
@@ -114,7 +114,7 @@ var InlineReply = {
     button.next().removeAttr('disabled');
     button.prev().removeAttr('disabled');
   },
-  
+
   hideButtonAndBox: function(button) {
     var button_and_box = button.parent();
     var reply_link = button_and_box.prev();
@@ -175,7 +175,7 @@ var CommentTracker = {
               }
 
     var page_id = comment_info_el.attr('href').match(/id=(\d+)/);
-    if (page_id.length) 
+    if (page_id.length)
       page_id = Number(page_id[1]);
     else {
       page_id = window.location.search.match(/id=(\d+)/);
@@ -195,8 +195,9 @@ var CommentTracker = {
     var comments = $('.comment-table');
 
     //don't include 'More' link if it's there
-    if ($('#more').length)
+    if ($('#more').length) {
       comments = comments.slice(0, -1);
+    }
 
     comments.each(function() {
       var id = $(this).attr('id');
@@ -685,7 +686,7 @@ var HN = {
         HN.removeNumbers();
 
         if (/*window.location.pathname != '/submit' &&*/
-            window.location.pathname != '/changepw') { 
+            window.location.pathname != '/changepw') {
           HN.rewriteNavigation();
         }
 
@@ -710,7 +711,7 @@ var HN = {
           else if (words[1] == "comments") {
             //paginated comments, anything other than first page of comments
             //"more comments | Hacker News"
-            if (words[0] == "more") 
+            if (words[0] == "more")
               pathname = "/more";
             //"user's comments | Hacker News"
             else
@@ -734,7 +735,7 @@ var HN = {
           }
         }
 
-        var postPagesRE = /^(?:\/|\/news|\/newest|\/best|\/active|\/classic|\/submitted|\/saved|\/jobs|\/noobstories|\/ask|\/news2|\/over|\/show|\/shownew)$/;
+        var postPagesRE = /^(?:\/|\/news|\/newest|\/best|\/active|\/classic|\/submitted|\/saved|\/jobs|\/noobstories|\/ask|\/news2|\/over|\/show|\/shownew|\/hidden)$/;
         if (postPagesRE.test(pathname)) {
           HN.doPostsList();
 
@@ -760,6 +761,13 @@ var HN = {
                  pathname == "/more") {
           let storyId = /id=(\d+)/.exec(window.location.search)[1];
           HN.hnComments = new HNComments(storyId);
+                 pathname == '/more') {
+          HN.doCommentsList(pathname, track_comments);
+        }
+        else if (pathname == '/favorites' ||
+                 pathname == '/upvoted') {
+          $("td[colspan='2']").hide();
+          $(".votelinks").hide();
           HN.doCommentsList(pathname, track_comments);
         }
         else if (pathname == '/threads') {
@@ -774,7 +782,7 @@ var HN = {
           HN.doCommentsList(pathname, track_comments);
         }
         else if (pathname == '/newcomments' ||
-                 pathname == '/bestcomments' || 
+                 pathname == '/bestcomments' ||
                  pathname == '/noobcomments' ) {
           HN.addClassToCommenters();
           HN.addInfoToUsers($('body'));
@@ -790,7 +798,7 @@ var HN = {
           HN.doLogin(); // reply when not logged in
         }
         else if ((pathname == '/submit') && HN.isLoginPage()) {
-          HN.doLogin(); // submit when not logged in 
+          HN.doLogin(); // submit when not logged in
         }
         else if (pathname == '/newpoll') {
           HN.doPoll();
@@ -838,7 +846,7 @@ var HN = {
       $('body > center > table > tbody > tr').eq(contentIndex - 1).remove();
 
       $('#header table td').removeAttr('style');
-      
+
       $('tr:last-child .title').attr('id', 'more');
       //$('.title a[rel="nofollow"]:contains(More)').parent().attr('id', 'more');
       //$('.title a[href="news2"]').parent().attr('id', 'more');
@@ -905,7 +913,7 @@ var HN = {
       $('form:first input[type=submit]').remove();
 
       var headerHtml = '<tr id="header"><td bgcolor="#ff6600"><table border="0" cellpadding="0" cellspacing="0" width="100%" style="padding:2px"><tbody><tr><td><a href="http://ycombinator.com"><img src="y18.gif" width="18" height="18" style="border:1px #ffffff solid;"></a></td><td><span class="pagetop" id="top-navigation"><span class="nav-links"><span><a href="/news" class="top" title="Top stories">top</a>|</span><span><a href="/newest" class="new" title="Newest stories">new</a>|</span><span><a href="/best" class="best" title="Best stories">best</a></span></div></span></span></td></tr></tbody></table></td></tr>';
-      
+
       // wrap content into a table
       $('body > form:first').attr('id', 'login-form');
       $('#login-form').wrap('<tr id="content"><td></td></tr>');
@@ -920,7 +928,7 @@ var HN = {
 
       if (recover_password_link.length > 0)
         $('#login-form').before(recover_password_link);
-      
+
       // re-add rogue messages previously removed
       if (message)
         $('tr#content > td:first > h1').before(' <p id="login-msg">' + message + '</p>');
@@ -970,11 +978,11 @@ var HN = {
       //enable highlighting of clicked links
       HN.enableLinkHighlighting();
 
-      HN.replaceVoteButtons(true);      
+      HN.replaceVoteButtons(true);
     },
 
     addClassToCommenters: function() {
-      //add class to comment author 
+      //add class to comment author
       var commenters = $(".comhead a[href*=user]");
       commenters.addClass('commenter');
     },
@@ -985,7 +993,11 @@ var HN = {
 
       //add classes to comment page header (OP post) and the table containing all the comments
       var comments;
-      var below_header = $('body > center > table > tbody > tr:nth-child(2) > td > table');
+
+      const
+        itemId = /id=(\w+)/.exec(window.location.search)[1],
+        below_header = $('#content table');
+
       if (pathname == "/item") {
         $("body").attr("id", "item-body");
         $(below_header[0]).addClass('item-header');
@@ -1001,17 +1013,18 @@ var HN = {
         $('.item-header tr:nth-child(3)').addClass('self-post-text').linkify();
 
         //fix spacing issue #86
-        $(".item-header td[colspan='2']").attr('colspan', '1');
+        $(".item-header td").removeAttr('colspan');
+
+        //fixes issue #121 (indent on individual comment pages)
+        $(".item-header td[class='ind']").remove()
+
+        // move reply button to new line.
+        $(".item-header input[type='submit']").css("display", "block");
 
         var more = $('#more');
         //recursively load more pages on closed thread
-        if (more) 
+        if (more)
           HN.loadMoreLink(more);
-
-        var addcomment = $('input[value="add comment"]');
-        //don't track comments on closed threads
-        if (addcomment.length == 0)
-          track_comments = false;
       }
       else {// if (pathname == "/threads") {
         $("body").attr("id", "threads-body");
@@ -1023,8 +1036,9 @@ var HN = {
 
       //do not want to track comments on 'more' pages
       //TODO: infinite scroll and tracking on 'more' pages
-      if (track_comments)
+      if (track_comments) {
         CommentTracker.init();
+      }
     },
 
     doUserProfile: function() {
@@ -1058,14 +1072,14 @@ var HN = {
           var topcolor = $(options[9]);
           topcolor.addClass('select-option');
           topcolor.next().append($('<span>Default: ff6600</span>'));
-          delay = $(options[10]);		
+          delay = $(options[10]);
         }
         else{
-          delay = $(options[11]);				
+          delay = $(options[11]);
         }
 
         //fix spacing
-        email.addClass('select-option'); 
+        email.addClass('select-option');
         showdead.addClass('select-option');
         noprocrast.addClass('select-option');
         maxvisit.addClass('select-option');
@@ -1074,9 +1088,9 @@ var HN = {
         $('#user-profile a[href="changepw"]').parent().attr('id', 'your-profile-change-password');
 
         var current_karma = parseInt(karma.next().text());
-        var karma_for_flag = 20;
-        var karma_for_polls = 200;
-        var karma_for_downvotes = 500;
+        var karma_for_flag = 21;
+        var karma_for_polls = 201;
+        var karma_for_downvotes = 501;
         var can_flag_msg;
         var can_create_polls_msg;
         var can_downvote_msg;
@@ -1129,7 +1143,7 @@ var HN = {
           HN.setLocalStorage('update_profile', window.location.href);
         });
       }
-    }, 
+    },
 
     getFormattingHelp: function(links_work) {
       help = '<p>Blank lines separate paragraphs.</p>' +
@@ -1194,7 +1208,6 @@ var HN = {
       var moreurl = elem.find('a').attr('href');
       var load_div = $('<div/>');
       load_div.load(moreurl + " > center > table > tbody > tr:nth-child(3) > td > table > tbody > tr", function(response) {
-        console.log('load', moreurl);
         $(".comments-table > tbody").append(load_div.children());
         $("#more").remove();
         morelink = $('.title a[rel="nofollow"]:contains(More)').parent();
@@ -1235,7 +1248,7 @@ var HN = {
     replaceVoteButtons: function(isPostList) {
       $('img[src$="grayarrow.gif"]').replaceWith('<div class="up-arrow"></div>');
       $('img[src$="graydown.gif"]').replaceWith('<div class="down-arrow last-arrow"></div>');
-      
+
       if (isPostList) {
         $('div.up-arrow').addClass('postlist-arrow');
       } else {
@@ -1422,33 +1435,43 @@ var HN = {
 
         var score = $this.find('span:first');
         var as = $this.find('a');
-        var comments;
-
-        comments = $(as[as.length - 1]);
-
         var by = $this.find('a:eq(0)');
         var at = $this.find('a:eq(1)');
+        var comments;
 
         if (score.length == 0)
           score = $("<span/>").text('0');
         else
-          score.text(score.text().substring(0, score.text().indexOf(' ')));
+          score.text(parseInt(score.text()));
         score.addClass("score").attr('title', 'Points');
 
-        if (comments.text() == "discuss" || /ago$/.test(comments.text()))
+        if ($(as[as.length - 1]).text() != 'web') {
+          comments = $(as[as.length - 1]);
+        }
+        else {
+          comments = $('<a>-</a>');
+        }
+
+        comments_link = $(at).attr('href');
+
+        if (comments.text() == "discuss" || /ago$/.test(comments.text())) {
           comments = $("<a/>").html('0')
                               .attr('href', comments.attr('href'));
-        else if (comments.text() == "comments")
+        }
+        else if (comments.text() == "comments") {
           comments = $("<a/>").html('?')
                               .attr('href', comments.attr('href'));
-        else if (comments.text() == "")
+        }
+        else if (comments.text() == "") {
           score.text('');
-        else
-          comments.text(
-            comments.text().substring(0, comments.text().indexOf(' '))
-          );
+        }
+        else {
+          comments.text(parseInt(comments.text()) || '-');
+        }
+
+        comments.attr('href', comments_link);
         comments.addClass("comments")
-                .attr('title', 'Comments');
+        comments.attr('title', 'Comments');
 
         var by_el;
         if (by.length == 0)
@@ -1471,6 +1494,7 @@ var HN = {
             $this.find('a[href^=flag]'),
             $this.find('a[href^=vouch]'),
             $this.find('a[href^="https://hn.algolia.com/?query="]'),
+            $this.find('a[href^=hide]'),
             $this.find('a[href^="https://www.google.com/search?q="]')
         ).insertAfter(by_el);
 
@@ -1550,7 +1574,8 @@ var HN = {
       var user_pages = [ ['profile', '/user', 'Your profile and settings'],
                          ['comments', '/threads', 'Your comments and replies'],
                          ['submitted', '/submitted', "Stories you've submitted"],
-                         ['saved', '/saved', "Stories you've voted for"]
+                         ['upvoted', '/upvoted', "Stories you've voted for"],
+                         ['favorites', '/favorites', "Stories you've favorited"]
                        ];
       var new_active = false;
       for (var i in user_pages) {
@@ -1561,14 +1586,14 @@ var HN = {
                             .attr('href', link_href + '?id=' + user_name)
                             .attr('title', link_title);
 
-        if (window.location.pathname == link_href) 
+        if (window.location.pathname == link_href)
           new_active = link.clone().addClass('nav-active-link')
                                    .addClass('new-active-link');
 
         hidden_div.append(link);
       }
       if (new_active) {
-        if (window.location.pathname != '/saved') {
+        if (window.location.pathname != '/upvoted' || window.location.pathname != '/favorites') {
           var user_id = window.location.search.match(/id=(\w+)/)[1];
           if (user_id == user_name)
             user_id = 'Your';
@@ -1666,7 +1691,7 @@ var HN = {
                                   .text(link_text)
                                   .addClass(link_text);
 
-          if (window.location.pathname == link_href) 
+          if (window.location.pathname == link_href)
             new_active = new_link.clone().addClass('nav-active-link')
                                          .addClass('new-active-link');
 
@@ -1679,7 +1704,7 @@ var HN = {
           topsel.append($('<span/>').text('|').append(new_active));
 
         navigation.empty().append(topsel);
-        
+
         toggle_more_link = function() {
           more_link.find('a').toggleClass('active');
           hidden_div.toggle();
@@ -1690,7 +1715,7 @@ var HN = {
         hidden_div.offset({'left': more_link.position().left});
         hidden_div.hide();
     },
-    
+
     toggleMoreNavLinks: function(e) {
       var others = $('#nav-others');
       others.toggle();
@@ -1704,7 +1729,7 @@ var HN = {
         $('.nav-drop-down a:hover').css('background-color', topcolor);
       }
     },
-	
+
     setSearchInput: function(el, domain) {
       var text = "Search on " + domain;
       $("input[name='q']").val(text);
@@ -1863,7 +1888,7 @@ if (window.location.host == "hckrnews.com") {
         var id = data.id;
         var num = data.num ? data.num : 0;
         var now = Number($('#'+id).find('.comments').text());
-        var unread = Math.max(now - num, 0); 
+        var unread = Math.max(now - num, 0);
         var prepend = unread == 0 ? "" + unread + " / " : "<span>"+unread+"</span> / ";
         $(document).ready(function() {
           $('#'+id).find('.comments').prepend(prepend);
@@ -1902,7 +1927,7 @@ else {
         }
       });
     }
-    
+
     $('body').css('visibility', 'visible');
   });
 }

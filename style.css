@@ -818,6 +818,8 @@ body#login-body {
 .hnes-comment footer {
   font-size: smaller;
 }/* removes some extraneous spacing between comments as mentioned in issue #140 */
+}
+/* removes some extraneous spacing between comments as mentioned in issue #140 */
 .comtr td {
   padding: 0px;
 }
