@@ -31,7 +31,7 @@ var InlineReply = {
 
       /*remove the 'reply' link without actually hide()ing it because it
         doesn't work that way with collapsible comments*/
-      $(this).addClass('no-font-size');
+      $(this).css('display', 'none');
 
       domain = window.location.origin;
       link = domain + '/' + $(this).attr('href');
@@ -125,7 +125,7 @@ var InlineReply = {
     else {
       reply_link.text("reply");
     }
-    reply_link.removeClass('no-font-size');
+    reply_link.css('display', 'inline')
     button_and_box.hide();
   }
 }
@@ -647,7 +647,7 @@ var RedditComments = {
     node.collapsed = true;
     node.table.addClass('hnes-collapsed');
     preorder(node, function(n) { n.row.addClass('hnes-hidden'); count++; }, true);
-    node.collapser.text('[+] ' + (count == 1 ? '(1 child)' :  '(' + count + ' children)'));
+    node.collapser.text('[+' + count + ']');
   },
 
   _expand: function(node) {
