@@ -324,19 +324,22 @@ div > .comhead {
 }
 
 /*score next to username indicating user upvotes*/
-.user-score {
-  margin-left: 4px;
+.hnes-user-score {
   color: #D74937;
 }
-.user-score:before, .user-score:after {
-  color: #888;
+
+.noscore {
+	display: none;
 }
-.user-score:before {
-  content:'(';
+
+.unvoter {
+	display: none;
 }
-.user-score:after {
-  content:')';
+
+.nostory, .noreply {
+  display: none !important;
 }
+
 
 /*collapse comment 'button'*/
 .collapse {
@@ -448,6 +451,11 @@ a.original_poster,
 #item-body .comhead a.original_poster {
   color: #D93B3D !important;
 }
+
+a.dead {
+  text-decoration: line-through !important;
+}
+
 .comment font{
   display: block;
 }
@@ -663,6 +671,14 @@ body#login-body {
   text-decoration: underline;
 }
 
+/* borders indicating new comments */
+.hnes-new-parent {
+	border-left: 2px solid #bc9b85;
+}
+.hnes-new {
+	border-left: 2px solid #f60;
+}
+
 .hnes-age,
 .hnes-actions {
     margin-left: .5em;
@@ -685,31 +701,28 @@ body#login-body {
     content: " ]";
 }
 
+/* user tags */
 .hnes-tag, .hnes-tagText:not(:empty) {
-    margin-left: 4px;
     cursor: pointer;
 }
-
 .hnes-tag {
-    margin-bottom: -2px;
+	margin-bottom: -3px;
 }
-
 .hnes-tagText:not(:empty) {
-  border-color: #828282;
-  border-radius: 1px;
-  border-width: 1px;
-  border-style: solid;
-  padding: 0 4px;
+  padding: 0 2px;
+  color: #D74937;
 }
-
 .hnes-tagEdit {
     padding-left: 2px;
     width: 120px;
     margin: 0 4px;
     display: none;
 }
-
-.hnes-tag-cont.edit .hnes-tag {
+.hnes-tagImage {
+	margin-right: 3px;
+	margin-bottom: 3px;
+}
+.hnes-tag-cont.edit .hnes-tagText {
     display: none;
 }
 .hnes-tag-cont.edit .hnes-tagEdit {
@@ -738,9 +751,6 @@ body#login-body {
 .hnes-comment {
   padding: 8px;
   margin: 0 0 16px 0;
-  border-width: 1px;
-  border-style: solid;
-  border-radius: 3px;
 }
 
 .hnes-comment header {
@@ -753,19 +763,31 @@ body#login-body {
   margin-right: 4px;
 }
 
-.hnes-comment .upvote {
+.voted {
+	display: none;
+}
+
+.unvoter.voted {
+	display: inline-block;
+}
+
+/*.hnes-comment .upvote {
   display: block;
   height: 10px;
   width: 10px;
-  background-image: url('https://news.ycombinator.com/grayarrow.gif');
+  padding: 1px;
+  background: url('https://news.ycombinator.com/grayarrow.gif');
+  background-position: top center;
+  background-repeat: no-repeat;
+  background-origin: padding-box;
 }
-
 .hnes-comment .downvote {
   display: block;
   height: 10px;
   width: 10px;
-  background-image: url('https://news.ycombinator.com/graydown.gif');
-}
+  padding: 1px;
+  background: url('https://news.ycombinator.com/graydown.gif') no-repeat center;
+}*/
 
 .hnes-comment .reply-count {
   display: none;
@@ -779,14 +801,12 @@ body#login-body {
   max-width: 800px;
 }
 
-.hnes-comment.level-odd {
+.hnes-comment.level-odd, #hnes-comments.nolevels .hnes-comment:nth-child(odd) {
   background-color: #FFFFFD;
-  border-color: #ABAB93;
 }
 
 .hnes-comment.level-even {
   background-color: #F6F6EF;
-  border-color: #CECEC0;
 }
 
 .hnes-comment:last-child {
