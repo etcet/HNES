@@ -264,9 +264,6 @@ var CommentTracker = {
 class HNComments {
   constructor(storyId) {
     var injector = document.createElement('div');
-	/*				  <input class="hnes-tagEdit" style="display: none;" type="text">
-				  <span class="hnes-tagText" title="User tag"></span>
-				  <img class="hnes-tagImage" title="Tag user">*/
     injector.innerHTML = `
       <template id="hnes-comment-tmpl">
           <div id="" class="hnes-comment" data-hnes-level="">
@@ -337,16 +334,11 @@ class HNComments {
     if (!commentTree) return;
 
     var commentTables = commentTree.querySelectorAll('tr.athing table');
+    // pages like /bestcomments don't have sub-tables
     if (!commentTables.length) {
       commentTables = commentTree.querySelectorAll('tr.athing')
     }
     if (!commentTables) return;
-
-    const original_poster_el = document.querySelector('.subtext .hnuser'),
-          original_poster = original_poster_el ? original_poster_el.textContent : '';
-    if (original_poster_el) {
-      original_poster_el.classList.add('original_poster');
-    }
 
     const nodeList = new Array(commentTables.length + 1);
 
@@ -355,12 +347,16 @@ class HNComments {
 
     nodeList[0] = { id: 'root', level: 0, children: [] };
 
-    for (let i = 0; i < commentTables.length; i++) {
-      const t = commentTables[i];
-      var level = t.querySelector('img') &&
-                  (t.querySelector('img').getAttribute('width') / 40) + 1
+    // record the OP so we can color their name orange
+    const original_poster_el = document.querySelector('.subtext .hnuser'),
+          original_poster = original_poster_el ? original_poster_el.textContent : '';
+    if (original_poster_el) {
+      original_poster_el.classList.add('original_poster');
+    }
 
+    for (let i = 0; i < commentTables.length; i++) {
       const
+        t = commentTables[i],
         id = t.parentElement.parentElement.id || t.id,
         upVoteEl = document.getElementById('up_' + id),
         upVoteUrl = upVoteEl ? upVoteEl.href : '',
@@ -381,6 +377,8 @@ class HNComments {
         commentEl = t.querySelector('div.comment'),
         isDeleted  = !(commentEl && commentEl.firstElementChild),
         textParts = isDeleted ? [] : this.extractCommentParts(commentEl),
+        imgEl = t.querySelector('img'),
+        level = imgEl && (imgEl.getAttribute('width') / 40) + 1,
         parentLinkEl = t.querySelector('.par a'),
         parentLinkUrl = parentLinkEl ? parentLinkEl.href : '',
         storyLinkEl = t.querySelector('.storyon a'),
@@ -390,7 +388,8 @@ class HNComments {
         userColor = userFontEl ? userFontEl.getAttribute('color') : '',
         isNoob = userColor == "#3c963c",
         isOP = username == original_poster,
-        commentColor = commentEl.querySelector('.comment span').classList[0],
+        commentSpanEl = commentEl.querySelector('span'),
+        commentColor = commentSpanEl ? commentSpanEl.classList[0] : 'c00',
         isDead = t.querySelector('span.comhead').textContent.includes(' [dead] ');
 
       nodeList[nodeIndex++] = {
@@ -461,7 +460,11 @@ class HNComments {
     if (c.descCount > 0) {
       commentEl.querySelector('.reply-count').textContent = `(${c.descCount} repl${c.descCount == 1 ? 'y' : 'ies'})`;
     }
-    commentEl.querySelector('.reply').href = c.replyUrl;
+    if (c.replyUrl) {
+      commentEl.querySelector('.reply').href = c.replyUrl;
+    } else {
+      commentEl.querySelector('.reply').classList.add('noreply');
+    }
     commentEl.querySelector('.permalink').href = c.permalinkUrl;
     authorEl.textContent = c.username;
     authorEl.href = c.userUrl;
@@ -626,11 +629,15 @@ class HNComments {
   apply() {
     var commentTree = document.querySelector('#hnmain table.comment-tree');
     var itemList = document.querySelector('#hnmain table.itemlist');
-    if (!commentTree && !itemList) {
-      console.warn('unrecognized markup detected, no commentTree or itemList');
+    var threadList = document.querySelector('#hnmain table.comments-table');
+    var threadList;
+    if (!commentTree && !itemList && !threadList) {
+      console.warn('unrecognized markup detected, no commentTree, itemList, or threadList');
       return;
     } else if (itemList) {
       commentTree = itemList;
+    } else if (threadList) {
+      commentTree = threadList;
     }
 
     const nodeMap = this.nodeListToTree(this.markupToNodeList(commentTree));
@@ -639,14 +646,18 @@ class HNComments {
       this.nodeMap = nodeMap;
       const commentsContainer = document.createElement('div');
       commentsContainer.id = 'hnes-comments';
-      if (itemList) {
-        commentsContainer.classList.add('nolevels')
-      }
+
       this.renderComments(this.nodeMap.root.children, commentsContainer);
       commentTree.parentNode.replaceChild(commentsContainer, commentTree);
 
+      if (itemList) {
+        commentsContainer.classList.add('nolevels')
+      } else {
+        // highlight new comments on threaded pages
+        CommentTracker.init();
+      }
+      // load and show user tags and point totals
       HN.addInfoToUsers();
-      //CommentTracker.init();
     });
   }
 }
@@ -717,7 +728,7 @@ var HN = {
           }
         }
 
-        var postPagesRE = /^(?:\/|\/news|\/newest|\/best|\/active|\/classic|\/submitted|\/saved|\/jobs|\/noobstories|\/ask|\/news2|\/over|\/show|\/shownew|\/hidden)$/;
+        var postPagesRE = /^(?:\/|\/news|\/newest|\/best|\/active|\/classic|\/submitted|\/saved|\/jobs|\/noobstories|\/ask|\/news2|\/over|\/show|\/shownew|\/hidden|\/upvoted)$/;
         if (postPagesRE.test(pathname)) {
           HN.doPostsList();
 
@@ -741,9 +752,9 @@ var HN = {
         }
         else if (pathname == '/item' ||
                  pathname == "/more" ||
-                 pathname == "/threads" ||
                  pathname == "/bestcomments" ||
-                 pathname == "/noobcomments") {
+                 pathname == "/noobcomments" ||
+                 pathname == "/newcomments") {
           let storyIdResults = /id=(\w+)/.exec(window.location.search)
           let storyId = false;
           if (storyIdResults) {
@@ -756,7 +767,8 @@ var HN = {
                  pathname == '/upvoted') {
           $("td[colspan='2']").hide();
           $(".votelinks").hide();
-          HN.doCommentsList(pathname, track_comments);
+          $(".ind").hide();
+          //HN.doCommentsList(pathname, track_comments);
         }
         else if (pathname == '/threads') {
           $("body").attr("id", "threads-body");
@@ -767,14 +779,15 @@ var HN = {
           var newtable = $("<table/>").append($('<tbody/>').append(comments));
           $(trs[1]).find('td').append(newtable);
 
+          HN.hnComments = new HNComments(0);
           HN.doCommentsList(pathname, track_comments);
         }
-        else if (pathname == '/newcomments' ||
+/*        else if (pathname == '/newcomments' ||
                  pathname == '/bestcomments' ||
                  pathname == '/noobcomments' ) {
           HN.addClassToCommenters();
           HN.addInfoToUsers($('body'));
-        }
+        }*/
         else if (pathname == '/user') {
           HN.doUserProfile();
         }
@@ -968,11 +981,11 @@ var HN = {
       HN.replaceVoteButtons(true);
     },
 
-    addClassToCommenters: function() {
+    /*addClassToCommenters: function() {
       //add class to comment author
       var commenters = $(".comhead a[href*=user]");
       commenters.addClass('commenter');
-    },
+    },*/
 
     doCommentsList: function(pathname, track_comments) {
 //      InlineReply.init();
@@ -1020,8 +1033,8 @@ var HN = {
       else {// if (pathname == "/threads") {
         $("body").attr("id", "threads-body");
         comments = $(below_header[0]);
-        comments.addClass('comments-table');
-        HN.doAfterCommentsLoad(comments);
+        comments.addClass('comment-tree');
+        HN.doAfterCommentsLoad();
       }
 
       //do not want to track comments on 'more' pages
@@ -1040,7 +1053,7 @@ var HN = {
       var karma = $(options[2]);
       var about = $(options[3]);
 
-      if (options.length === 5) {
+      if (options.length === 4) {
         //other user pages
         $('#user-profile a[href^="submitted"]').parent().attr('id', 'others-profile-submitted');
         about.next().linkify();
@@ -1187,7 +1200,7 @@ var HN = {
 
     loadMoreLink: function(elem) {
       if (elem.length == 0) {
-        HN.doAfterCommentsLoad($('.comments-table'));
+        HN.doAfterCommentsLoad();
         return;
       }
 
@@ -1204,11 +1217,8 @@ var HN = {
       });
     },
 
-    doAfterCommentsLoad: function(comments) {
+    doAfterCommentsLoad: function() {
       HN.hnComments.apply();
-
-      //HN.addInfoToUsers(comments);
-      //HN.replaceVoteButtons(false);
     },
 
     replaceVoteButtons: function(isPostList) {
@@ -1333,10 +1343,6 @@ var HN = {
 			}
 		}
 	},
-
-    getUserInfo: function(commenters) { // Gets the user's votes and tag, and displays them.
-
-    },
 
     displayUserScore: function(el, upvotes) {
       userscoreEl = el.parentElement.querySelector('.hnes-user-score');
