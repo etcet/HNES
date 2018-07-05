@@ -31,7 +31,7 @@ body center table table {
 /*header color*/
 #header,
 .nav-drop-down {
-  background-color: #d74937;
+  background-color: #f60;
 }
 /*content color*/
 #content {
@@ -105,7 +105,7 @@ table tr td {
   left: 0;
 }
 .comments:hover {
-  color: #dd4b39;
+  color: #f60;
 }
 /* show a fallback if parsing comment number fails */
 .comments:empty::before {
@@ -238,7 +238,7 @@ a.comments:hover {
   text-align: left !important;
 }
 #more a {
-  color: #D93B3D;
+  color: #f60;
 }
 #more a:hover {
   text-decoration: underline;
@@ -263,14 +263,12 @@ body#item-body .title {
 a:link {
   color: #202020;
 }
-a:hover {
-  color: #dd4b39;
-}
+
 /*submit/add comment button*/
 input[type="submit"] {
   font-size: 13px;
   color: white;
-  background: -webkit-gradient(linear,left top,left bottom,from(#d74937),to(#c23422));
+  background: #f60;
   padding: 5px 10px;
   text-transform: capitalize;
   border: 1px solid #666;
@@ -278,7 +276,7 @@ input[type="submit"] {
 }
 input[type="submit"]:hover {
   cursor: pointer;
-  background: #d74937;
+  background: #;
 }
 /*format add comment button on its own line*/
 input[value="add comment"] {
@@ -296,7 +294,7 @@ font[color="#ff6600"] {
 }
 .submitter a:hover,
 .title a:hover {
-  color: #dd4b39;
+  color: #f60;
 }
 
 /*user name in info subtext*/
@@ -308,10 +306,7 @@ font[color="#ff6600"] {
   font-size: 11px !important;
   padding-bottom: 15px;
 }
-body#index-body .submitter a,
-body#index-body .submitter a:visited {
-  color: #666;
-}
+
 .subtext a, .comhead a {
   color: #989898 !important
 }
@@ -325,7 +320,7 @@ div > .comhead {
 
 /*score next to username indicating user upvotes*/
 .hnes-user-score {
-  color: #D74937;
+  color: #f60;
 }
 
 .noscore {
@@ -404,7 +399,7 @@ textarea, input {
   border-radius: 2px;
 }
 form textarea:focus, textarea:focus, input:focus, input[name="q"] {
-  outline: #d74937;
+  outline: #f60;
   border-color: #d73937 !important;
 }
 form[action="http://hn.algolia.com/"],
@@ -449,7 +444,7 @@ a.new_user,
 /*and the person who posted the story is orange*/
 a.original_poster,
 #item-body .comhead a.original_poster {
-  color: #D93B3D !important;
+  color: #f60 !important;
 }
 
 a.dead {
@@ -557,16 +552,16 @@ form[action="/r"] input[type="submit"] {
 
 /* HN Heat */
 .no-heat {
-  color: #242222 !important;
+  color: #000 !important;
 }
 .mild {
-  color: #462628 !important;
+  color: #520 !important;
 }
 .medium {
-  color: #702e30 !important;
+  color: #a40 !important;
 }
 .hot {
-  color: #d93b3d !important;
+  color: #f60 !important;
 }
 
 #jobs-body table table {
@@ -579,7 +574,7 @@ form[action="/r"] input[type="submit"] {
 }
 
 .poll-graph {
-  background-color: #D74937;
+  background-color: #f60;
   display: block;
   height: 32px;
 }
@@ -687,6 +682,7 @@ body#login-body {
 
 .hnes-actions a:after {
     content: " | ";
+    color: #000;
 }
 
 .hnes-actions a:last-child:after {
@@ -710,7 +706,7 @@ body#login-body {
 }
 .hnes-tagText:not(:empty) {
   padding: 0 2px;
-  color: #D74937;
+  color: #f60;
 }
 .hnes-tagEdit {
     padding-left: 2px;
@@ -847,4 +843,8 @@ body#login-body {
 /* hide native comment collapse */
 .togg {
   display: none;
+}
+
+#content a:hover, #content a:visited:hover {
+  color: #f60 !important;
 }
