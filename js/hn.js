@@ -165,12 +165,13 @@ var CommentTracker = {
     var comment_info_as = document.querySelectorAll('.subtext a');
     var comment_info_el = comment_info_as[comment_info_as.length - 1];
 
-    //if there is no 'discuss' or 'n comment(s)' link it's some other kind of page (e.g. profile)
-    //if (comment_info_el.length == 0)
-    //  return {"id": window.location.pathname + window.location.search,
-    //          "num": 0,
-    //          "last_comment_id": CommentTracker.getLastCommentId()
-    //          }
+    // if there is no 'discuss' or 'n comment(s)' link it's some other kind of page (e.g. profile)
+    if (!comment_info_el || comment_info_el.length == 0) {
+      return {"id": window.location.pathname + window.location.search,
+              "num": 0,
+              "last_comment_id": CommentTracker.getLastCommentId()
+              }
+    }
 
     var page_id = comment_info_el.href.match(/id=(\d+)/);
     if (page_id.length) {
@@ -658,6 +659,10 @@ class HNComments {
       }
       // load and show user tags and point totals
       HN.addInfoToUsers();
+      var loading_comments = document.getElementById('loading_comments');
+      if (loading_comments) {
+        loading_comments.classList.add('hidden');
+      }
     });
   }
 }
@@ -778,6 +783,12 @@ var HN = {
           var comments = trs.slice(2, -1);
           var newtable = $("<table/>").append($('<tbody/>').append(comments));
           $(trs[1]).find('td').append(newtable);
+
+          var morelink = document.querySelector('.morelink');
+          if (morelink) {
+            var morelink_href = morelink.href;
+            newtable.parent().append(morelink);
+          }
 
           HN.hnComments = new HNComments(0);
           HN.doCommentsList(pathname, track_comments);
@@ -1001,6 +1012,8 @@ var HN = {
       }
       below_header = $('#content table');
 
+      $("<p id='loading_comments'>Loading comments</p>").insertBefore(below_header[1])
+
       if (pathname == "/item") {
         $("body").attr("id", "item-body");
         $(below_header[0]).addClass('item-header');
@@ -1199,6 +1212,11 @@ var HN = {
     },
 
     loadMoreLink: function(elem) {
+      var loading_comments = document.getElementById('loading_comments')
+      if (loading_comments) {
+        loading_comments.textContent += '.';
+      }
+
       if (elem.length == 0) {
         HN.doAfterCommentsLoad();
         return;
@@ -1219,6 +1237,10 @@ var HN = {
 
     doAfterCommentsLoad: function() {
       HN.hnComments.apply();
+      var loading_comments = document.getElementById("loading_comments");
+      if (loading_comments) {
+        loading_comments.textContent = "Rendering comments...";
+      }
     },
 
     replaceVoteButtons: function(isPostList) {

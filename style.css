@@ -52,7 +52,7 @@ body center table table {
 }
 /*content padding*/
 #content > td {
-  padding: 21px 8px;
+  padding: 21px 8px 0px 8px;
 }
 body#index-body #content > td {
   padding: 21px 0px;
@@ -335,6 +335,16 @@ div > .comhead {
   display: none !important;
 }
 
+.hidden {
+  display: none;
+}
+
+#loading_comments {
+  margin: 1em;
+  padding: 1em;
+  color: #000;
+  background-color: #fffffd
+}
 
 /*collapse comment 'button'*/
 .collapse {
@@ -847,4 +857,14 @@ body#login-body {
 
 #content a:hover, #content a:visited:hover {
   color: #f60 !important;
+}
+
+#threads-body .morelink, #threads-body .morelink:hover {
+  display: block;
+  padding: 1em;
+  color: #f60;
+  font-size: 16px;
+}
+#threads-body .morelink:hover {
+  text-decoration: underline;
 }
