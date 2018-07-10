@@ -269,13 +269,13 @@ class HNComments {
       <template id="hnes-comment-tmpl">
           <div id="" class="hnes-comment" data-hnes-level="">
               <header>
-                  <span class="collapser"></span>
+                  <span class="collapser" title="Toggle collapse"></span>
                   <!--<span class="voter"><a href="#" class="upvote"></a><a href="#" class="downvote"></a></span>-->
 				          <span class="upvoter"><a href="#" class="upvote" title="Upvote">↑</a></span>
 				          <span class="downvoter"><a href="#" class="downvote" title="Downvote">↓</a></span>
 				          <span class="unvoter"><a href="#" class="unvote" title"Unvote">🗙</a></span>
                   <span class="author">
-					          <a href=""></a>
+					          <a href="" title="User profile"></a>
 					          <span class="hnes-user-score-cont noscore" title="User score">(<span class="hnes-user-score"></span>)</span>
 					          <span class="hnes-tag-cont">
 						          <img class="hnes-tag" title="Tag user">
@@ -379,7 +379,7 @@ class HNComments {
         isDeleted  = !(commentEl && commentEl.firstElementChild),
         textParts = isDeleted ? [] : this.extractCommentParts(commentEl),
         imgEl = t.querySelector('img'),
-        level = imgEl && (imgEl.getAttribute('width') / 40) + 1,
+        level = (imgEl && (Math.floor(imgEl.getAttribute('width') / 40))) + 1,
         parentLinkEl = t.querySelector('.par a'),
         parentLinkUrl = parentLinkEl ? parentLinkEl.href : '',
         storyLinkEl = t.querySelector('.storyon a'),
@@ -760,6 +760,13 @@ var HN = {
                  pathname == "/bestcomments" ||
                  pathname == "/noobcomments" ||
                  pathname == "/newcomments") {
+
+          var morelink = document.querySelector('.morelink');
+          if (morelink) {
+            var morelink_href = morelink.href;
+            $('#content').after(morelink);
+          }
+
           let storyIdResults = /id=(\w+)/.exec(window.location.search)
           let storyId = false;
           if (storyIdResults) {
@@ -1375,6 +1382,7 @@ var HN = {
     displayUserTag: function(el, tag) {
       if (tag) {
         el.parentElement.querySelector('.hnes-tagText').textContent = tag;
+        el.parentElement.querySelector('.hnes-tagEdit').value = tag;
       }
     },
 

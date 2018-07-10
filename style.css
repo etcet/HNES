@@ -52,6 +52,9 @@ body center table table {
 }
 /*content padding*/
 #content > td {
+  padding: 21px 8px 21px 8px;
+}
+body#threads-body #content > td {
   padding: 21px 8px 0px 8px;
 }
 body#index-body #content > td {
@@ -320,7 +323,7 @@ div > .comhead {
 
 /*score next to username indicating user upvotes*/
 .hnes-user-score {
-  color: #f60;
+  color: #444;
 }
 
 .noscore {
@@ -716,7 +719,7 @@ body#login-body {
 }
 .hnes-tagText:not(:empty) {
   padding: 0 2px;
-  color: #f60;
+  color: #000;
 }
 .hnes-tagEdit {
     padding-left: 2px;
@@ -751,7 +754,7 @@ body#login-body {
 }
 
 #hnes-comments .replies {
-  margin: 8px 0 0 16px;
+  margin: 8px 0 0 8px;
 }
 
 .hnes-comment {
@@ -777,6 +780,10 @@ body#login-body {
 	display: inline-block;
 }
 
+.hnes-comment .upvote, .hnes-comment .downvote {
+  font-size: 16px;
+}
+
 /*.hnes-comment .upvote {
   display: block;
   height: 10px;
@@ -800,6 +807,7 @@ body#login-body {
 }
 
 .hnes-comment.collapsed .reply-count {
+  color: #000;
   display: initial;
 }
 
@@ -807,7 +815,8 @@ body#login-body {
   max-width: 800px;
 }
 
-.hnes-comment.level-odd, #hnes-comments.nolevels .hnes-comment:nth-child(odd) {
+.hnes-comment.level-odd,
+#hnes-comments.nolevels .hnes-comment {
   background-color: #FFFFFD;
 }
 
@@ -831,6 +840,10 @@ body#login-body {
   display: block;
   width: 1em;
   cursor: pointer;
+}
+
+.hnes-comment .collapser:hover {
+  color: #f60;
 }
 
 .hnes-comment .collapser::after {
