@@ -84,7 +84,7 @@ Thanks to alanc10n for fixing issue 66
 
 Thanks to sglantz for adding support for topcolor, issue 52
 
-Thanks to ibejoeb for fixing the collapsible comments and many other improvements.
+Thanks to ibejoeb for fixing the collapsible comments, improving comment performance, and many other improvements.
 
 Thanks to SCdF for a bug fix.
 

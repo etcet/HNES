@@ -1,4 +1,4 @@
-﻿/*
+/*
 * Hacker News Enhancement Suite (HNES)
 * Chris James / etcet.net / chris@etcet.net
 *
@@ -14,9 +14,9 @@ body {
   margin: 0;
 }
 /*ignore <center> elements*/
-body center {
+/*body center {
   text-align: left;
-}
+}*/
 body > center > table {
   width: 100%;
   margin: 0 auto;
@@ -327,11 +327,11 @@ div > .comhead {
 }
 
 .noscore {
-	display: none;
+  display: none;
 }
 
 .unvoter {
-	display: none;
+  display: none;
 }
 
 .nostory, .noreply {
@@ -512,6 +512,9 @@ pre {
 a[href^="reply"]:visited {
   color: #000
 }
+form input[type="submit"] {
+  display: block;
+}
 
 #options_bar {
   position: fixed;
@@ -681,10 +684,10 @@ body#login-body {
 
 /* borders indicating new comments */
 .hnes-new-parent {
-	border-left: 2px solid #bc9b85;
+  border-left: 2px solid #bc9b85;
 }
 .hnes-new {
-	border-left: 2px solid #f60;
+  border-left: 2px solid #f60;
 }
 
 .hnes-age,
@@ -715,7 +718,7 @@ body#login-body {
     cursor: pointer;
 }
 .hnes-tag {
-	margin-bottom: -3px;
+  margin-bottom: -3px;
 }
 .hnes-tagText:not(:empty) {
   padding: 0 2px;
@@ -728,8 +731,8 @@ body#login-body {
     display: none;
 }
 .hnes-tagImage {
-	margin-right: 3px;
-	margin-bottom: 3px;
+  margin-right: 3px;
+  margin-bottom: 3px;
 }
 .hnes-tag-cont.edit .hnes-tagText {
     display: none;
@@ -753,8 +756,20 @@ body#login-body {
   color: black;
 }
 
+#hnes-comments .permalink, #hnes-comments .permalink:visited {
+  color: rgb(152, 152, 152);
+}
+
+#hnes-comments .parent {
+  display: none;
+}
+
 #hnes-comments .replies {
-  margin: 8px 0 0 8px;
+  margin: 8px 0 0 16px;
+}
+
+.replies:empty {
+  display: none;
 }
 
 .hnes-comment {
@@ -768,16 +783,16 @@ body#login-body {
   color: rgb(152, 152, 152);
 }
 
-.hnes-comment header > span {
+.hnes-comment header > span, .hnes-comment header > a {
   margin-right: 4px;
 }
 
 .voted {
-	display: none;
+  display: none;
 }
 
 .unvoter.voted {
-	display: inline-block;
+  display: inline-block;
 }
 
 .hnes-comment .upvote, .hnes-comment .downvote {
@@ -856,6 +871,7 @@ body#login-body {
 
 .hnes-comment footer {
   font-size: smaller;
+  text-decoration: underline;
 }
 
 /* removes some extraneous spacing between comments as mentioned in issue #140 */

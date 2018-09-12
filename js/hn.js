@@ -91,7 +91,6 @@ var InlineReply = {
   },
 
   sendComment: function(domain, fnidarg, whencearg, hmacarg, textarg) {
-    //console.log(domain, fnidarg, whencearg, hmacarg, textarg)
     $.post(
       domain + "/comment",
       {'parent': fnidarg,
@@ -271,19 +270,20 @@ class HNComments {
               <header>
                   <span class="collapser" title="Toggle collapse"></span>
                   <!--<span class="voter"><a href="#" class="upvote"></a><a href="#" class="downvote"></a></span>-->
-				          <span class="upvoter"><a href="#" class="upvote" title="Upvote">↑</a></span>
-				          <span class="downvoter"><a href="#" class="downvote" title="Downvote">↓</a></span>
-				          <span class="unvoter"><a href="#" class="unvote" title"Unvote">🗙</a></span>
+                  <span class="upvoter"><a href="#" class="upvote" title="Upvote">↑</a></span>
+                  <span class="downvoter"><a href="#" class="downvote" title="Downvote">↓</a></span>
+                  <span class="unvoter"><a href="#" class="unvote" title"Unvote">🗙</a></span>
                   <span class="author">
-					          <a href="" title="User profile"></a>
-					          <span class="hnes-user-score-cont noscore" title="User score">(<span class="hnes-user-score"></span>)</span>
-					          <span class="hnes-tag-cont">
-						          <img class="hnes-tag" title="Tag user">
-						          <span class="hnes-tagText" title="User tag"></span>
-						          <input type="text" class="hnes-tagEdit" placeholder="">
-					          </span>
-				          </span>
-                  <span class="age"></span>
+                    <a href="" title="User profile"></a>
+                    <span class="hnes-user-score-cont noscore" title="User score">(<span class="hnes-user-score"></span>)</span>
+                    <span class="hnes-tag-cont">
+                      <img class="hnes-tag" title="Tag user">
+                      <span class="hnes-tagText" title="User tag"></span>
+                      <input type="text" class="hnes-tagEdit" placeholder="">
+                    </span>
+                  </span>
+                  <!--<span class="age"></span>-->
+                  <a class="age permalink"></a>
                   <span class="reply-count"></span>
                   <span class="on-story nostory">on <a href=""></a></span>
               </header>
@@ -292,8 +292,8 @@ class HNComments {
                   </div>
                   <footer>
                       <a class="reply">reply</a>
-                      <a class="permalink">permalink</a>
-                      <a class="parent">parent</a></span>
+                      <!--<a class="permalink">permalink</a>-->
+                      <a class="parent">parent</a>
                   </footer>
               </section>
               <section class="replies"></div>
@@ -305,7 +305,7 @@ class HNComments {
   }
 
   getNodeMap() {
-	  return this.nodeMap;
+    return this.nodeMap;
   }
 
   extractCommentParts(commentEl) {
@@ -502,9 +502,9 @@ class HNComments {
       upvoterEl.classList.add('voted')
       downvoterEl.classList.add('voted')
     }
-	  if (c.unVoteUrl) {
-	    unvoterEl.classList.add('voted')
-	  }
+    if (c.unVoteUrl) {
+      unvoterEl.classList.add('voted')
+    }
 
     if (c.storyLinkUrl) {
       commentEl.querySelector('.on-story').classList.remove('nostory');
@@ -547,9 +547,9 @@ class HNComments {
         commentEl.querySelector('a.unvote').href = c.unVoteUrl;
 
         HN.upvoteUserData(authorEl.textContent, 1);
-	      upvoterEl.classList.add('voted');
-	      downvoterEl.classList.add('voted');
-	      unvoterEl.classList.add('voted');
+        upvoterEl.classList.add('voted');
+        downvoterEl.classList.add('voted');
+        unvoterEl.classList.add('voted');
       };
       httpRequest.open('GET', c.upVoteUrl, true);
       httpRequest.send();
@@ -562,15 +562,15 @@ class HNComments {
       httpRequest.onload = function(e) {
         HN.upvoteUserData(authorEl.textContent, -1);
         // only show up/down vote if we receive urls (for logged out users or low karma)
-	      if (c.upVoteUrl) upvoterEl.classList.remove('voted');
-	      if (c.downVoteUrl) downvoterEl.classList.remove('voted');
-	      unvoterEl.classList.remove('voted');
+        if (c.upVoteUrl) upvoterEl.classList.remove('voted');
+        if (c.downVoteUrl) downvoterEl.classList.remove('voted');
+        unvoterEl.classList.remove('voted');
       };
       var unvote_link = c.unVoteUrl;
       httpRequest.open('GET', unvote_link, true);
       httpRequest.send();
     }, true);
-
+    
     this.renderComments(kids, commentEl.querySelector('.replies'))
     into.appendChild(clone);
   }
@@ -650,7 +650,6 @@ class HNComments {
 
       this.renderComments(this.nodeMap.root.children, commentsContainer);
       commentTree.parentNode.replaceChild(commentsContainer, commentTree);
-
       if (itemList) {
         commentsContainer.classList.add('nolevels')
       } else {
@@ -826,7 +825,6 @@ var HN = {
           //make sure More link is in correct place
           $('.title:contains(More)').prev().attr('colspan', '1');
         }
-        //console.log(pathname);
     },
 
     doPoll: function() {
@@ -904,7 +902,7 @@ var HN = {
     },
 
     getUserData: function(usernames, callback) {
-      chrome.extension.sendMessage({
+      chrome.runtime.sendMessage({
         method: "getUserData",
         usernames: usernames
       }, callback);
@@ -1044,7 +1042,7 @@ var HN = {
         // move reply button to new line.
         $(".item-header input[type='submit']").css("display", "block");
 
-        var more = $('#more');
+        var more = $('.morelink');
         //recursively load more pages on closed thread
         if (more) {
           HN.loadMoreLink(more);
@@ -1219,24 +1217,23 @@ var HN = {
     },
 
     loadMoreLink: function(elem) {
-      var loading_comments = document.getElementById('loading_comments')
-      if (loading_comments) {
-        loading_comments.textContent += '.';
-      }
-
       if (elem.length == 0) {
         HN.doAfterCommentsLoad();
         return;
       }
 
-      var moreurl = elem.find('a').attr('href');
+      var loading_comments = document.getElementById('loading_comments')
+      if (loading_comments) {
+        loading_comments.textContent += '.';
+      }
+
+      var moreurl = elem.attr('href');
       var load_div = $('<div/>');
       load_div.load(moreurl + " > center > table > tbody > tr:nth-child(3) > td > table > tbody > tr", function(response) {
         $(".comments-table > tbody").append(load_div.children());
-        $("#more").remove();
-        morelink = $('.title a[rel="nofollow"]:contains(More)').parent();
+        $(".morelink").remove();
+        morelink = $('.title a[rel="nofollow"]:contains(More)');
         if (morelink) {
-          morelink.attr('id', 'more');
           HN.loadMoreLink(morelink);
         }
       });
@@ -1332,46 +1329,44 @@ var HN = {
           tagEdit.val(tagText.text());
           parent.removeClass('edit');
         }
-	    });
-    },
-
-    upvoteUserData: function(author, value) { // Adds value to the user's upvote count, saves and displays it.
-	  console.log('upvoteUserData', author, value);
-      var commenter = $('.author:contains('+author+')');
-      HN.getLocalStorage(author, function(response) {
-        var userInfo = {},
-		    new_upvote_total = value;
-
-        if (response.data) {
-          userInfo = JSON.parse(response.data);
-		}
-
-        if (userInfo.votes) { // If we already have up/downvoted this user before.
-		  new_upvote_total += userInfo.votes;
-		}
-		userInfo.votes = new_upvote_total;
-		if (new_upvote_total === 0) {
-			delete userInfo.votes;
-		}
-		HN.setLocalStorage(author, JSON.stringify(userInfo));
-		HN.showNewUserScore(author, new_upvote_total); // Set the upvote count
       });
     },
 
-	showNewUserScore: function(author, value) {
-		console.log('showNewUserScore', author, value);
-		var author_els = $('.author:contains('+author+')');
-		for (var i = 0; i < author_els.length; i++) {
-			var author_el = author_els[i];
-			var score_el = author_el.querySelector('.hnes-user-score');
-			if (value !== 0) {
-				score_el.textContent = value;
-				score_el.parentElement.classList.remove('noscore');
-			} else {
-				score_el.parentElement.classList.add('noscore');
-			}
-		}
-	},
+    upvoteUserData: function(author, value) { // Adds value to the user's upvote count, saves and displays it.
+      var commenter = $('.author:contains('+author+')');
+      HN.getLocalStorage(author, function(response) {
+        var userInfo = {},
+        new_upvote_total = value;
+
+        if (response.data) {
+          userInfo = JSON.parse(response.data);
+        }
+
+        if (userInfo.votes) { // If we already have up/downvoted this user before.
+          new_upvote_total += userInfo.votes;
+        }
+        userInfo.votes = new_upvote_total;
+        if (new_upvote_total === 0) {
+          delete userInfo.votes;
+        }
+        HN.setLocalStorage(author, JSON.stringify(userInfo));
+        HN.showNewUserScore(author, new_upvote_total); // Set the upvote count
+      });
+    },
+
+    showNewUserScore: function(author, value) {
+      var author_els = $('.author:contains('+author+')');
+      for (var i = 0; i < author_els.length; i++) {
+        var author_el = author_els[i];
+        var score_el = author_el.querySelector('.hnes-user-score');
+        if (value !== 0) {
+          score_el.textContent = value;
+          score_el.parentElement.classList.remove('noscore');
+        } else {
+          score_el.parentElement.classList.add('noscore');
+        }
+      }
+    },
 
     displayUserScore: function(el, upvotes) {
       userscoreEl = el.parentElement.querySelector('.hnes-user-score');
@@ -1389,7 +1384,7 @@ var HN = {
     editUserTag: function(e) {
       var parent = $(e.target).parent(),
           tagEdit = parent.find('.hnes-tagEdit'),
-		  tagText = parent.find('.hnes-tagText');
+          tagText = parent.find('.hnes-tagText');
       parent.addClass('edit');
       tagEdit.focus();
     },
@@ -1614,7 +1609,7 @@ var HN = {
       user_drop.click(user_drop_toggle);
       hidden_div.click(user_drop_toggle);
       hidden_div.hide();
-	  HN.setTopColor();
+      HN.setTopColor();
     },
     rewriteNavigation: function() {
         var topsel = $('.topsel');
