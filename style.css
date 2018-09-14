@@ -17,6 +17,9 @@ body {
 /*body center {
   text-align: left;
 }*/
+form center {
+  text-align: left;
+}
 body > center > table {
   width: 100%;
   margin: 0 auto;
@@ -26,6 +29,14 @@ body center table table {
   box-shadow: none;
   padding: 0;
   background: none
+}
+
+.hnes-comment .score {
+  display: none;
+}
+
+.hnes-comment .score.visible {
+  display: inline-block;
 }
 
 /*header color*/
@@ -757,7 +768,7 @@ body#login-body {
 }
 
 #hnes-comments .permalink, #hnes-comments .permalink:visited {
-  color: rgb(152, 152, 152);
+  color: rgb(102, 102, 102);
 }
 
 #hnes-comments .parent {
@@ -780,7 +791,7 @@ body#login-body {
 .hnes-comment header {
   display: flex;
   font-size: 93%;
-  color: rgb(152, 152, 152);
+  color: rgb(102, 102, 102);
 }
 
 .hnes-comment header > span, .hnes-comment header > a {

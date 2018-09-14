@@ -268,11 +268,12 @@ class HNComments {
       <template id="hnes-comment-tmpl">
           <div id="" class="hnes-comment" data-hnes-level="">
               <header>
-                  <span class="collapser" title="Toggle collapse"></span>
+                  <a class="collapser" title="Toggle collapse"></a>
                   <!--<span class="voter"><a href="#" class="upvote"></a><a href="#" class="downvote"></a></span>-->
                   <span class="upvoter"><a href="#" class="upvote" title="Upvote">↑</a></span>
                   <span class="downvoter"><a href="#" class="downvote" title="Downvote">↓</a></span>
                   <span class="unvoter"><a href="#" class="unvote" title"Unvote">🗙</a></span>
+                  <span class="score"></span>
                   <span class="author">
                     <a href="" title="User profile"></a>
                     <span class="hnes-user-score-cont noscore" title="User score">(<span class="hnes-user-score"></span>)</span>
@@ -391,7 +392,9 @@ class HNComments {
         isOP = username == original_poster,
         commentSpanEl = commentEl.querySelector('span'),
         commentColor = commentSpanEl ? commentSpanEl.classList[0] : 'c00',
-        isDead = t.querySelector('span.comhead').textContent.includes(' [dead] ');
+        isDead = t.querySelector('span.comhead').textContent.includes(' [dead] '),
+        scoreEl = t.querySelector('span.score'),
+        score = scoreEl ? scoreEl.textContent : '';
 
       nodeList[nodeIndex++] = {
         id,
@@ -418,6 +421,7 @@ class HNComments {
         isOP,
         commentColor,
         isDead,
+        score,
       }
     };
     return nodeList;
@@ -518,6 +522,11 @@ class HNComments {
 
     if (c.isDead) {
       authorEl.classList.add('dead');
+    }
+    
+    if (c.score) {
+      commentEl.querySelector('.score').textContent = c.score + " by";
+      commentEl.querySelector('.score').classList.add('visible');
     }
 
     for (let parts = c.textParts, textContainer = commentEl.querySelector('.text'), i = 0; i < parts.length; i++) {
