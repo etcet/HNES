@@ -341,10 +341,6 @@ div > .comhead {
   display: none;
 }
 
-.unvoter {
-  display: none;
-}
-
 .nostory, .noreply {
   display: none !important;
 }
@@ -357,7 +353,7 @@ div > .comhead {
   margin: 1em;
   padding: 1em;
   color: #000;
-  background-color: #fffffd
+  background-color: #FFFFFD
 }
 
 /*collapse comment 'button'*/
@@ -776,7 +772,7 @@ body#login-body {
 }
 
 #hnes-comments .replies {
-  margin: 8px 0 0 16px;
+  margin: 8px 0 0 30px;
 }
 
 .replies:empty {
@@ -784,7 +780,7 @@ body#login-body {
 }
 
 .hnes-comment {
-  padding: 8px;
+  padding: 4px 8px 4px 8px;
   margin: 0 0 16px 0;
 }
 
@@ -798,17 +794,49 @@ body#login-body {
   margin-right: 4px;
 }
 
-.voted {
+.votearrow.voted, .voteblock.voted {;
   display: none;
 }
 
 .unvoter.voted {
-  display: inline-block;
+  display: block;
 }
 
-.hnes-comment .upvote, .hnes-comment .downvote {
-  font-size: 16px;
+.unvoter {
+  display: none;
+  width: 10px;
+  height: 10px;
+  border: 0px;
+  margin-top: 9px !important;
+  margin-left: 1px;
+  margin-right: 1px !important;
+  padding: 0px;
 }
+
+.hnes-comment header a, .hnes-comment header span {
+  margin-top: 4px;
+}
+.voteblock {
+  margin: 0px 1px 0px 1px !important;
+  padding: 0px;
+  border: 0px;
+  width: 10px;
+  height: 10px;
+}
+.voteblock a {
+  display: block;
+  margin-top: 0px;
+}
+.voteblock .votearrow {
+  margin: 3px 1px 3px;
+}
+.upvote.nodownvote {
+  margin-top: 7px;
+}
+
+/*.hnes-comment .upvote, .hnes-comment .downvote {
+  font-size: 16px;
+}*/
 
 /*.hnes-comment .upvote {
   display: block;
@@ -862,9 +890,15 @@ body#login-body {
   display: none;
 }
 
+.hnes-comment section.body {
+  margin-left: 34px;
+}
+
 .hnes-comment .collapser {
   display: block;
-  width: 1em;
+  margin-left: 4px;
+  margin-right: 4px;
+  width: 14px;
   cursor: pointer;
 }
 

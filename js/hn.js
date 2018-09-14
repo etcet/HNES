@@ -261,6 +261,8 @@ var CommentTracker = {
   }
 }
 
+var unvoteImg = chrome.extension.getURL("images/unvote.gif");
+
 class HNComments {
   constructor(storyId) {
     var injector = document.createElement('div');
@@ -268,11 +270,13 @@ class HNComments {
       <template id="hnes-comment-tmpl">
           <div id="" class="hnes-comment" data-hnes-level="">
               <header>
-                  <a class="collapser" title="Toggle collapse"></a>
                   <!--<span class="voter"><a href="#" class="upvote"></a><a href="#" class="downvote"></a></span>-->
-                  <span class="upvoter"><a href="#" class="upvote" title="Upvote">↑</a></span>
-                  <span class="downvoter"><a href="#" class="downvote" title="Downvote">↓</a></span>
-                  <span class="unvoter"><a href="#" class="unvote" title"Unvote">🗙</a></span>
+                  <span class="voteblock">
+                    <a href="#" class="upvoter votearrow upvote" title="Upvote"></a>
+                    <a href="#" class="downvoter votearrow rotate180 downvote" title="Downvote"></a>
+                  </span>
+                  <a class="unvoter unvote" title="Unvote"></a>
+                  <a class="collapser" title="Toggle collapse"></a>
                   <span class="score"></span>
                   <span class="author">
                     <a href="" title="User profile"></a>
@@ -453,7 +457,8 @@ class HNComments {
       authorEl = commentEl.querySelector('.author a'),
       userscoreEl = commentEl.querySelector('.hnes-user-score'),
       tagImageEl = commentEl.querySelector('.hnes-tag'),
-      tagTextEl = commentEl.querySelector('.hnes-tagText');
+      tagTextEl = commentEl.querySelector('.hnes-tagText'),
+      voteblockEl = commentEl.querySelector('.voteblock');
 
     c.el = commentEl;
 
@@ -500,14 +505,19 @@ class HNComments {
 
     // hide upvotes or downvotes if there's no url in original (i.e. not logged in or not enough karma to downvote)
     if (!c.upVoteUrl) { upvoterEl.classList.add('voted') }
-    if (!c.downVoteUrl) { downvoterEl.classList.add('voted') }
-
+    if (!c.downVoteUrl) { 
+      downvoterEl.classList.add('voted')
+      upvoterEl.classList.add('nodownvote')
+    }
+  
     if (c.isUpVoted || c.isDownVoted) {
       upvoterEl.classList.add('voted')
       downvoterEl.classList.add('voted')
     }
     if (c.unVoteUrl) {
+      voteblockEl.classList.add('voted');
       unvoterEl.classList.add('voted')
+      unvoterEl.style.backgroundImage = 'url(' + unvoteImg + ')'
     }
 
     if (c.storyLinkUrl) {
@@ -558,7 +568,9 @@ class HNComments {
         HN.upvoteUserData(authorEl.textContent, 1);
         upvoterEl.classList.add('voted');
         downvoterEl.classList.add('voted');
+        voteblockEl.classList.add('voted');
         unvoterEl.classList.add('voted');
+        unvoterEl.style.backgroundImage = 'url(' + unvoteImg + ')'
       };
       httpRequest.open('GET', c.upVoteUrl, true);
       httpRequest.send();
@@ -574,6 +586,7 @@ class HNComments {
         if (c.upVoteUrl) upvoterEl.classList.remove('voted');
         if (c.downVoteUrl) downvoterEl.classList.remove('voted');
         unvoterEl.classList.remove('voted');
+        voteblockEl.classList.remove('voted');
       };
       var unvote_link = c.unVoteUrl;
       httpRequest.open('GET', unvote_link, true);
