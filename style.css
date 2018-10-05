@@ -779,6 +779,10 @@ body#login-body {
   display: none;
 }
 
+#hnes-comments p {
+  margin: 5px;
+}
+
 .hnes-comment {
   padding: 4px 8px 4px 8px;
   margin: 0 0 16px 0;
