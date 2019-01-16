@@ -38,6 +38,7 @@
           "js/jquery-3.2.1.min.js",
           "js/linkify/jquery.linkify-1.0.js",
           "js/linkify/plugins/jquery.linkify-1.0-twitter.js",
+          "js/jquery.visible.min.js",
           "js/hn.js"],
         "matches": [
           "http://news.ycombinator.com/*",

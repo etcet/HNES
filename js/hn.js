@@ -1943,3 +1943,57 @@ else {
     $('body').css('visibility', 'visible');
   });
 }
+
+// Comment navigation
+
+function allComments() {
+
+  return document.getElementById("hnes-comments").children;
+}
+
+function goToComment(which) {
+
+  const comments = allComments();
+
+  var i = 0;
+  for (var comment of comments) {
+
+      const commentID = comment.id;
+
+      if ($("#"+commentID).visible(true)) {
+
+        if (which === "next") {
+
+          i++;
+        }
+        else if (which === "previous") {
+
+          i--;
+        }
+
+        const commentToScrollTo = comments[i];
+
+        $('html,body').animate({
+            scrollTop: $("#" + commentToScrollTo.id).offset().top
+        }, 'fast');
+
+        return;
+      }
+
+      i++;
+  }
+}
+
+$(document).keydown(function(e) {
+
+  if (e.which == 39) {
+    
+      e.preventDefault();
+      goToComment("next");
+  }
+  else if (e.which == 37) {
+
+      e.preventDefault();
+      goToComment("previous");
+  }
+});
