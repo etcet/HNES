@@ -1986,10 +1986,18 @@ function goToComment(which) {
 
 $(document).keydown(function(e) {
 
+  const url = new URL(window.location);
+
+  if ($("textarea, input").is(":focus"))
+    return;
+
+  if (!(url.pathname == "/item" && url.searchParams.get("id")))
+    return;
+
   if (e.which == 39) {
-    
-      e.preventDefault();
-      goToComment("next");
+
+    e.preventDefault();
+    goToComment("next");
   }
   else if (e.which == 37) {
 
