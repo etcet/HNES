@@ -2069,8 +2069,30 @@ if (window.location.host == 'hckrnews.com') {
     }
   }
 
+  /**
+   * @description Checks if an input field is being edited and if the window location is other than the comments page
+   * @returns {boolean}
+   */
+  function shouldScroll() {
+    const url = new URL(window.location)
+
+    if ($('textarea, input').is(':focus')) {
+      return false
+    }
+
+    if (!(url.pathname == '/item' && url.searchParams.get('id'))) {
+      return false
+    }
+
+    return true
+  }
+
   // Listen to keyboard keydown events
   $(document).keydown(function (e) {
+    if (!shouldScroll()) {
+      return
+    }
+
     const { which: keyCode } = e
     switch (keyCode) {
       case LEFT_ARROW_KEY_CODE:
