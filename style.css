@@ -898,7 +898,8 @@ body#login-body {
   display: block;
   margin-left: 4px;
   margin-right: 4px;
-  width: 14px;
+  font-size: 15px;
+  width: 16px;
   cursor: pointer;
 }
 
