@@ -1840,7 +1840,7 @@ var HN = {
 
     open_story: function(new_tab){
       if ($('.on_story').length != 0) {
-        var story = $('.on_story .title > a');
+        var story = $('.on_story .title .titleline > a');
         if (new_tab) {
           $('.on_story .title').addClass("link-highlight");
           window.open(story.attr("href"));
