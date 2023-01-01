@@ -1,3 +1,8 @@
+Warning: Unmaintained
+============
+I don't have much desire to keep maintaining this project, so please don't create pull requests for any new features or anything which is not a bug or regression.
+
+
 Hacker News Enhancement Suite
 =============================
 
