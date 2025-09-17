@@ -2,13 +2,13 @@
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   console.log('REQUEST', request.method, request)
   if (request.method == "getAllLocalStorage") {
-    sendResponse({data: localStorage});
+    sendResponse({data: chrome.storage.local});
   }
   else if (request.method == "getLocalStorage") {
-    sendResponse({data: localStorage[request.key]});
+    sendResponse({data: chrome.storage.local[request.key]});
   }
   else if (request.method == "setLocalStorage") {
-    localStorage[request.key] = request.value;
+    chrome.storage.local[request.key] = request.value;
     sendResponse({});
   }
   else if (request.method == "getUserData") {
@@ -24,7 +24,7 @@ function getUserData(usernames) {
   var results = {};
   for (var i = 0; i < usernames.length; i++) {
     var key = usernames[i],
-        value = localStorage[key];
+        value = chrome.storage.local[key];
     results[key] = value;
   }
   return results;
@@ -32,10 +32,10 @@ function getUserData(usernames) {
 
 //expire old entries
 (function() {
-  for (i=0; i<localStorage.length; i++) {
-    var info = JSON.parse(localStorage[localStorage.key(i)]);
+  for (i=0; i<chrome.storage.local.length; i++) {
+    var info = JSON.parse(chrome.storage.local[chrome.storage.local.key(i)]);
     var now = new Date().getTime();
     if (now > info.expire)
-      localStorage.removeItem(localStorage.key(i));
+      chrome.storage.local.removeItem(chrome.storage.local.key(i));
   }
 });

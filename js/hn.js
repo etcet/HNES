@@ -63,7 +63,7 @@ var InlineReply = {
       $(this).attr("value","Posting...");
       //Add loading spinner
       image = $('<img style="vertical-align:middle;margin-left:5px;"/>');
-      image.attr('src',chrome.extension.getURL("images/spin.gif"));
+      image.attr('src',chrome.runtime.getURL("images/spin.gif"));
       $(this).after(image);
       //Post
       InlineReply.postCommentTo(link, domain, text, $(this));
@@ -261,7 +261,7 @@ var CommentTracker = {
   }
 }
 
-var unvoteImg = chrome.extension.getURL("images/unvote.gif");
+var unvoteImg = chrome.runtime.getURL("images/unvote.gif");
 
 class HNComments {
   constructor(storyId) {
@@ -462,7 +462,7 @@ class HNComments {
 
     c.el = commentEl;
 
-    tagImageEl.src = chrome.extension.getURL('/images/tag.svg');
+    tagImageEl.src = chrome.runtime.getURL('/images/tag.svg');
 
     commentEl.id = c.id;
     commentEl.classList.add(`level-${oddOrEven}`);
